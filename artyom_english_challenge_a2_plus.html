@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,10 +21,10 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
 <main>
 <section class="hero">
   <h1>Artyom's English Challenge</h1>
-  <p>Level A2+ · Test 01</p>
-  <div class="meta"><span class="pill">10 questions</span><span class="pill">10 points</span><span class="pill">About 10 minutes</span></div>
+  <p>Level A2+ · Test 02</p>
+  <div class="meta"><span class="pill">5 questions</span><span class="pill">5 points</span><span class="pill">About 5 minutes</span></div>
 </section>
-<div class="instructions"><strong>How to play:</strong> Read each Russian sentence and choose the best English translation. Answer all 10 questions, then press <strong>Check my answers</strong>. You will see your score and explanations.</div>
+<div class="instructions"><strong>Инструкция:</strong> Прочитай предложение на русском и выбери правильный перевод на английском. Ответь на все 5 вопросов и нажми <strong>Check my answers</strong>. После проверки появятся результат и объяснения.</div>
 <form id="quiz">
 <div id="questions"></div>
 <div class="actions"><button class="btn primary" type="submit" id="check">Check my answers</button><button class="btn secondary" type="button" id="reset">Try again</button></div>
@@ -38,23 +38,24 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
 </main>
 <script>
 const data = [
- {ru:"Я обычно делаю домашнее задание после ужина.",opts:["I usually do my homework after dinner.","I am usually doing my homework after dinner.","I usually am do my homework after dinner."],a:0,why:"Для привычек используем Present Simple: usually do."},
- {ru:"Вчера мы не пошли в парк, потому что шёл дождь.",opts:["Yesterday we don't go to the park because it rains.","Yesterday we didn't go to the park because it was raining.","Yesterday we weren't go to the park because it rained."],a:1,why:"Отрицание в Past Simple: didn't go. Действие на фоне другого события: was raining."},
- {ru:"Если я закончу работу рано, я помогу тебе.",opts:["If I will finish work early, I help you.","If I finish work early, I will help you.","If I finished work early, I will help you."],a:1,why:"В First Conditional после if используем Present Simple, в главной части — will."},
- {ru:"Моя сестра уже видела этот фильм два раза.",opts:["My sister has already seen this film twice.","My sister already saw this film twice.","My sister have already seen this film twice."],a:0,why:"Present Perfect: has + третья форма глагола seen."},
- {ru:"Ты бы предпочёл поехать на велосипеде или пойти пешком?",opts:["Would you rather ride a bike or walk?","Do you rather riding a bike or walking?","Would you rather to ride a bike or to walk?"],a:0,why:"Конструкция would rather + начальная форма глагола без to."},
- {ru:"Мне нравится читать вечером, а не смотреть телевизор.",opts:["I enjoy to read in the evening rather than watch TV.","I enjoy reading in the evening rather than watching TV.","I enjoy read in the evening than watching TV."],a:1,why:"После enjoy используем -ing. В конструкции rather than здесь естественно повторить форму -ing."},
- {ru:"В комнате недостаточно стульев для всех.",opts:["There aren't enough chairs for everyone in the room.","There are chairs enough for everyone in the room.","There isn't enough chairs for everyone in the room."],a:0,why:"Chairs — исчисляемое множественное число, поэтому aren't enough."},
- {ru:"Когда я позвонил, Том принимал душ.",opts:["When I called, Tom took a shower.","When I was calling, Tom had a shower.","When I called, Tom was taking a shower."],a:2,why:"Длительное действие в прошлом: was taking; короткое событие: called."},
- {ru:"Это самый интересный музей, который я когда-либо посещал.",opts:["This is the more interesting museum I ever visited.","This is the most interesting museum I have ever visited.","This is the interestingest museum I have ever visit."],a:1,why:"Превосходная степень: the most interesting. Опыт до настоящего момента: have ever visited."},
- {ru:"Хотя было холодно, дети продолжали играть на улице.",opts:["Although it was cold, the children kept playing outside.","Because it was cold, the children kept to play outside.","Although it was cold, the children kept play outside."],a:0,why:"Although означает «хотя». После keep используем глагол с -ing: kept playing."}
+ {ru:"Раньше я боялся выступать перед классом, но теперь мне это нравится.",opts:["I used to be afraid of speaking in front of the class, but now I enjoy it.","I am used to be afraid of speaking in front of the class, but now I enjoy it.","I use to afraid speaking in front of the class, but now I enjoy it."],a:0,why:"Used to + начальная форма глагола описывает привычное или обычное состояние в прошлом, которого сейчас уже нет."},
+ {ru:"Я бы предпочёл остаться дома, а не идти в торговый центр.",opts:["I would rather staying at home than going to the shopping centre.","I would rather stay at home than go to the shopping centre.","I rather to stay at home instead go to the shopping centre."],a:1,why:"После would rather используется начальная форма глагола без to: would rather stay. В сравнении действий можно использовать rather than."},
+ {ru:"Мы ещё не закончили проект, но закончим его к пятнице.",opts:["We didn't finish the project yet, but we finish it by Friday.","We haven't finished the project yet, but we'll finish it by Friday.","We aren't finishing the project yet, but we finished it by Friday."],a:1,why:"Present Perfect с yet подходит для незавершённого действия до настоящего момента; будущее обещание выражается will finish."},
+ {ru:"Если Артём будет тренироваться каждый день, он станет говорить быстрее.",opts:["If Artyom will practise every day, he speaks faster.","If Artyom practises every day, he will speak faster.","If Artyom practised every day, he will spoke faster."],a:1,why:"В First Conditional после if ставим Present Simple, а в главной части — will + начальная форма глагола."},
+ {ru:"Когда мама вернулась домой, дети уже сделали домашнее задание.",opts:["When Mum came home, the children have already done their homework.","When Mum had come home, the children already did their homework.","When Mum came home, the children had already done their homework."],a:2,why:"Past Perfect (had done) показывает, что домашнее задание было закончено раньше другого действия в прошлом (came home)."}
 ];
 const letters=["A","B","C"];
 const root=document.getElementById("questions");
 data.forEach((q,i)=>{
  const card=document.createElement("section");card.className="question";
- card.innerHTML=`<div class="qhead">Question ${i+1} of 10</div><div class="prompt">${q.ru}</div><div class="translation">Choose the correct English sentence.</div>`+
- q.opts.map((o,j)=>`<label class="option"><input type="radio" name="q${i}" value="${j}"><span><strong>${letters[j]}.</strong> ${o}</span></label>`).join("");
+ card.innerHTML='<div class="qhead">Question '+(i+1)+' of 5</div><div class="prompt"></div><div class="translation">Choose the correct English sentence.</div>';
+ card.querySelector(".prompt").textContent=q.ru;
+ q.opts.forEach((o,j)=>{
+  const label=document.createElement("label");label.className="option";
+  const radio=document.createElement("input");radio.type="radio";radio.name="q"+i;radio.value=String(j);
+  const span=document.createElement("span");span.innerHTML="<strong>"+letters[j]+".</strong> ";span.appendChild(document.createTextNode(o));
+  label.append(radio,span);card.appendChild(label);
+ });
  root.appendChild(card);
 });
 const form=document.getElementById("quiz"), result=document.getElementById("result");
@@ -64,28 +65,28 @@ form.addEventListener("submit",e=>{
  let score=0, answered=0;
  const review=document.getElementById("review");review.innerHTML="";
  data.forEach((q,i)=>{
-  const chosen=form.querySelector(`input[name="q${i}"]:checked`);
+  const chosen=form.querySelector('input[name="q'+i+'"]:checked');
   if(chosen)answered++;
   const ok=chosen && Number(chosen.value)===q.a;if(ok)score++;
   const div=document.createElement("div");div.className="review";
   const status=ok?"Correct ✓":chosen?"Not quite ✗":"Not answered";
-  div.innerHTML=`<div class="${ok?"correct":"incorrect"}"><strong>${i+1}. ${status}</strong><br>Your answer: ${chosen?letters[Number(chosen.value)]+". "+q.opts[Number(chosen.value)]:"—"}<br>Correct answer: <strong>${letters[q.a]}. ${q.opts[q.a]}</strong><br><span class="small">${q.why}</span></div>`;
-  review.appendChild(div);
+  const panel=document.createElement("div");panel.className=ok?"correct":"incorrect";
+  const heading=document.createElement("strong");heading.textContent=(i+1)+". "+status;panel.appendChild(heading);panel.appendChild(document.createElement("br"));
+  panel.appendChild(document.createTextNode("Your answer: "+(chosen?letters[Number(chosen.value)]+". "+q.opts[Number(chosen.value)]:"—")));panel.appendChild(document.createElement("br"));
+  const answer=document.createElement("span");answer.textContent="Correct answer: "+letters[q.a]+". "+q.opts[q.a];answer.style.fontWeight="700";panel.appendChild(answer);panel.appendChild(document.createElement("br"));
+  const why=document.createElement("span");why.className="small";why.textContent=q.why;panel.appendChild(why);div.appendChild(panel);review.appendChild(div);
  });
- document.getElementById("score").textContent=`${score} / 10 points`;
- document.getElementById("message").textContent=`You answered ${answered} out of 10 questions. ${score>=9?"Excellent work!":score>=7?"Good job! Review the explanations below.": "Good effort! Read the explanations and try again."}`;
- resultText=`Artyom's English Challenge — A2+\nScore: ${score}/10\nAnswered: ${answered}/10\n\n`+data.map((q,i)=>{const c=form.querySelector(`input[name="q${i}"]:checked`);return `${i+1}. ${c?letters[Number(c.value)]+". "+q.opts[Number(c.value)]:"Not answered"} | Correct: ${letters[q.a]}. ${q.opts[q.a]}`}).join("\n");
+ document.getElementById("score").textContent=score+" / 5 points";
+ document.getElementById("message").textContent="You answered "+answered+" out of 5 questions. "+(score===5?"Perfect score! Excellent work!":score>=4?"Great job! Review the explanations below.":score>=3?"Good effort! Read the explanations and try again.":"Keep practising — you can do it!");
+ resultText="Artyom's English Challenge — A2+\nScore: "+score+"/5\nAnswered: "+answered+"/5\n\n"+data.map((q,i)=>{const c=form.querySelector('input[name="q'+i+'"]:checked');return (i+1)+". "+(c?letters[Number(c.value)]+". "+q.opts[Number(c.value)]:"Not answered")+" | Correct: "+letters[q.a]+". "+q.opts[q.a];}).join("\n");
  result.style.display="block";result.scrollIntoView({behavior:"smooth",block:"start"});
  document.getElementById("check").disabled=true;
 });
 document.getElementById("reset").addEventListener("click",()=>{form.reset();document.getElementById("check").disabled=false;result.style.display="none";resultText="";window.scrollTo({top:0,behavior:"smooth"});});
 document.getElementById("copy").addEventListener("click",async()=>{
  const btn=document.getElementById("copy");
- try{await navigator.clipboard.writeText(resultText);btn.textContent="Copied!";}catch(e){
-  const area=document.createElement("textarea");area.value=resultText;document.body.appendChild(area);area.select();
-  try{document.execCommand("copy");btn.textContent="Copied!";}catch(err){btn.textContent="Select and copy manually";area.style.display="block";}
-  area.remove();
- }
+ try{await navigator.clipboard.writeText(resultText);btn.textContent="Copied!";}
+ catch(e){const area=document.createElement("textarea");area.value=resultText;document.body.appendChild(area);area.select();try{document.execCommand("copy");btn.textContent="Copied!";}catch(err){btn.textContent="Select and copy manually";area.style.display="block";}area.remove();}
 });
 </script>
 </body>
