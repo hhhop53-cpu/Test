@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artyom's English Challenge — A2+</title>
+<style>
+:root{color-scheme:light;--ink:#172033;--muted:#64748b;--line:#dbe3ee;--blue:#2457d6;--pale:#eef4ff;--good:#e9f8ef;--bad:#fff0f0}
+*{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 48px}.hero{background:#172b59;color:white;padding:26px 22px;border-radius:20px;margin-bottom:20px}
+h1{font-size:clamp(25px,5vw,34px);line-height:1.15;margin:0 0 8px}.hero p{margin:0;color:#dbe6ff}.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.pill{background:#ffffff1c;border:1px solid #ffffff38;border-radius:99px;padding:5px 11px;font-size:13px}
+.instructions{background:white;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:18px;color:#39465d}
+.question{background:white;border:1px solid var(--line);border-radius:15px;padding:18px;margin:14px 0}.qhead{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase}.prompt{font-weight:650;margin:7px 0 12px}.translation{color:#526078;font-size:14px;margin:-4px 0 12px}
+.option{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;cursor:pointer}.option:has(input:checked){border-color:var(--blue);background:var(--pale)}.option input{margin-top:4px;accent-color:var(--blue)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}.btn{border:0;border-radius:11px;padding:13px 18px;font-weight:700;font-size:15px;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e6ebf3;color:#24324a}.btn:disabled{opacity:.5;cursor:not-allowed}
+#result{display:none;background:white;border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px}#result h2{margin:0 0 8px}.score{font-size:28px;font-weight:800;color:var(--blue)}.review{border-top:1px solid var(--line);padding:11px 0}.correct{background:var(--good);border-radius:9px;padding:9px}.incorrect{background:var(--bad);border-radius:9px;padding:9px}.small{font-size:13px;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
+</style>
+</head>
+<body>
+<main>
+<section class="hero">
+  <h1>Artyom's English Challenge</h1>
+  <p>Level A2+ · Test 02</p>
+  <div class="meta"><span class="pill">5 questions</span><span class="pill">5 points</span><span class="pill">About 5 minutes</span></div>
+</section>
+<div class="instructions"><strong>Инструкция:</strong> Прочитай предложение на русском и выбери правильный перевод на английском. Ответь на все 5 вопросов и нажми <strong>Check my answers</strong>. После проверки появятся результат и объяснения.</div>
+<form id="quiz">
+<div id="questions"></div>
+<div class="actions"><button class="btn primary" type="submit" id="check">Check my answers</button><button class="btn secondary" type="button" id="reset">Try again</button></div>
+</form>
+<section id="result" aria-live="polite">
+  <h2>Your result</h2><div class="score" id="score"></div><p id="message"></p>
+  <div class="actions"><button class="btn primary" id="copy" type="button">Copy results</button></div>
+  <div id="review"></div>
+</section>
+<footer>Keep going, Artyom. Every challenge makes your English stronger!</footer>
+</main>
+<script>
+const data = [
+ {ru:"Раньше я боялся выступать перед классом, но теперь мне это нравится.",opts:["I used to be afraid of speaking in front of the class, but now I enjoy it.","I am used to be afraid of speaking in front of the class, but now I enjoy it.","I use to afraid speaking in front of the class, but now I enjoy it."],a:0,why:"Used to + начальная форма глагола описывает привычное или обычное состояние в прошлом, которого сейчас уже нет."},
+ {ru:"Я бы предпочёл остаться дома, а не идти в торговый центр.",opts:["I would rather staying at home than going to the shopping centre.","I would rather stay at home than go to the shopping centre.","I rather to stay at home instead go to the shopping centre."],a:1,why:"После would rather используется начальная форма глагола без to: would rather stay. В сравнении действий можно использовать rather than."},
+ {ru:"Мы ещё не закончили проект, но закончим его к пятнице.",opts:["We didn't finish the project yet, but we finish it by Friday.","We haven't finished the project yet, but we'll finish it by Friday.","We aren't finishing the project yet, but we finished it by Friday."],a:1,why:"Present Perfect с yet подходит для незавершённого действия до настоящего момента; будущее обещание выражается will finish."},
+ {ru:"Если Артём будет тренироваться каждый день, он станет говорить быстрее.",opts:["If Artyom will practise every day, he speaks faster.","If Artyom practises every day, he will speak faster.","If Artyom practised every day, he will spoke faster."],a:1,why:"В First Conditional после if ставим Present Simple, а в главной части — will + начальная форма глагола."},
+ {ru:"Когда мама вернулась домой, дети уже сделали домашнее задание.",opts:["When Mum came home, the children have already done their homework.","When Mum had come home, the children already did their homework.","When Mum came home, the children had already done their homework."],a:2,why:"Past Perfect (had done) показывает, что домашнее задание было закончено раньше другого действия в прошлом (came home)."}
+];
+const letters=["A","B","C"];
+const root=document.getElementById("questions");
+data.forEach((q,i)=>{
+ const card=document.createElement("section");card.className="question";
+ card.innerHTML='<div class="qhead">Question '+(i+1)+' of 5</div><div class="prompt"></div><div class="translation">Choose the correct English sentence.</div>';
+ card.querySelector(".prompt").textContent=q.ru;
+ q.opts.forEach((o,j)=>{
+  const label=document.createElement("label");label.className="option";
+  const radio=document.createElement("input");radio.type="radio";radio.name="q"+i;radio.value=String(j);
+  const span=document.createElement("span");span.innerHTML="<strong>"+letters[j]+".</strong> ";span.appendChild(document.createTextNode(o));
+  label.append(radio,span);card.appendChild(label);
+ });
+ root.appendChild(card);
+});
+const form=document.getElementById("quiz"), result=document.getElementById("result");
+let resultText="";
+form.addEventListener("submit",e=>{
+ e.preventDefault();
+ let score=0, answered=0;
+ const review=document.getElementById("review");review.innerHTML="";
+ data.forEach((q,i)=>{
+  const chosen=form.querySelector('input[name="q'+i+'"]:checked');
+  if(chosen)answered++;
+  const ok=chosen && Number(chosen.value)===q.a;if(ok)score++;
+  const div=document.createElement("div");div.className="review";
+  const status=ok?"Correct ✓":chosen?"Not quite ✗":"Not answered";
+  const panel=document.createElement("div");panel.className=ok?"correct":"incorrect";
+  const heading=document.createElement("strong");heading.textContent=(i+1)+". "+status;panel.appendChild(heading);panel.appendChild(document.createElement("br"));
+  panel.appendChild(document.createTextNode("Your answer: "+(chosen?letters[Number(chosen.value)]+". "+q.opts[Number(chosen.value)]:"—")));panel.appendChild(document.createElement("br"));
+  const answer=document.createElement("span");answer.textContent="Correct answer: "+letters[q.a]+". "+q.opts[q.a];answer.style.fontWeight="700";panel.appendChild(answer);panel.appendChild(document.createElement("br"));
+  const why=document.createElement("span");why.className="small";why.textContent=q.why;panel.appendChild(why);div.appendChild(panel);review.appendChild(div);
+ });
+ document.getElementById("score").textContent=score+" / 5 points";
+ document.getElementById("message").textContent="You answered "+answered+" out of 5 questions. "+(score===5?"Perfect score! Excellent work!":score>=4?"Great job! Review the explanations below.":score>=3?"Good effort! Read the explanations and try again.":"Keep practising — you can do it!");
+ resultText="Artyom's English Challenge — A2+\nScore: "+score+"/5\nAnswered: "+answered+"/5\n\n"+data.map((q,i)=>{const c=form.querySelector('input[name="q'+i+'"]:checked');return (i+1)+". "+(c?letters[Number(c.value)]+". "+q.opts[Number(c.value)]:"Not answered")+" | Correct: "+letters[q.a]+". "+q.opts[q.a];}).join("\n");
+ result.style.display="block";result.scrollIntoView({behavior:"smooth",block:"start"});
+ document.getElementById("check").disabled=true;
+});
+document.getElementById("reset").addEventListener("click",()=>{form.reset();document.getElementById("check").disabled=false;result.style.display="none";resultText="";window.scrollTo({top:0,behavior:"smooth"});});
+document.getElementById("copy").addEventListener("click",async()=>{
+ const btn=document.getElementById("copy");
+ try{await navigator.clipboard.writeText(resultText);btn.textContent="Copied!";}
+ catch(e){const area=document.createElement("textarea");area.value=resultText;document.body.appendChild(area);area.select();try{document.execCommand("copy");btn.textContent="Copied!";}catch(err){btn.textContent="Select and copy manually";area.style.display="block";}area.remove();}
+});
+</script>
+</body>
+</html>
