@@ -31,12 +31,15 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
 </form>
 <section id="result" aria-live="polite">
   <h2>Your result</h2><div class="score" id="score"></div><p id="message"></p>
-  <div class="actions"><button class="btn primary" id="copy" type="button">Copy results</button></div>
+  <div class="actions"><button class="btn primary" id="copy" type="button">Copy results</button><button class="btn primary" id="send" type="button">Отправить результат</button></div><p id="sendStatus" class="small"></p>
   <div id="review"></div>
 </section>
 <footer>Keep going, Artyom. Every challenge makes your English stronger!</footer>
 </main>
 <script>
+const RESULTS_ENDPOINT = "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+const startedAt = Date.now();
+let savedPayload = null;
 const data = [
  {ru:"Раньше я боялся выступать перед классом, но теперь мне это нравится.",opts:["I used to be afraid of speaking in front of the class, but now I enjoy it.","I am used to be afraid of speaking in front of the class, but now I enjoy it.","I use to afraid speaking in front of the class, but now I enjoy it."],a:0,why:"Used to + начальная форма глагола описывает привычное или обычное состояние в прошлом, которого сейчас уже нет."},
  {ru:"Я бы предпочёл остаться дома, а не идти в торговый центр.",opts:["I would rather staying at home than going to the shopping centre.","I would rather stay at home than go to the shopping centre.","I rather to stay at home instead go to the shopping centre."],a:1,why:"После would rather используется начальная форма глагола без to: would rather stay. В сравнении действий можно использовать rather than."},
@@ -79,10 +82,22 @@ form.addEventListener("submit",e=>{
  document.getElementById("score").textContent=score+" / 5 points";
  document.getElementById("message").textContent="You answered "+answered+" out of 5 questions. "+(score===5?"Perfect score! Excellent work!":score>=4?"Great job! Review the explanations below.":score>=3?"Good effort! Read the explanations and try again.":"Keep practising — you can do it!");
  resultText="Artyom's English Challenge — A2+\nScore: "+score+"/5\nAnswered: "+answered+"/5\n\n"+data.map((q,i)=>{const c=form.querySelector('input[name="q'+i+'"]:checked');return (i+1)+". "+(c?letters[Number(c.value)]+". "+q.opts[Number(c.value)]:"Not answered")+" | Correct: "+letters[q.a]+". "+q.opts[q.a];}).join("\n");
+
+  savedPayload={student:"Артём",testTitle:"Artyom's English Challenge — Test 02",level:"A2+",score:score,total:data.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:data.map((q,i)=>{const c=form.querySelector('input[name="q'+i+'"]:checked');const n=c?Number(c.value):null;return {question:q.ru,selectedAnswer:n===null?"Нет ответа":letters[n]+". "+q.opts[n],correctAnswer:letters[q.a]+". "+q.opts[q.a],isCorrect:n===q.a};})};
  result.style.display="block";result.scrollIntoView({behavior:"smooth",block:"start"});
  document.getElementById("check").disabled=true;
 });
 document.getElementById("reset").addEventListener("click",()=>{form.reset();document.getElementById("check").disabled=false;result.style.display="none";resultText="";window.scrollTo({top:0,behavior:"smooth"});});
+
+document.getElementById("send").addEventListener("click",async()=>{
+ const status=document.getElementById("sendStatus"),btn=document.getElementById("send");
+ if(!savedPayload){status.textContent="Сначала заверши тест.";return;}
+ if(RESULTS_ENDPOINT==="PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"){status.textContent="Сначала подключи Google Apps Script. Инструкция находится в папке apps-script.";return;}
+ btn.disabled=true;status.textContent="Отправляю результат…";
+ try{await fetch(RESULTS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(savedPayload)});status.textContent="Запрос отправлен. Обнови журнал через несколько секунд.";btn.textContent="Отправлено";}
+ catch(err){btn.disabled=false;status.textContent="Не удалось отправить. Попробуй ещё раз.";}
+});
+
 document.getElementById("copy").addEventListener("click",async()=>{
  const btn=document.getElementById("copy");
  try{await navigator.clipboard.writeText(resultText);btn.textContent="Copied!";}
