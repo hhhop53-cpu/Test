@@ -1,49 +1,49 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Журнал результатов Артёма</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Общий журнал английских тестов</title>
 <style>
-body{font-family:Arial,sans-serif;background:#f4f6fa;color:#172033;margin:0;padding:20px}
-main{max-width:900px;margin:auto}.hero{background:#172b59;color:#fff;padding:22px;border-radius:16px;margin-bottom:18px}
-h1{margin:0 0 6px;font-size:25px}.muted{color:#64748b}.hero .muted{color:#dbe6ff}
-.card{background:#fff;border:1px solid #dbe3ee;border-radius:14px;padding:17px;margin:12px 0}
+body{font-family:Arial,sans-serif;background:#f4f6fa;color:#172033;margin:0;padding:20px}main{max-width:900px;margin:auto}
+.hero{background:#172b59;color:#fff;padding:22px;border-radius:16px;margin-bottom:18px}h1{margin:0 0 6px;font-size:25px}
+.muted{color:#64748b}.hero .muted{color:#dbe6ff}.card{background:#fff;border:1px solid #dbe3ee;border-radius:14px;padding:17px;margin:12px 0}
 .top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.score{font-size:22px;font-weight:800;color:#2457d6}
 button{border:0;background:#2457d6;color:white;padding:10px 14px;border-radius:9px;font-weight:bold;cursor:pointer}
 details{margin-top:12px;border-top:1px solid #e5eaf1;padding-top:10px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.5 Arial,sans-serif}
-#status{margin:14px 0}.empty{background:#fff;padding:20px;border-radius:12px}
-</style>
-</head>
-<body>
-<main>
-<section class="hero">
-<h1>Журнал английских тестов Артёма</h1>
-<div class="muted">Все отправленные результаты, ответы и время прохождения</div>
-</section>
-<div class="top"><div id="status" class="muted">Загружаю результаты…</div><button onclick="loadResults()">Обновить</button></div>
-<div id="list"></div>
-</main>
-<script>
+#status{margin:14px 0}.empty{background:#fff;padding:20px;border-radius:12px}.section-title{font-size:20px;margin:24px 0 10px}
+.live{border-left:5px solid #16a36a}.progress-track{height:12px;background:#e8edf4;border-radius:20px;overflow:hidden;margin:13px 0}.progress-fill{height:100%;background:#16a36a;border-radius:20px}
+.live-status{font-weight:bold;color:#128052}.small{font-size:13px;color:#64748b}
+</style></head>
+<body><main>
+<section class="hero"><h1>Общий журнал английских тестов</h1><div class="muted">Артём и Даша · текущий прогресс и завершённые тесты</div></section>
+<div class="top"><div id="status" class="muted">Загружаю данные…</div><button onclick="loadAll()">Обновить</button></div>
+<h2 class="section-title">Сейчас проходят тест</h2><div id="liveList"></div>
+<h2 class="section-title">Завершённые тесты</h2><div id="list"></div>
+</main><script>
 function fmtDate(v){try{return new Date(v).toLocaleString('ru-RU',{dateStyle:'short',timeStyle:'medium'});}catch(e){return v;}}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function loadResults(){
- document.getElementById('status').textContent='Загружаю результаты…';
- google.script.run.withSuccessHandler(render).withFailureHandler(e=>{
-  document.getElementById('status').textContent='Не удалось загрузить: '+e.message;
- }).getResults();
+function loadAll(){
+ google.script.run.withSuccessHandler(renderProgress).withFailureHandler(e=>{document.getElementById('liveList').textContent='Не удалось загрузить прогресс: '+e.message;}).getProgress();
+ google.script.run.withSuccessHandler(renderResults).withFailureHandler(e=>{document.getElementById('status').textContent='Не удалось загрузить результаты: '+e.message;}).getResults();
 }
-function render(rows){
+function renderProgress(rows){
+ const box=document.getElementById('liveList');
+ const active=rows.filter(r=>r.status==='В процессе'&&(Date.now()-new Date(r.updatedAt).getTime())<300000);
+ if(!active.length){box.innerHTML='<div class="empty">Сейчас никто не проходит тест. Когда Даша или Артём начнут отвечать, здесь появится их прогресс.</div>';return;}
+ box.innerHTML=active.map(r=>{
+  const total=Number(r.total)||0,answered=Number(r.answered)||0,pct=total?Math.round(answered/total*100):0;
+  return '<article class="card live"><div class="top"><div><strong>'+esc(r.student)+'</strong><div>'+esc(r.testTitle)+'</div><div class="small">Уровень '+esc(r.level)+'</div></div><div class="live-status">В процессе</div></div><div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div><strong>Отвечено: '+answered+' из '+total+' ('+pct+'%)</strong><div class="small">Последнее действие: '+esc(fmtDate(r.updatedAt))+'</div></article>';
+ }).join('');
+}
+function renderResults(rows){
  const list=document.getElementById('list');
- document.getElementById('status').textContent='Всего попыток: '+rows.length;
- if(!rows.length){list.innerHTML='<div class="empty">Пока нет отправленных результатов. После теста Артём должен нажать кнопку «Отправить результат».</div>';return;}
- list.innerHTML=rows.map((r,i)=>{
+ document.getElementById('status').textContent='Завершённых попыток: '+rows.length+' · обновление каждые 4 секунды';
+ if(!rows.length){list.innerHTML='<div class="empty">Пока нет завершённых тестов. После проверки ответов ребёнок нажимает кнопку «Отправить результат».</div>';return;}
+ list.innerHTML=rows.map(r=>{
   let detail=r.details||'';
-  try{const d=JSON.parse(r.raw||'{}'); if(d.answers) detail=d.answers.map((a,n)=>(n+1)+'. '+a.question+'\nОтвет: '+(a.selectedAnswer||'Нет ответа')+'\nПравильно: '+a.correctAnswer+'\n'+(a.isCorrect?'Верно':'Ошибка')).join('\n\n');}catch(e){}
+  try{const d=JSON.parse(r.raw||'{}');if(d.answers)detail=d.answers.map((a,n)=>(n+1)+'. '+a.question+'\nОтвет: '+(a.selectedAnswer||'Нет ответа')+'\nПравильно: '+a.correctAnswer+'\n'+(a.isCorrect?'Верно':'Ошибка')).join('\n\n');}catch(e){}
   return '<article class="card"><div class="top"><div><strong>'+esc(r.testTitle)+'</strong><div class="muted">'+esc(r.student)+' · '+esc(r.level)+'</div><div class="muted">Отправлено: '+esc(fmtDate(r.submittedAt))+'</div></div><div class="score">'+esc(r.score)+' / '+esc(r.total)+'</div></div><details><summary>Посмотреть ответы и правильные варианты</summary><pre>'+esc(detail)+'</pre></details></article>';
  }).join('');
 }
-loadResults();
-</script>
-</body>
-</html>
+loadAll();setInterval(loadAll,4000);
+</script></body></html>
