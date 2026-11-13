@@ -1,9 +1,8 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Artyom's English Challenge — Future in the Past</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artyom's English Challenge — A2</title>
 <style>
 :root{color-scheme:light;--ink:#172033;--muted:#64748b;--line:#dbe3ee;--blue:#2457d6;--pale:#eef4ff;--good:#e9f8ef;--bad:#fff0f0}
 *{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -15,95 +14,39 @@ h1{font-size:clamp(25px,5vw,34px);line-height:1.15;margin:0 0 8px}.hero p{margin
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}.btn{border:0;border-radius:11px;padding:13px 18px;font-weight:700;font-size:15px;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e6ebf3;color:#24324a}.btn:disabled{opacity:.5;cursor:not-allowed}
 #result{display:none;background:white;border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px}#result h2{margin:0 0 8px}.score{font-size:28px;font-weight:800;color:var(--blue)}.review{border-top:1px solid var(--line);padding:11px 0}.correct{background:var(--good);border-radius:9px;padding:9px}.incorrect{background:var(--bad);border-radius:9px;padding:9px}.small{font-size:13px;color:var(--muted)}
 footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
-</style>
-</head>
-<body>
-<main>
-<section class="hero">
-  <h1>Artyom's English Challenge</h1>
-  <p>Grammar · Future in the Past · A2+</p>
-  <div class="meta"><span class="pill">10 questions</span><span class="pill">10 points</span><span class="pill">About 10 minutes</span></div>
-</section>
-<div class="instructions"><strong>Инструкция:</strong> Прочитай предложение на русском и выбери правильный перевод на английском. Вспомни, как мы говорим о будущем, смотря из прошлого: <em>would</em>, <em>was/were going to</em>, <em>was/were about to</em>. Ответь на все 10 вопросов и нажми <strong>Check my answers</strong>. После проверки появятся результат и объяснения.</div>
-<form id="quiz">
-<div id="questions"></div>
-<div class="actions"><button class="btn primary" type="submit" id="check">Check my answers</button><button class="btn secondary" type="button" id="reset">Try again</button></div>
-</form>
-<section id="result" aria-live="polite">
-  <h2>Your result</h2><div class="score" id="score"></div><p id="message"></p>
-  <div class="actions"><button class="btn primary" id="copy" type="button">Copy results</button><button class="btn primary" id="send" type="button">Отправить результат</button></div><p id="sendStatus" class="small"></p>
-  <div id="review"></div>
-</section>
+</style></head>
+<body><main>
+<section class="hero"><h1>Artyom's English Challenge</h1><p>General English · Level A2</p><div class="meta"><span class="pill">10 questions</span><span class="pill">10 points</span><span class="pill">About 10 minutes</span></div></section>
+<div class="instructions"><strong>Инструкция:</strong> Прочитай предложение на русском и выбери один правильный вариант на английском. В тесте проверяются основные темы уровня A2: времена, вопросы, модальные глаголы, степени сравнения, предлоги и конструкции с инфинитивом. Ответь на все 10 вопросов и нажми <strong>Check my answers</strong>. Future in the Past в этом тесте нет.</div>
+<form id="quiz"><div id="questions"></div><div class="actions"><button class="btn primary" type="submit" id="check">Check my answers</button><button class="btn secondary" type="button" id="reset">Try again</button></div></form>
+<section id="result" aria-live="polite"><h2>Your result</h2><div class="score" id="score"></div><p id="message"></p><div class="actions"><button class="btn primary" id="copy" type="button">Copy results</button><button class="btn primary" id="send" type="button">Отправить результат</button></div><p id="sendStatus" class="small"></p><div id="review"></div></section>
 <footer>Keep going, Artyom. Every challenge makes your English stronger!</footer>
 </main>
 <script>
 const RESULTS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxGweNqBvYEs0INITyn4KwwlyfWjEjKisQ4LvYnVfTljWPfaCf71_REpMzWgg4zwFczng/exec";
-const startedAt = Date.now();
-let savedPayload = null;
-const data = [
- {ru:"Я знал, что однажды она станет известной певицей.",opts:["I knew that she will become a famous singer one day.","I knew that she would become a famous singer one day.","I know that she would became a famous singer one day."],a:1,why:"Когда мы смотрим из прошлого на будущее, используем would + начальную форму глагола: would become."},
- {ru:"Том собирался позвонить тебе, но забыл.",opts:["Tom was going to call you, but he forgot.","Tom would going to call you, but he forgot.","Tom is going to call you, but he forgot."],a:0,why:"Was going to показывает намерение или план, существовавший в прошлом. После was going to используется начальная форма глагола."},
- {ru:"Она сказала, что поможет мне с домашним заданием.",opts:["She said she will help me with my homework.","She said she would helped me with my homework.","She said she would help me with my homework."],a:2,why:"В косвенной речи после said будущее will обычно сдвигается в would: would help."},
- {ru:"Мы собирались посмотреть фильм, но электричество отключили.",opts:["We were going to watch a film, but the electricity went off.","We was going to watch a film, but the electricity went off.","We would to watch a film, but the electricity went off."],a:0,why:"С подлежащим we нужна форма were going to. Она описывает прошлый план, который мог не осуществиться."},
- {ru:"Я думал, что поезд прибудет в восемь часов.",opts:["I thought the train will arrive at eight.","I thought the train would arrive at eight.","I thought the train would arrived at eight."],a:1,why:"Would arrive — форма Future in the Past: would + verb без окончания и без to."},
- {ru:"Дети уже собирались ложиться спать, когда папа пришёл домой.",opts:["The children were about to go to bed when Dad came home.","The children was about to go to bed when Dad came home.","The children are about to go to bed when Dad came home."],a:0,why:"Were about to означает, что действие вот-вот должно было произойти. С children используется were."},
- {ru:"Она обещала, что не расскажет мой секрет.",opts:["She promised she won't tell my secret.","She promised she wouldn't tell my secret.","She promised she wouldn't told my secret."],a:1,why:"В прошлом обещании о будущем используем wouldn't + начальную форму tell."},
- {ru:"Я не собирался покупать новый телефон, но увидел хорошую скидку.",opts:["I didn't going to buy a new phone, but I saw a good discount.","I wasn't going to buy a new phone, but I saw a good discount.","I wouldn't to buy a new phone, but I saw a good discount."],a:1,why:"Отрицательная форма намерения в прошлом: wasn't/weren't going to + verb."},
- {ru:"Он сказал, что позже отправит мне сообщение.",opts:["He said he would send me a message later.","He said he would sent me a message later.","He said he will sent me a message later."],a:0,why:"После would всегда ставим начальную форму глагола: would send."},
- {ru:"Я как раз собирался выйти из дома, когда начался дождь.",opts:["I would about to leave the house when it started raining.","I was about to leave the house when it started raining.","I were about to leave the house when it started raining."],a:1,why:"Was about to описывает действие, которое должно было произойти в ближайший момент. С I используется was."}
+const startedAt=Date.now();let savedPayload=null;
+const data=[
+{ru:"Я обычно хожу в школу пешком, но сегодня еду на автобусе.",opts:["I usually walk to school, but today I'm going by bus.","I usually am walking to school, but today I go by bus.","I use to walk to school, but today I went by bus."],a:0,why:"Present Simple описывает обычную привычку (usually), а Present Continuous — временную ситуацию сегодня."},
+{ru:"Вчера вечером мы смотрели фильм, когда зазвонил телефон.",opts:["We watched a film when the phone was ringing yesterday evening.","We were watching a film when the phone rang yesterday evening.","We are watching a film when the phone rang yesterday evening."],a:1,why:"Past Continuous описывает длительное действие, которое прервалось коротким действием в Past Simple."},
+{ru:"Тебе не нужно вставать так рано завтра.",opts:["You mustn't get up so early tomorrow.","You don't have to get up so early tomorrow.","You shouldn't to get up so early tomorrow."],a:1,why:"Don't have to означает отсутствие необходимости. Mustn't означает запрет."},
+{ru:"Мой брат выше меня, но я старше него.",opts:["My brother is taller than me, but I'm older than him.","My brother is more tall than me, but I'm elder than him.","My brother is tallest than me, but I'm more old than him."],a:0,why:"Короткие прилагательные образуют сравнительную степень с -er: taller, older. После than сравниваем."},
+{ru:"Сколько времени тебе нужно, чтобы добраться до работы?",opts:["How long do you take to get to work?","How much time you need get to work?","How long does it take you to get to work?"],a:2,why:"Устойчивая конструкция: How long does it take you to…? — Сколько времени у тебя уходит, чтобы…?"},
+{ru:"Я никогда не был в Лондоне, но хотел бы туда поехать.",opts:["I have never been to London, but I'd like to go there.","I never was in London, but I like go there.","I have never gone in London, but I would like going there."],a:0,why:"Have been to используется для опыта посещения места. Would like + to-infinitive выражает желание."},
+{ru:"Она достаточно взрослая, чтобы путешествовать одна.",opts:["She is enough old to travel alone.","She is old enough to travel alone.","She is too old for travel alone."],a:1,why:"Enough ставится после прилагательного: old enough. Затем используется to + глагол."},
+{ru:"Если пойдёт дождь, мы останемся дома.",opts:["If it will rain, we stay at home.","If it rains, we'll stay at home.","If it rained, we'll stayed at home."],a:1,why:"В First Conditional после if используется Present Simple, а в главной части — will + начальная форма."},
+{ru:"На столе почти нет молока. Нам нужно купить ещё.",opts:["There are a few milk on the table. We need buy some.","There is little milk on the table. We need to buy some more.","There is few milk on the table. We need buying more."],a:1,why:"Milk — неисчисляемое существительное, поэтому there is little milk. После need в этом значении используем to buy."},
+{ru:"Ты когда-нибудь пробовал кататься на лошади?",opts:["Did you ever tried horse riding?","Have you ever tried horse riding?","Have you ever try to ride horse?"],a:1,why:"Вопрос об опыте в жизни строится с Present Perfect: Have you ever + третья форма глагола."}
 ];
-const letters=["A","B","C"];
-const root=document.getElementById("questions");
-data.forEach((q,i)=>{
- const card=document.createElement("section");card.className="question";
- card.innerHTML='<div class="qhead">Question '+(i+1)+' of '+data.length+'</div><div class="prompt"></div><div class="translation">Choose the correct English sentence.</div>';
- card.querySelector(".prompt").textContent=q.ru;
- q.opts.forEach((o,j)=>{
-  const label=document.createElement("label");label.className="option";
-  const radio=document.createElement("input");radio.type="radio";radio.name="q"+i;radio.value=String(j);
-  const span=document.createElement("span");span.innerHTML="<strong>"+letters[j]+".</strong> ";span.appendChild(document.createTextNode(o));
-  label.append(radio,span);card.appendChild(label);
- });
- root.appendChild(card);
-});
-const form=document.getElementById("quiz"), result=document.getElementById("result");
-let resultText="";
-form.addEventListener("submit",e=>{
- e.preventDefault();
- let score=0, answered=0;
- const review=document.getElementById("review");review.innerHTML="";
- data.forEach((q,i)=>{
-  const chosen=form.querySelector('input[name="q'+i+'"]:checked');
-  if(chosen)answered++;
-  const ok=chosen && Number(chosen.value)===q.a;if(ok)score++;
-  const div=document.createElement("div");div.className="review";
-  const status=ok?"Correct ✓":chosen?"Not quite ✗":"Not answered";
-  const panel=document.createElement("div");panel.className=ok?"correct":"incorrect";
-  const heading=document.createElement("strong");heading.textContent=(i+1)+". "+status;panel.appendChild(heading);panel.appendChild(document.createElement("br"));
-  panel.appendChild(document.createTextNode("Your answer: "+(chosen?letters[Number(chosen.value)]+". "+q.opts[Number(chosen.value)]:"—")));panel.appendChild(document.createElement("br"));
-  const answer=document.createElement("span");answer.textContent="Correct answer: "+letters[q.a]+". "+q.opts[q.a];answer.style.fontWeight="700";panel.appendChild(answer);panel.appendChild(document.createElement("br"));
-  const why=document.createElement("span");why.className="small";why.textContent=q.why;panel.appendChild(why);div.appendChild(panel);review.appendChild(div);
- });
- document.getElementById("score").textContent=score+" / "+data.length+" points";
- document.getElementById("message").textContent="You answered "+answered+" out of "+data.length+" questions. "+(score===data.length?"Perfect score! Excellent work!":score>=8?"Great job! Review the explanations below.":score>=6?"Good effort! Read the explanations and try again.":"Keep practising — you can do it!");
- resultText="Artyom's English Challenge — Future in the Past\nScore: "+score+"/"+data.length+"\nAnswered: "+answered+"/"+data.length+"\n\n"+data.map((q,i)=>{const c=form.querySelector('input[name="q'+i+'"]:checked');return (i+1)+". "+(c?letters[Number(c.value)]+". "+q.opts[Number(c.value)]:"Not answered")+" | Correct: "+letters[q.a]+". "+q.opts[q.a];}).join("\n");
- savedPayload={student:"Артём",testTitle:"Future in the Past — Test",level:"A2+",score:score,total:data.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:data.map((q,i)=>{const c=form.querySelector('input[name="q'+i+'"]:checked');const n=c?Number(c.value):null;return {question:q.ru,selectedAnswer:n===null?"Нет ответа":letters[n]+". "+q.opts[n],correctAnswer:letters[q.a]+". "+q.opts[q.a],isCorrect:n===q.a};})};
- result.style.display="block";result.scrollIntoView({behavior:"smooth",block:"start"});
- document.getElementById("check").disabled=true;
-});
-document.getElementById("reset").addEventListener("click",()=>{form.reset();document.getElementById("check").disabled=false;result.style.display="none";resultText="";savedPayload=null;document.getElementById("send").disabled=false;document.getElementById("send").textContent="Отправить результат";document.getElementById("sendStatus").textContent="";window.scrollTo({top:0,behavior:"smooth"});});
-document.getElementById("send").addEventListener("click",async()=>{
- const status=document.getElementById("sendStatus"),btn=document.getElementById("send");
- if(!savedPayload){status.textContent="Сначала заверши тест.";return;}
- btn.disabled=true;status.textContent="Отправляю результат…";
- try{await fetch(RESULTS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(savedPayload)});status.textContent="Запрос отправлен. Обнови журнал через несколько секунд.";btn.textContent="Отправлено";}
- catch(err){btn.disabled=false;status.textContent="Не удалось отправить. Попробуй ещё раз.";}
-});
-document.getElementById("copy").addEventListener("click",async()=>{
- const btn=document.getElementById("copy");
- try{await navigator.clipboard.writeText(resultText);btn.textContent="Copied!";}
- catch(e){const area=document.createElement("textarea");area.value=resultText;document.body.appendChild(area);area.select();try{document.execCommand("copy");btn.textContent="Copied!";}catch(err){btn.textContent="Select and copy manually";area.style.display="block";}area.remove();}
-});
-</script>
-</body>
-</html>
+const letters=["A","B","C"],root=document.getElementById("questions");
+data.forEach((q,i)=>{const card=document.createElement("section");card.className="question";card.innerHTML='<div class="qhead">Question '+(i+1)+' of 10</div><div class="prompt"></div><div class="translation">Choose the correct English sentence.</div>';card.querySelector(".prompt").textContent=q.ru;q.opts.forEach((o,j)=>{const label=document.createElement("label");label.className="option";const radio=document.createElement("input");radio.type="radio";radio.name="q"+i;radio.value=String(j);const span=document.createElement("span");span.innerHTML="<strong>"+letters[j]+".</strong> ";span.appendChild(document.createTextNode(o));label.append(radio,span);card.appendChild(label);});root.appendChild(card);});
+const form=document.getElementById("quiz"),result=document.getElementById("result");let resultText="";
+form.addEventListener("submit",e=>{e.preventDefault();let score=0,answered=0;const review=document.getElementById("review");review.innerHTML="";
+data.forEach((q,i)=>{const chosen=form.querySelector('input[name="q'+i+'"]:checked');if(chosen)answered++;const ok=chosen&&Number(chosen.value)===q.a;if(ok)score++;const div=document.createElement("div");div.className="review";const panel=document.createElement("div");panel.className=ok?"correct":"incorrect";const heading=document.createElement("strong");heading.textContent=(i+1)+". "+(ok?"Correct ✓":chosen?"Not quite ✗":"Not answered");panel.appendChild(heading);panel.appendChild(document.createElement("br"));panel.appendChild(document.createTextNode("Your answer: "+(chosen?letters[Number(chosen.value)]+". "+q.opts[Number(chosen.value)]:"—")));panel.appendChild(document.createElement("br"));const answer=document.createElement("span");answer.textContent="Correct answer: "+letters[q.a]+". "+q.opts[q.a];answer.style.fontWeight="700";panel.appendChild(answer);panel.appendChild(document.createElement("br"));const why=document.createElement("span");why.className="small";why.textContent=q.why;panel.appendChild(why);div.appendChild(panel);review.appendChild(div);});
+document.getElementById("score").textContent=score+" / 10 points";document.getElementById("message").textContent="You answered "+answered+" out of 10 questions. "+(score===10?"Perfect score! Excellent work!":score>=8?"Great job! Review the explanations below.":score>=6?"Good effort! Read the explanations and try again.":"Keep practising — you can do it!");
+resultText="Artyom's English Challenge — General A2\nScore: "+score+"/10\nAnswered: "+answered+"/10\n\n"+data.map((q,i)=>{const c=form.querySelector('input[name="q'+i+'"]:checked');return(i+1)+". "+(c?letters[Number(c.value)]+". "+q.opts[Number(c.value)]:"Not answered")+" | Correct: "+letters[q.a]+". "+q.opts[q.a];}).join("\n");
+savedPayload={student:"Артём",testTitle:"General English A2 — Test",level:"A2",score,total:10,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:data.map((q,i)=>{const c=form.querySelector('input[name="q'+i+'"]:checked'),n=c?Number(c.value):null;return{question:q.ru,selectedAnswer:n===null?"Нет ответа":letters[n]+". "+q.opts[n],correctAnswer:letters[q.a]+". "+q.opts[q.a],isCorrect:n===q.a};})};
+result.style.display="block";result.scrollIntoView({behavior:"smooth",block:"start"});document.getElementById("check").disabled=true;});
+document.getElementById("reset").addEventListener("click",()=>{form.reset();document.getElementById("check").disabled=false;result.style.display="none";resultText="";savedPayload=null;const b=document.getElementById("send");b.disabled=false;b.textContent="Отправить результат";document.getElementById("sendStatus").textContent="";window.scrollTo({top:0,behavior:"smooth"});});
+document.getElementById("send").addEventListener("click",async()=>{const status=document.getElementById("sendStatus"),btn=document.getElementById("send");if(!savedPayload){status.textContent="Сначала заверши тест.";return;}btn.disabled=true;status.textContent="Отправляю результат…";try{await fetch(RESULTS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(savedPayload)});status.textContent="Запрос отправлен. Обнови журнал через несколько секунд.";btn.textContent="Отправлено";}catch(err){btn.disabled=false;status.textContent="Не удалось отправить. Попробуй ещё раз."; }});
+document.getElementById("copy").addEventListener("click",async()=>{const btn=document.getElementById("copy");try{await navigator.clipboard.writeText(resultText);btn.textContent="Copied!";}catch(e){const area=document.createElement("textarea");area.value=resultText;document.body.appendChild(area);area.select();try{document.execCommand("copy");btn.textContent="Copied!";}catch(err){btn.textContent="Select and copy manually";}area.remove();}});
+</script></body></html>
