@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Даша — English Test: To be</title>
+<title>Даша — English Test: To be 03</title>
 <style>
 :root{--ink:#27334a;--muted:#6d7890;--purple:#7055d9;--pink:#ffe8f0;--line:#e5e9f2;--green:#e6f7eb}
 *{box-sizing:border-box}body{margin:0;padding:16px;background:linear-gradient(140deg,#fff4f8,#f1f5ff);font-family:Arial,sans-serif;color:var(--ink)}
@@ -20,9 +20,9 @@ button{border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:
 </head>
 <body><main>
 <section class="hero">
-<div class="art">🦋 🌸 🐱</div><span class="tag">Уровень A0 · Тест 02</span>
+<div class="art">🦋 🌸 🐱</div><span class="tag">Уровень A0 · Тест 03</span>
 <h1>Даша и глагол to be</h1>
-<div class="intro">Сегодня тренируем <b>am, is, are</b>, отрицания и вопросы.<br>Выбери один правильный ответ. У тебя всё получится!</div>
+<div class="intro">Сегодня снова играем с глаголом <b>to be</b>: am, is, are. Будут новые слова, отрицания и вопросы. Посмотри на картинки и выбери правильный ответ!</div>
 <div class="progress"><div class="bar" id="bar"></div></div><div class="small" id="progressText">Отвечено: 0 из 10</div>
 </section>
 <div id="quiz"></div>
@@ -37,16 +37,16 @@ button{border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:
 <script>
 const RESULTS_ENDPOINT="https://script.google.com/macros/s/AKfycbxGweNqBvYEs0INITyn4KwwlyfWjEjKisQ4LvYnVfTljWPfaCf71_REpMzWgg4zwFczng/exec";
 const questions=[
-{pic:"👧",q:"I ___ seven years old.",ru:"Мне семь лет.",a:["am","is","are"],c:0,why:"С I используем am: I am."},
-{pic:"🐱",q:"It ___ a little cat.",ru:"Это маленькая кошка.",a:["are","am","is"],c:2,why:"С it используем is."},
-{pic:"👨‍👩‍👧",q:"We ___ a family.",ru:"Мы семья.",a:["is","are","am"],c:1,why:"С we используем are."},
-{pic:"🐶",q:"He ___ my dog.",ru:"Он моя собака.",a:["is","are","am"],c:0,why:"С he используем is."},
-{pic:"🌧️",q:"It ___ not sunny.",ru:"Солнечно? Нет, не солнечно.",a:["am","is","are"],c:1,why:"It is not — это не..."},
-{pic:"😴",q:"I ___ not sleepy.",ru:"Я не хочу спать.",a:["are","am","is"],c:1,why:"Отрицание: I am not."},
-{pic:"🎈",q:"___ you happy?",ru:"Ты счастлива?",a:["Are","Is","Am"],c:0,why:"С you задаём вопрос: Are you...?" },
-{pic:"🌷",q:"___ she your sister?",ru:"Она твоя сестра?",a:["Am","Are","Is"],c:2,why:"С she используем is: Is she...?" },
-{pic:"🧸",q:"Выбери правильное предложение:",ru:"Мишка не большой.",a:["The teddy are not big.","The teddy is not big.","The teddy am not big."],c:1,why:"The teddy = it, поэтому is not."},
-{pic:"🌟",q:"Выбери правильное предложение:",ru:"Они мои друзья.",a:["They is my friends.","They am my friends.","They are my friends."],c:2,why:"С they используем are."}
+{"pic":"🐰","q":"I ___ a little rabbit.","ru":"Я маленький кролик.","a":["am","is","are"],"c":0,"why":"С местоимением I используем am: I am."},
+{"pic":"🍎","q":"The apple ___ red.","ru":"Яблоко красное.","a":["are","is","am"],"c":1,"why":"The apple — это it (один предмет), поэтому используем is."},
+{"pic":"👭","q":"We ___ good friends.","ru":"Мы хорошие подруги.","a":["is","are","am"],"c":1,"why":"С we всегда используем are."},
+{"pic":"🐼","q":"He ___ not sad. He is happy!","ru":"Он не грустный. Он счастливый!","a":["am","are","is"],"c":2,"why":"С he используем is. Отрицание: is not."},
+{"pic":"☀️","q":"It ___ sunny today.","ru":"Сегодня солнечно.","a":["is","are","am"],"c":0,"why":"Когда говорим о погоде, используем it is."},
+{"pic":"🎒","q":"They ___ at school.","ru":"Они в школе.","a":["am","is","are"],"c":2,"why":"С they используем are."},
+{"pic":"🐶","q":"___ she your dog?","ru":"Она твоя собака?","a":["Are","Is","Am"],"c":1,"why":"В вопросе с she ставим Is в начало: Is she...?"},
+{"pic":"🍦","q":"I ___ not hungry. I want ice cream!","ru":"Я не голодная. Я хочу мороженое!","a":["is","am","are"],"c":1,"why":"Отрицание с I: I am not."},
+{"pic":"🧸","q":"Выбери правильное предложение:","ru":"Медвежонок маленький.","a":["The teddy bear are small.","The teddy bear am small.","The teddy bear is small."],"c":2,"why":"The teddy bear — один предмет, вместо него можно сказать it. Поэтому is."},
+{"pic":"🌈","q":"Выбери правильный вопрос:","ru":"Вы счастливы?","a":["Are you happy?","Is you happy?","Am you happy?"],"c":0,"why":"С you используем are. Вопрос: Are you happy?"}
 ];
 let checked=false,score=0,startedAt=Date.now();
 const quiz=document.getElementById("quiz");
@@ -75,7 +75,7 @@ function sendResult(){
  if(!checked)return;
  const btn=document.getElementById("sendBtn"),status=document.getElementById("sendStatus");btn.disabled=true;btn.textContent="Отправляем...";
  const answers=questions.map((q,i)=>{const n=Number(document.querySelector('input[name="q'+i+'"]:checked').value);return {question:q.q,selectedAnswer:q.a[n],correctAnswer:q.a[q.c],isCorrect:n===q.c,explanation:q.why};});
- const payload={student:"Даша",testTitle:"To be: am, is, are — тест 02",level:"A0",score:score,total:questions.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:answers};
+ const payload={student:"Даша",testTitle:"To be: am, is, are — тест 03",level:"A0",score:score,total:questions.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:answers};
  fetch(RESULTS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)})
  .then(()=>{btn.textContent="Отправлено";status.textContent="Запрос отправлен. Проверь общий журнал — там должна появиться попытка Даши.";})
  .catch(()=>{btn.disabled=false;btn.textContent="Повторить отправку";status.textContent="Не получилось отправить. Проверь интернет и попробуй ещё раз.";});
