@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Даша — English Test 02: To be</title>
+<style>
+:root{--ink:#27334a;--muted:#6d7890;--purple:#7055d9;--pink:#ffe8f0;--line:#e5e9f2;--green:#e6f7eb}
+*{box-sizing:border-box}body{margin:0;padding:16px;background:linear-gradient(140deg,#fff4f8,#f1f5ff);font-family:Arial,sans-serif;color:var(--ink)}
+main{max-width:720px;margin:auto}.hero,.question,#result{background:#fff;border-radius:22px;padding:20px;margin:14px 0;box-shadow:0 5px 20px #2634540d}
+.hero{text-align:center}.art{font-size:38px;letter-spacing:7px;margin:4px}.tag{display:inline-block;background:var(--pink);color:#914c6b;padding:7px 13px;border-radius:30px;font-weight:bold;font-size:13px}
+h1{font-size:25px;margin:12px 0 8px}.intro{color:var(--muted);line-height:1.5}.progress{height:9px;background:#edf0f7;border-radius:20px;overflow:hidden;margin:18px 0 7px}.bar{height:100%;background:var(--purple);width:0;transition:width .2s}
+.qhead{display:flex;align-items:center;gap:12px}.picture{width:58px;height:58px;flex:none;border-radius:17px;background:#f4f0ff;display:grid;place-items:center;font-size:32px}
+.qnum{font-size:13px;color:var(--muted);font-weight:bold}.qtext{font-size:19px;font-weight:bold;margin:12px 0 5px}.ru{font-size:14px;color:var(--muted);margin-bottom:13px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:9px}.option{display:flex;gap:9px;align-items:center;padding:12px;border:1.5px solid var(--line);border-radius:13px;min-height:48px;cursor:pointer}.option:has(input:checked){border-color:var(--purple);background:#f6f3ff}.option input{accent-color:var(--purple);width:17px;height:17px}
+button{border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:bold;cursor:pointer}.primary{background:var(--purple);color:#fff}.primary:disabled{opacity:.55;cursor:not-allowed}.actions{margin:22px 0;display:flex;justify-content:center}
+#result{display:none}.score{font-size:30px;font-weight:800;color:var(--purple)}.review{padding:12px;border-radius:12px;margin:9px 0;background:#f5f7fb;line-height:1.45}.good{background:var(--green)}.bad{background:#fff0f0}.small{font-size:13px;line-height:1.5;color:var(--muted)}
+@media(max-width:480px){body{padding:10px}.hero,.question,#result{padding:16px}.options{grid-template-columns:1fr}h1{font-size:22px}}
+</style>
+</head>
+<body><main>
+<section class="hero">
+<div class="art">🦋 🌸 🐱</div><span class="tag">Уровень A0 · Тест 02</span>
+<h1>Даша и глагол to be</h1>
+<div class="intro">Сегодня тренируем <b>am, is, are</b>, отрицания и вопросы.<br>Выбери один правильный ответ. У тебя всё получится!</div>
+<div class="progress"><div class="bar" id="bar"></div></div><div class="small" id="progressText">Отвечено: 0 из 10</div>
+</section>
+<div id="quiz"></div>
+<div class="actions"><button class="primary" id="checkBtn" onclick="checkAnswers()">Проверить ответы ✨</button></div>
+<section id="result">
+<h2>Ты молодец, Даша! 🎉</h2><div class="score" id="score"></div><p id="message"></p><div id="review"></div>
+<div class="actions"><button class="primary" id="sendBtn" onclick="sendResult()">Отправить результаты</button></div>
+<p class="small" id="sendStatus">Нажми кнопку, чтобы отправить результат в общий журнал с тестами Артёма.</p>
+</section>
+<p class="small" style="text-align:center">Если нужно, попроси взрослого прочитать задание. 💜</p>
+</main>
+<script>
+const RESULTS_ENDPOINT="https://script.google.com/macros/s/AKfycbxGweNqBvYEs0INITyn4KwwlyfWjEjKisQ4LvYnVfTljWPfaCf71_REpMzWgg4zwFczng/exec";
+const questions=[
+{pic:"👧",q:"I ___ seven years old.",ru:"Мне семь лет.",a:["am","is","are"],c:0,why:"С I используем am: I am."},
+{pic:"🐱",q:"It ___ a little cat.",ru:"Это маленькая кошка.",a:["are","am","is"],c:2,why:"С it используем is."},
+{pic:"👨‍👩‍👧",q:"We ___ a family.",ru:"Мы семья.",a:["is","are","am"],c:1,why:"С we используем are."},
+{pic:"🐶",q:"He ___ my dog.",ru:"Он моя собака.",a:["is","are","am"],c:0,why:"С he используем is."},
+{pic:"🌧️",q:"It ___ not sunny.",ru:"Солнечно? Нет, не солнечно.",a:["am","is","are"],c:1,why:"It is not — это не..."},
+{pic:"😴",q:"I ___ not sleepy.",ru:"Я не хочу спать.",a:["are","am","is"],c:1,why:"Отрицание: I am not."},
+{pic:"🎈",q:"___ you happy?",ru:"Ты счастлива?",a:["Are","Is","Am"],c:0,why:"С you задаём вопрос: Are you...?" },
+{pic:"🌷",q:"___ she your sister?",ru:"Она твоя сестра?",a:["Am","Are","Is"],c:2,why:"С she используем is: Is she...?" },
+{pic:"🧸",q:"Выбери правильное предложение:",ru:"Мишка не большой.",a:["The teddy are not big.","The teddy is not big.","The teddy am not big."],c:1,why:"The teddy = it, поэтому is not."},
+{pic:"🌟",q:"Выбери правильное предложение:",ru:"Они мои друзья.",a:["They is my friends.","They am my friends.","They are my friends."],c:2,why:"С they используем are."}
+];
+let checked=false,score=0,startedAt=Date.now();
+const quiz=document.getElementById("quiz");
+questions.forEach((q,i)=>{
+ const el=document.createElement("section");el.className="question";
+ el.innerHTML='<div class="qhead"><div class="picture">'+q.pic+'</div><div><div class="qnum">ЗАДАНИЕ '+(i+1)+' ИЗ 10</div><div class="qtext">'+q.q+'</div></div></div><div class="ru">'+q.ru+'</div><div class="options">'+q.a.map((a,j)=>'<label class="option"><input type="radio" name="q'+i+'" value="'+j+'"><span>'+a+'</span></label>').join("")+'</div>';
+ quiz.appendChild(el);
+});
+document.querySelectorAll('input[type="radio"]').forEach(x=>x.addEventListener("change",updateProgress));
+function updateProgress(){const n=questions.filter((q,i)=>document.querySelector('input[name="q'+i+'"]:checked')).length;document.getElementById("progressText").textContent="Отвечено: "+n+" из 10";document.getElementById("bar").style.width=(n*10)+"%";}
+function checkAnswers(){
+ if(checked)return;
+ const missing=questions.findIndex((q,i)=>!document.querySelector('input[name="q'+i+'"]:checked'));
+ if(missing!==-1){alert("Ответь, пожалуйста, на задание номер "+(missing+1)+".");return;}
+ checked=true;score=0;const review=document.getElementById("review");review.innerHTML="";
+ questions.forEach((q,i)=>{
+  const selected=Number(document.querySelector('input[name="q'+i+'"]:checked').value),ok=selected===q.c;if(ok)score++;
+  const d=document.createElement("div");d.className="review "+(ok?"good":"bad");
+  d.innerHTML="<b>"+(ok?"✓ Верно!":"Попробуем запомнить!")+" "+(i+1)+". "+q.q+"</b><div class='small'>Твой ответ: "+q.a[selected]+" · Правильно: "+q.a[q.c]+"</div><div class='small'>"+q.why+"</div>";review.appendChild(d);
+ });
+ document.getElementById("score").textContent=score+" / 10 баллов";
+ document.getElementById("message").textContent=score>=9?"Прекрасно! Ты отлично справилась!":score>=6?"Здорово! Ещё немного практики — и будет идеально.":"Хорошая попытка! Ошибки помогают учиться. Давай повторим am, is, are.";
+ document.getElementById("result").style.display="block";document.getElementById("checkBtn").disabled=true;document.getElementById("checkBtn").textContent="Ответы проверены";document.getElementById("result").scrollIntoView({behavior:"smooth"});
+}
+function sendResult(){
+ if(!checked)return;
+ const btn=document.getElementById("sendBtn"),status=document.getElementById("sendStatus");btn.disabled=true;btn.textContent="Отправляем...";
+ const answers=questions.map((q,i)=>{const n=Number(document.querySelector('input[name="q'+i+'"]:checked').value);return {question:q.q,selectedAnswer:q.a[n],correctAnswer:q.a[q.c],isCorrect:n===q.c,explanation:q.why};});
+ const payload={student:"Даша",testTitle:"To be: am, is, are — тест 02",level:"A0",score:score,total:questions.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:answers};
+ fetch(RESULTS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)})
+ .then(()=>{btn.textContent="Отправлено";status.textContent="Запрос отправлен. Проверь общий журнал — там должна появиться попытка Даши.";})
+ .catch(()=>{btn.disabled=false;btn.textContent="Повторить отправку";status.textContent="Не получилось отправить. Проверь интернет и попробуй ещё раз.";});
+}
+</script></body></html>
