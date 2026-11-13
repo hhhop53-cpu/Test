@@ -61,8 +61,10 @@ questions.forEach((q,i)=>{
  el.innerHTML='<div class="qtitle">'+(i+1)+'. '+q.q+'</div><div class="translation">'+q.ru+'</div><div class="options">'+q.a.map((a,j)=>'<label class="option"><input type="radio" name="q'+i+'" value="'+j+'"><span>'+a+'</span></label>').join('')+'</div>';
  quiz.appendChild(el);
 });
-document.querySelectorAll('input[type=radio]').forEach(x=>x.addEventListener('change',updateProgress));
+document.querySelectorAll('input[type=radio]').forEach(x=>x.addEventListener('change',()=>{updateProgress();sendLiveProgress();}));
 function updateProgress(){const n=questions.filter((q,i)=>document.querySelector('input[name=q'+i+']:checked')).length;document.getElementById('progressText').textContent='Отвечено: '+n+' из 10';document.getElementById('bar').style.width=(n*10)+'%';}
+function sendLiveProgress(){const answered=questions.filter((q,i)=>document.querySelector('input[name=q'+i+']:checked')).length;const firstMissing=questions.findIndex((q,i)=>!document.querySelector('input[name=q'+i+']:checked'));const payload={type:'progress',student:'Даша',testTitle:'Глагол to be: am, is, are — тест 1',level:'A0',answered:answered,total:questions.length,currentQuestion:firstMissing===-1?questions.length:firstMissing+1};fetch(RESULTS_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).catch(()=>{});}
+sendLiveProgress();
 function checkAnswers(){
  if(checked)return;
  const missing=questions.findIndex((q,i)=>!document.querySelector('input[name=q'+i+']:checked'));
