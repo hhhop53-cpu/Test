@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Даша — English Test: To be 03</title>
+<title>Даша — English Test: To be 04</title>
 <style>
 :root{--ink:#27334a;--muted:#6d7890;--purple:#7055d9;--pink:#ffe8f0;--line:#e5e9f2;--green:#e6f7eb}
 *{box-sizing:border-box}body{margin:0;padding:16px;background:linear-gradient(140deg,#fff4f8,#f1f5ff);font-family:Arial,sans-serif;color:var(--ink)}
@@ -20,9 +20,9 @@ button{border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:
 </head>
 <body><main>
 <section class="hero">
-<div class="art">🦋 🌸 🐱</div><span class="tag">Уровень A0 · Тест 03</span>
-<h1>Даша и глагол to be</h1>
-<div class="intro">Сегодня снова играем с глаголом <b>to be</b>: am, is, are. Будут новые слова, отрицания и вопросы. Посмотри на картинки и выбери правильный ответ!</div>
+<div class="art">🦋 🌸 🐱</div><span class="tag">Уровень A1 · Тест 04</span>
+<h1>Даша и глагол to be — уровень выше!</h1>
+<div class="intro">Сегодня задания посложнее: am, is, are, отрицания, вопросы, короткие ответы и предложения с несколькими героями. Прочитай внимательно и выбери правильный вариант!</div>
 <div class="progress"><div class="bar" id="bar"></div></div><div class="small" id="progressText">Отвечено: 0 из 10</div>
 </section>
 <div id="quiz"></div>
@@ -37,16 +37,16 @@ button{border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:
 <script>
 const RESULTS_ENDPOINT="https://script.google.com/macros/s/AKfycbxGweNqBvYEs0INITyn4KwwlyfWjEjKisQ4LvYnVfTljWPfaCf71_REpMzWgg4zwFczng/exec";
 const questions=[
-{"pic":"🐰","q":"I ___ a little rabbit.","ru":"Я маленький кролик.","a":["am","is","are"],"c":0,"why":"С местоимением I используем am: I am."},
-{"pic":"🍎","q":"The apple ___ red.","ru":"Яблоко красное.","a":["are","is","am"],"c":1,"why":"The apple — это it (один предмет), поэтому используем is."},
-{"pic":"👭","q":"We ___ good friends.","ru":"Мы хорошие подруги.","a":["is","are","am"],"c":1,"why":"С we всегда используем are."},
-{"pic":"🐼","q":"He ___ not sad. He is happy!","ru":"Он не грустный. Он счастливый!","a":["am","are","is"],"c":2,"why":"С he используем is. Отрицание: is not."},
-{"pic":"☀️","q":"It ___ sunny today.","ru":"Сегодня солнечно.","a":["is","are","am"],"c":0,"why":"Когда говорим о погоде, используем it is."},
-{"pic":"🎒","q":"They ___ at school.","ru":"Они в школе.","a":["am","is","are"],"c":2,"why":"С they используем are."},
-{"pic":"🐶","q":"___ she your dog?","ru":"Она твоя собака?","a":["Are","Is","Am"],"c":1,"why":"В вопросе с she ставим Is в начало: Is she...?"},
-{"pic":"🍦","q":"I ___ not hungry. I want ice cream!","ru":"Я не голодная. Я хочу мороженое!","a":["is","am","are"],"c":1,"why":"Отрицание с I: I am not."},
-{"pic":"🧸","q":"Выбери правильное предложение:","ru":"Медвежонок маленький.","a":["The teddy bear are small.","The teddy bear am small.","The teddy bear is small."],"c":2,"why":"The teddy bear — один предмет, вместо него можно сказать it. Поэтому is."},
-{"pic":"🌈","q":"Выбери правильный вопрос:","ru":"Вы счастливы?","a":["Are you happy?","Is you happy?","Am you happy?"],"c":0,"why":"С you используем are. Вопрос: Are you happy?"}
+{"pic":"👨‍👩‍👧","q":"My parents ___ at work now.","ru":"Мои родители сейчас на работе.","a":["is","are","am"],"c":1,"why":"My parents — это множественное число (они), поэтому используем are."},
+{"pic":"👧👧","q":"My sister and I ___ in the same class.","ru":"Моя сестра и я учимся в одном классе.","a":["am","is","are"],"c":2,"why":"My sister and I = we. С we используем are."},
+{"pic":"📚","q":"These books ___ not very interesting.","ru":"Эти книги не очень интересные.","a":["is","are","am"],"c":1,"why":"These books — множественное число, поэтому are not."},
+{"pic":"🐈","q":"The little cat ___ under the table.","ru":"Маленькая кошка под столом.","a":["are","am","is"],"c":2,"why":"The little cat — одна кошка, вместо неё можно сказать it. Поэтому is."},
+{"pic":"🏡","q":"___ your friends at home?","ru":"Твои друзья дома?","a":["Is","Are","Am"],"c":1,"why":"Your friends — множественное число. В вопросе are ставим перед подлежащим: Are your friends...?"},
+{"pic":"❄️","q":"Why ___ you so cold?","ru":"Почему тебе так холодно?","a":["is","are","am"],"c":1,"why":"В вопросе с you используем are: Why are you...?"},
+{"pic":"👦","q":"He ___ not my cousin. He is my brother.","ru":"Он мне не двоюродный брат. Он мой брат.","a":["is","are","am"],"c":0,"why":"С he используем is. Полная отрицательная форма — is not, краткая — isn't."},
+{"pic":"🙋‍♀️","q":"Are you ready? — Yes, I ___.","ru":"Ты готова? — Да.","a":["are","is","am"],"c":2,"why":"В коротком ответе на вопрос Are you...? отвечаем Yes, I am."},
+{"pic":"🐻","q":"Выбери правильное предложение.","ru":"Медведи не злые.","a":["The bears isn't angry.","The bears aren't angry.","The bears am not angry."],"c":1,"why":"The bears — множественное число, поэтому используем are not или краткую форму aren't."},
+{"pic":"🎒","q":"Выбери правильный вопрос.","ru":"Почему твоя сумка такая тяжёлая?","a":["Why your bag is so heavy?","Why are your bag so heavy?","Why is your bag so heavy?"],"c":2,"why":"Your bag — один предмет, поэтому is. В вопросе с вопросительным словом порядок такой: Why + is + подлежащее."}
 ];
 let checked=false,score=0,startedAt=Date.now();
 const quiz=document.getElementById("quiz");
@@ -75,7 +75,7 @@ function sendResult(){
  if(!checked)return;
  const btn=document.getElementById("sendBtn"),status=document.getElementById("sendStatus");btn.disabled=true;btn.textContent="Отправляем...";
  const answers=questions.map((q,i)=>{const n=Number(document.querySelector('input[name="q'+i+'"]:checked').value);return {question:q.q,selectedAnswer:q.a[n],correctAnswer:q.a[q.c],isCorrect:n===q.c,explanation:q.why};});
- const payload={student:"Даша",testTitle:"To be: am, is, are — тест 03",level:"A0",score:score,total:questions.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:answers};
+ const payload={student:"Даша",testTitle:"To be: am, is, are — Challenge 04",level:"A1",score:score,total:questions.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:answers};
  fetch(RESULTS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)})
  .then(()=>{btn.textContent="Отправлено";status.textContent="Запрос отправлен. Проверь общий журнал — там должна появиться попытка Даши.";})
  .catch(()=>{btn.disabled=false;btn.textContent="Повторить отправку";status.textContent="Не получилось отправить. Проверь интернет и попробуй ещё раз.";});
