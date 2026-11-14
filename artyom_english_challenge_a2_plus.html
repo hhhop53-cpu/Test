@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Artyom's English Challenge — A2+</title>
+<title>Artyom's English Challenge — Passive Voice</title>
 <style>
 :root{color-scheme:light;--ink:#172033;--muted:#64748b;--line:#dbe3ee;--blue:#2457d6;--pale:#eef4ff;--good:#e9f8ef;--bad:#fff0f0}
 *{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -22,13 +22,13 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
 <main>
 <section class="hero">
   <h1>Artyom's English Challenge</h1>
-  <p>Level A2+ · Test 02</p>
-  <div class="meta"><span class="pill">5 questions</span><span class="pill">5 points</span><span class="pill">About 5 minutes</span></div>
+  <p>Level A2+ · Test 03 · Passive Voice</p>
+  <div class="meta"><span class="pill">15 questions</span><span class="pill">15 points</span><span class="pill">About 10–12 minutes</span></div>
 </section>
-<section id="startPanel"><h2>Are you ready, Artyom?</h2><p>There are 5 questions. Press Start Test to begin. Press Finish & Check Answers when you are ready.</p><button class="btn primary" type="button" id="startBtn">Start Test</button></section>
+<section id="startPanel"><h2>Are you ready, Artyom?</h2><p>There are 15 questions about Passive Voice. Press Start Test to begin. Press Finish & Check Answers when you are ready.</p><button class="btn primary" type="button" id="startBtn">Start Test</button></section>
 <div id="testArea" hidden>
 <div id="timerBar"><span>Time elapsed</span><span id="timer" role="timer" aria-live="off">00:00</span></div>
-<div class="instructions"><strong>Инструкция:</strong> Прочитай предложение на русском и выбери правильный перевод на английском. Ответь на все 5 вопросов и нажми <strong>Check my answers</strong>. После проверки появятся результат и объяснения.</div>
+<div class="instructions"><strong>Инструкция:</strong> Прочитай предложение на русском и выбери правильный перевод на английском. Ответь на все 15 вопросов и нажми <strong>Check my answers</strong>. После проверки появятся результат и объяснения.</div>
 <form id="quiz">
 <div id="questions"></div>
 <div class="actions"><button class="btn primary" type="submit" id="check">Finish &amp; Check Answers</button><button class="btn secondary" type="button" id="reset">Try again</button></div>
@@ -43,83 +43,58 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
 </main>
 <script>
 const RESULTS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxGweNqBvYEs0INITyn4KwwlyfWjEjKisQ4LvYnVfTljWPfaCf71_REpMzWgg4zwFczng/exec";
-let startedAt = null;
-let timerInterval = null;
-let elapsedSeconds = 0;
-let testStarted = false;
-let savedPayload = null;
-const startPanel = document.getElementById("startPanel");
-const testArea = document.getElementById("testArea");
-const timerDisplay = document.getElementById("timer");
-function formatDuration(total){const m=String(Math.floor(total/60)).padStart(2,"0");const sec=String(total%60).padStart(2,"0");return m+":"+sec;}\nfunction renderTimer(){timerDisplay.textContent=formatDuration(elapsedSeconds);timerDisplay.classList.remove("warning");}
+let startedAt=null,timerInterval=null,elapsedSeconds=0,testStarted=false,savedPayload=null;
+const startPanel=document.getElementById("startPanel"),testArea=document.getElementById("testArea"),timerDisplay=document.getElementById("timer");
+function formatDuration(total){const m=String(Math.floor(total/60)).padStart(2,"0"),s=String(total%60).padStart(2,"0");return m+":"+s;}
+function renderTimer(){timerDisplay.textContent=formatDuration(elapsedSeconds);}
 function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
 function startTest(){if(testStarted)return;testStarted=true;startedAt=Date.now();elapsedSeconds=0;startPanel.hidden=true;testArea.hidden=false;renderTimer();timerInterval=setInterval(()=>{elapsedSeconds=Math.floor((Date.now()-startedAt)/1000);renderTimer();},250);}
 document.getElementById("startBtn").addEventListener("click",startTest);
-const data = [
- {ru:"Раньше я боялся выступать перед классом, но теперь мне это нравится.",opts:["I used to be afraid of speaking in front of the class, but now I enjoy it.","I am used to be afraid of speaking in front of the class, but now I enjoy it.","I use to afraid speaking in front of the class, but now I enjoy it."],a:0,why:"Used to + начальная форма глагола описывает привычное или обычное состояние в прошлом, которого сейчас уже нет."},
- {ru:"Я бы предпочёл остаться дома, а не идти в торговый центр.",opts:["I would rather staying at home than going to the shopping centre.","I would rather stay at home than go to the shopping centre.","I rather to stay at home instead go to the shopping centre."],a:1,why:"После would rather используется начальная форма глагола без to: would rather stay. В сравнении действий можно использовать rather than."},
- {ru:"Мы ещё не закончили проект, но закончим его к пятнице.",opts:["We didn't finish the project yet, but we finish it by Friday.","We haven't finished the project yet, but we'll finish it by Friday.","We aren't finishing the project yet, but we finished it by Friday."],a:1,why:"Present Perfect с yet подходит для незавершённого действия до настоящего момента; будущее обещание выражается will finish."},
- {ru:"Если Артём будет тренироваться каждый день, он станет говорить быстрее.",opts:["If Artyom will practise every day, he speaks faster.","If Artyom practises every day, he will speak faster.","If Artyom practised every day, he will spoke faster."],a:1,why:"В First Conditional после if ставим Present Simple, а в главной части — will + начальная форма глагола."},
- {ru:"Когда мама вернулась домой, дети уже сделали домашнее задание.",opts:["When Mum came home, the children have already done their homework.","When Mum had come home, the children already did their homework.","When Mum came home, the children had already done their homework."],a:2,why:"Past Perfect (had done) показывает, что домашнее задание было закончено раньше другого действия в прошлом (came home)."}
+const data=[
+{ru:"Эту книгу читают миллионы людей.",opts:["This book is read by millions of people.","This book reads by millions of people.","This book was read by millions of people."],a:0,why:"Present Simple Passive: am/is/are + V3. Здесь говорится о факте в настоящем."},
+{ru:"Мой телефон был украден вчера.",opts:["My phone is stolen yesterday.","My phone was stolen yesterday.","My phone stole yesterday."],a:1,why:"Past Simple Passive: was/were + V3. Yesterday указывает на прошедшее время."},
+{ru:"Дом будет построен в следующем году.",opts:["The house will build next year.","The house is built next year.","The house will be built next year."],a:2,why:"Future Simple Passive: will be + V3."},
+{ru:"Здесь не продают билеты.",opts:["Tickets are not sold here.","Tickets do not sold here.","Tickets were not sell here."],a:0,why:"Отрицание в Present Simple Passive: am/is/are + not + V3."},
+{ru:"Эти письма отправляются каждый понедельник.",opts:["These letters sent every Monday.","These letters are sent every Monday.","These letters were send every Monday."],a:1,why:"Регулярное действие в настоящем: are + V3."},
+{ru:"Машину ремонтировали, когда я пришёл.",opts:["The car is being repaired when I came.","The car was repaired when I come.","The car was being repaired when I came."],a:2,why:"Past Continuous Passive: was/were being + V3. Действие было в процессе в определённый момент прошлого."},
+{ru:"Обед сейчас готовится мамой.",opts:["Lunch is being prepared by Mum now.","Lunch is prepared by Mum now.","Lunch was being prepared by Mum now."],a:0,why:"Present Continuous Passive: am/is/are being + V3. Now показывает, что действие происходит сейчас."},
+{ru:"Эту задачу уже решили.",opts:["This problem has already solved.","This problem has already been solved.","This problem was already been solved."],a:1,why:"Present Perfect Passive: has/have been + V3."},
+{ru:"Правила должны соблюдаться всеми учениками.",opts:["The rules must be followed by all students.","The rules must followed by all students.","The rules must be follow by all students."],a:0,why:"После модального глагола в Passive Voice используется modal + be + V3."},
+{ru:"Когда мы приехали, двери уже закрыли.",opts:["When we arrived, the doors have already been closed.","When we arrived, the doors had already closed.","When we arrived, the doors had already been closed."],a:2,why:"Past Perfect Passive: had been + V3. Закрытие произошло раньше нашего приезда."},
+{ru:"Английский язык изучают во многих странах.",opts:["English is spoken in many countries.","English is studied in many countries.","English was studied in many countries."],a:1,why:"Present Simple Passive подходит для общего факта. Study → studied (V3)."},
+{ru:"Этот мост строят прямо сейчас.",opts:["This bridge is built right now.","This bridge was being built right now.","This bridge is being built right now."],a:2,why:"Действие происходит прямо сейчас: Present Continuous Passive — is being + V3."},
+{ru:"Тебе не разрешат войти без билета.",opts:["You will not be allowed to enter without a ticket.","You will not allowed to enter without a ticket.","You are not allow to enter without a ticket."],a:0,why:"Future Simple Passive с отрицанием: will not be + V3."},
+{ru:"Кем была написана эта картина?",opts:["Who was this picture painted?","Who did this picture painted by?","Who was this picture painted by?"],a:2,why:"Вопрос в Past Simple Passive: was/were + subject + V3; by указывает на исполнителя."},
+{ru:"Моя комната убирается каждую неделю.",opts:["My room is cleaned every week.","My room cleans every week.","My room was clean every week."],a:0,why:"Регулярное действие в настоящем: is + V3. Clean → cleaned."}
 ];
-const letters=["A","B","C"];
-const root=document.getElementById("questions");
+const letters=["A","B","C"],root=document.getElementById("questions");
 data.forEach((q,i)=>{
  const card=document.createElement("section");card.className="question";
- card.innerHTML='<div class="qhead">Question '+(i+1)+' of 5</div><div class="prompt"></div><div class="translation">Choose the correct English sentence.</div>';
+ card.innerHTML='<div class="qhead">Question '+(i+1)+' of '+data.length+'</div><div class="prompt"></div><div class="translation">Choose the correct English sentence.</div>';
  card.querySelector(".prompt").textContent=q.ru;
- q.opts.forEach((o,j)=>{
-  const label=document.createElement("label");label.className="option";
-  const radio=document.createElement("input");radio.type="radio";radio.name="q"+i;radio.value=String(j);
-  const span=document.createElement("span");span.innerHTML="<strong>"+letters[j]+".</strong> ";span.appendChild(document.createTextNode(o));
-  label.append(radio,span);card.appendChild(label);
- });
+ q.opts.forEach((o,j)=>{const label=document.createElement("label");label.className="option";const radio=document.createElement("input");radio.type="radio";radio.name="q"+i;radio.value=String(j);const span=document.createElement("span");span.innerHTML="<strong>"+letters[j]+".</strong> ";span.appendChild(document.createTextNode(o));label.append(radio,span);card.appendChild(label);});
  root.appendChild(card);
 });
-const form=document.getElementById("quiz"), result=document.getElementById("result");
-let resultText="";
+const form=document.getElementById("quiz"),result=document.getElementById("result");let resultText="";
 form.addEventListener("submit",e=>{
- e.preventDefault();
- if(!testStarted)return;
- stopTimer();
- let score=0, answered=0;
- const review=document.getElementById("review");review.innerHTML="";
+ e.preventDefault();if(!testStarted)return;stopTimer();let score=0,answered=0;const review=document.getElementById("review");review.innerHTML="";
  data.forEach((q,i)=>{
-  const chosen=form.querySelector('input[name="q'+i+'"]:checked');
-  if(chosen)answered++;
-  const ok=chosen && Number(chosen.value)===q.a;if(ok)score++;
-  const div=document.createElement("div");div.className="review";
-  const status=ok?"Correct ✓":chosen?"Not quite ✗":"Not answered";
-  const panel=document.createElement("div");panel.className=ok?"correct":"incorrect";
-  const heading=document.createElement("strong");heading.textContent=(i+1)+". "+status;panel.appendChild(heading);panel.appendChild(document.createElement("br"));
+  const chosen=form.querySelector('input[name="q'+i+'"]:checked');if(chosen)answered++;const ok=chosen&&Number(chosen.value)===q.a;if(ok)score++;
+  const div=document.createElement("div");div.className="review";const panel=document.createElement("div");panel.className=ok?"correct":"incorrect";
+  const heading=document.createElement("strong");heading.textContent=(i+1)+". "+(ok?"Correct ✓":chosen?"Not quite ✗":"Not answered");panel.appendChild(heading);panel.appendChild(document.createElement("br"));
   panel.appendChild(document.createTextNode("Your answer: "+(chosen?letters[Number(chosen.value)]+". "+q.opts[Number(chosen.value)]:"—")));panel.appendChild(document.createElement("br"));
   const answer=document.createElement("span");answer.textContent="Correct answer: "+letters[q.a]+". "+q.opts[q.a];answer.style.fontWeight="700";panel.appendChild(answer);panel.appendChild(document.createElement("br"));
   const why=document.createElement("span");why.className="small";why.textContent=q.why;panel.appendChild(why);div.appendChild(panel);review.appendChild(div);
  });
- document.getElementById("score").textContent=score+" / 5 points";
- document.getElementById("message").textContent="You answered "+answered+" out of 5 questions. "+(score===5?"Perfect score! Excellent work!":score>=4?"Great job! Review the explanations below.":score>=3?"Good effort! Read the explanations and try again.":"Keep practising — you can do it!");
- resultText="Artyom's English Challenge — A2+\nScore: "+score+"/5\nAnswered: "+answered+"/5\n\n"+data.map((q,i)=>{const c=form.querySelector('input[name="q'+i+'"]:checked');return (i+1)+". "+(c?letters[Number(c.value)]+". "+q.opts[Number(c.value)]:"Not answered")+" | Correct: "+letters[q.a]+". "+q.opts[q.a];}).join("\n");
-
-  savedPayload={student:"Артём",testTitle:"Artyom's English Challenge — Test 02",level:"A2+",score:score,total:data.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:data.map((q,i)=>{const c=form.querySelector('input[name="q'+i+'"]:checked');const n=c?Number(c.value):null;return {question:q.ru,selectedAnswer:n===null?"Нет ответа":letters[n]+". "+q.opts[n],correctAnswer:letters[q.a]+". "+q.opts[q.a],isCorrect:n===q.a};})};
- result.style.display="block";result.scrollIntoView({behavior:"smooth",block:"start"});
- document.getElementById("check").disabled=true;
+ document.getElementById("score").textContent=score+" / "+data.length+" points";
+ document.getElementById("message").textContent="You answered "+answered+" out of "+data.length+" questions. "+(score===data.length?"Perfect score! Excellent work!":score>=12?"Great job! Review the explanations below.":score>=9?"Good effort! Read the explanations and try again.":"Keep practising — you can do it!");
+ resultText="Artyom's English Challenge — Passive Voice Test 03\nScore: "+score+"/"+data.length+"\nAnswered: "+answered+"/"+data.length+"\n\n"+data.map((q,i)=>{const c=form.querySelector('input[name="q'+i+'"]:checked');return (i+1)+". "+(c?letters[Number(c.value)]+". "+q.opts[Number(c.value)]:"Not answered")+" | Correct: "+letters[q.a]+". "+q.opts[q.a];}).join("\n");
+ savedPayload={student:"Артём",testTitle:"Artyom's English Challenge — Passive Voice Test 03",level:"A2+",score:score,total:data.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:data.map((q,i)=>{const c=form.querySelector('input[name="q'+i+'"]:checked'),n=c?Number(c.value):null;return {question:q.ru,selectedAnswer:n===null?"Нет ответа":letters[n]+". "+q.opts[n],correctAnswer:letters[q.a]+". "+q.opts[q.a],isCorrect:n===q.a};})};
+ result.style.display="block";result.scrollIntoView({behavior:"smooth",block:"start"});document.getElementById("check").disabled=true;
 });
-document.getElementById("reset").addEventListener("click",()=>{stopTimer();form.reset();document.getElementById("check").disabled=false;result.style.display="none";resultText="";elapsedSeconds=0;testStarted=false;startedAt=null;renderTimer();testArea.hidden=true;startPanel.hidden=false;window.scrollTo({top:0,behavior:"smooth"});});
-
-document.getElementById("send").addEventListener("click",async()=>{
- const status=document.getElementById("sendStatus"),btn=document.getElementById("send");
- if(!savedPayload){status.textContent="Сначала заверши тест.";return;}
- if(RESULTS_ENDPOINT==="PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"){status.textContent="Сначала подключи Google Apps Script. Инструкция находится в папке apps-script.";return;}
- btn.disabled=true;status.textContent="Отправляю результат…";
- try{await fetch(RESULTS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(savedPayload)});status.textContent="Запрос отправлен. Обнови журнал через несколько секунд.";btn.textContent="Отправлено";}
- catch(err){btn.disabled=false;status.textContent="Не удалось отправить. Попробуй ещё раз.";}
-});
-
-document.getElementById("copy").addEventListener("click",async()=>{
- const btn=document.getElementById("copy");
- try{await navigator.clipboard.writeText(resultText);btn.textContent="Copied!";}
- catch(e){const area=document.createElement("textarea");area.value=resultText;document.body.appendChild(area);area.select();try{document.execCommand("copy");btn.textContent="Copied!";}catch(err){btn.textContent="Select and copy manually";area.style.display="block";}area.remove();}
-});
+document.getElementById("reset").addEventListener("click",()=>{stopTimer();form.reset();document.getElementById("check").disabled=false;result.style.display="none";resultText="";elapsedSeconds=0;testStarted=false;startedAt=null;savedPayload=null;renderTimer();testArea.hidden=true;startPanel.hidden=false;window.scrollTo({top:0,behavior:"smooth"});});
+document.getElementById("send").addEventListener("click",async()=>{const status=document.getElementById("sendStatus"),btn=document.getElementById("send");if(!savedPayload){status.textContent="Сначала заверши тест.";return;}btn.disabled=true;status.textContent="Отправляю результат…";try{await fetch(RESULTS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(savedPayload)});status.textContent="Запрос отправлен. Обнови журнал через несколько секунд.";btn.textContent="Отправлено";}catch(err){btn.disabled=false;status.textContent="Не удалось отправить. Попробуй ещё раз."; }});
+document.getElementById("copy").addEventListener("click",async()=>{const btn=document.getElementById("copy");try{await navigator.clipboard.writeText(resultText);btn.textContent="Copied!";}catch(e){const area=document.createElement("textarea");area.value=resultText;document.body.appendChild(area);area.select();try{document.execCommand("copy");btn.textContent="Copied!";}catch(err){btn.textContent="Select and copy manually";area.style.display="block";}area.remove();}});
 </script>
 </body>
 </html>
