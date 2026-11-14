@@ -25,17 +25,17 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
   <p>Level A2+ · Test 02</p>
   <div class="meta"><span class="pill">5 questions</span><span class="pill">5 points</span><span class="pill">About 5 minutes</span></div>
 </section>
-<section id="startPanel"><h2>Are you ready, Artyom?</h2><p>There are 5 questions. You have 5 minutes to complete the test.</p><button class="btn primary" type="button" id="startBtn">Start Test</button></section>
+<section id="startPanel"><h2>Are you ready, Artyom?</h2><p>There are 5 questions. Press Start Test to begin. Press Finish & Check Answers when you are ready.</p><button class="btn primary" type="button" id="startBtn">Start Test</button></section>
 <div id="testArea" hidden>
-<div id="timerBar"><span>Time remaining</span><span id="timer" role="timer" aria-live="off">05:00</span></div>
+<div id="timerBar"><span>Time elapsed</span><span id="timer" role="timer" aria-live="off">00:00</span></div>
 <div class="instructions"><strong>Инструкция:</strong> Прочитай предложение на русском и выбери правильный перевод на английском. Ответь на все 5 вопросов и нажми <strong>Check my answers</strong>. После проверки появятся результат и объяснения.</div>
 <form id="quiz">
 <div id="questions"></div>
-<div class="actions"><button class="btn primary" type="submit" id="check">Check my answers</button><button class="btn secondary" type="button" id="reset">Try again</button></div>
+<div class="actions"><button class="btn primary" type="submit" id="check">Finish &amp; Check Answers</button><button class="btn secondary" type="button" id="reset">Try again</button></div>
 </form>
 </div>
 <section id="result" aria-live="polite">
-  <h2>Your result</h2><div class="score" id="score"></div><p id="message"></p>
+  <h2>Your result</h2><p id="elapsedResult" class="small"></p><div class="score" id="score"></div><p id="message"></p>
   <div class="actions"><button class="btn primary" id="copy" type="button">Copy results</button><button class="btn primary" id="send" type="button">Отправить результат</button></div><p id="sendStatus" class="small"></p>
   <div id="review"></div>
 </section>
@@ -45,15 +45,15 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
 const RESULTS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxGweNqBvYEs0INITyn4KwwlyfWjEjKisQ4LvYnVfTljWPfaCf71_REpMzWgg4zwFczng/exec";
 let startedAt = null;
 let timerInterval = null;
-let timeLeft = 5 * 60;
+let elapsedSeconds = 0;
 let testStarted = false;
 let savedPayload = null;
 const startPanel = document.getElementById("startPanel");
 const testArea = document.getElementById("testArea");
 const timerDisplay = document.getElementById("timer");
-function renderTimer(){const m=String(Math.floor(timeLeft/60)).padStart(2,"0");const sec=String(timeLeft%60).padStart(2,"0");timerDisplay.textContent=m+":"+sec;timerDisplay.classList.toggle("warning",timeLeft<=60);}
+function formatDuration(total){const m=String(Math.floor(total/60)).padStart(2,"0");const sec=String(total%60).padStart(2,"0");return m+":"+sec;}\nfunction renderTimer(){timerDisplay.textContent=formatDuration(elapsedSeconds);timerDisplay.classList.remove("warning");}
 function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
-function startTest(){if(testStarted)return;testStarted=true;startedAt=Date.now();startPanel.hidden=true;testArea.hidden=false;renderTimer();timerInterval=setInterval(()=>{timeLeft--;renderTimer();if(timeLeft<=0){stopTimer();form.requestSubmit();}},1000);}
+function startTest(){if(testStarted)return;testStarted=true;startedAt=Date.now();elapsedSeconds=0;startPanel.hidden=true;testArea.hidden=false;renderTimer();timerInterval=setInterval(()=>{elapsedSeconds=Math.floor((Date.now()-startedAt)/1000);renderTimer();},250);}
 document.getElementById("startBtn").addEventListener("click",startTest);
 const data = [
  {ru:"Раньше я боялся выступать перед классом, но теперь мне это нравится.",opts:["I used to be afraid of speaking in front of the class, but now I enjoy it.","I am used to be afraid of speaking in front of the class, but now I enjoy it.","I use to afraid speaking in front of the class, but now I enjoy it."],a:0,why:"Used to + начальная форма глагола описывает привычное или обычное состояние в прошлом, которого сейчас уже нет."},
@@ -104,7 +104,7 @@ form.addEventListener("submit",e=>{
  result.style.display="block";result.scrollIntoView({behavior:"smooth",block:"start"});
  document.getElementById("check").disabled=true;
 });
-document.getElementById("reset").addEventListener("click",()=>{stopTimer();form.reset();document.getElementById("check").disabled=false;result.style.display="none";resultText="";timeLeft=5*60;testStarted=false;startedAt=null;renderTimer();testArea.hidden=true;startPanel.hidden=false;window.scrollTo({top:0,behavior:"smooth"});});
+document.getElementById("reset").addEventListener("click",()=>{stopTimer();form.reset();document.getElementById("check").disabled=false;result.style.display="none";resultText="";elapsedSeconds=0;testStarted=false;startedAt=null;renderTimer();testArea.hidden=true;startPanel.hidden=false;window.scrollTo({top:0,behavior:"smooth"});});
 
 document.getElementById("send").addEventListener("click",async()=>{
  const status=document.getElementById("sendStatus"),btn=document.getElementById("send");
