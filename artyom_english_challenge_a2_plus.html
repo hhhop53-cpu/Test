@@ -14,6 +14,7 @@ h1{font-size:clamp(25px,5vw,34px);line-height:1.15;margin:0 0 8px}.hero p{margin
 .option{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;cursor:pointer}.option:has(input:checked){border-color:var(--blue);background:var(--pale)}.option input{margin-top:4px;accent-color:var(--blue)}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}.btn{border:0;border-radius:11px;padding:13px 18px;font-weight:700;font-size:15px;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e6ebf3;color:#24324a}.btn:disabled{opacity:.5;cursor:not-allowed}
 #result{display:none;background:white;border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px}#result h2{margin:0 0 8px}.score{font-size:28px;font-weight:800;color:var(--blue)}.review{border-top:1px solid var(--line);padding:11px 0}.correct{background:var(--good);border-radius:9px;padding:9px}.incorrect{background:var(--bad);border-radius:9px;padding:9px}.small{font-size:13px;color:var(--muted)}
+#startPanel{background:white;border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px;text-align:center}#timerBar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 14px;font-weight:700}#timer{font-variant-numeric:tabular-nums;font-size:22px;color:var(--blue)}#timer.warning{color:#c2410c}#testArea[hidden]{display:none}
 footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
 </style>
 </head>
@@ -24,11 +25,15 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
   <p>Level A2+ · Test 02</p>
   <div class="meta"><span class="pill">5 questions</span><span class="pill">5 points</span><span class="pill">About 5 minutes</span></div>
 </section>
+<section id="startPanel"><h2>Are you ready, Artyom?</h2><p>There are 5 questions. You have 5 minutes to complete the test.</p><button class="btn primary" type="button" id="startBtn">Start Test</button></section>
+<div id="testArea" hidden>
+<div id="timerBar"><span>Time remaining</span><span id="timer" role="timer" aria-live="off">05:00</span></div>
 <div class="instructions"><strong>Инструкция:</strong> Прочитай предложение на русском и выбери правильный перевод на английском. Ответь на все 5 вопросов и нажми <strong>Check my answers</strong>. После проверки появятся результат и объяснения.</div>
 <form id="quiz">
 <div id="questions"></div>
 <div class="actions"><button class="btn primary" type="submit" id="check">Check my answers</button><button class="btn secondary" type="button" id="reset">Try again</button></div>
 </form>
+</div>
 <section id="result" aria-live="polite">
   <h2>Your result</h2><div class="score" id="score"></div><p id="message"></p>
   <div class="actions"><button class="btn primary" id="copy" type="button">Copy results</button><button class="btn primary" id="send" type="button">Отправить результат</button></div><p id="sendStatus" class="small"></p>
@@ -38,8 +43,18 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
 </main>
 <script>
 const RESULTS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxGweNqBvYEs0INITyn4KwwlyfWjEjKisQ4LvYnVfTljWPfaCf71_REpMzWgg4zwFczng/exec";
-const startedAt = Date.now();
+let startedAt = null;
+let timerInterval = null;
+let timeLeft = 5 * 60;
+let testStarted = false;
 let savedPayload = null;
+const startPanel = document.getElementById("startPanel");
+const testArea = document.getElementById("testArea");
+const timerDisplay = document.getElementById("timer");
+function renderTimer(){const m=String(Math.floor(timeLeft/60)).padStart(2,"0");const sec=String(timeLeft%60).padStart(2,"0");timerDisplay.textContent=m+":"+sec;timerDisplay.classList.toggle("warning",timeLeft<=60);}
+function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
+function startTest(){if(testStarted)return;testStarted=true;startedAt=Date.now();startPanel.hidden=true;testArea.hidden=false;renderTimer();timerInterval=setInterval(()=>{timeLeft--;renderTimer();if(timeLeft<=0){stopTimer();form.requestSubmit();}},1000);}
+document.getElementById("startBtn").addEventListener("click",startTest);
 const data = [
  {ru:"Раньше я боялся выступать перед классом, но теперь мне это нравится.",opts:["I used to be afraid of speaking in front of the class, but now I enjoy it.","I am used to be afraid of speaking in front of the class, but now I enjoy it.","I use to afraid speaking in front of the class, but now I enjoy it."],a:0,why:"Used to + начальная форма глагола описывает привычное или обычное состояние в прошлом, которого сейчас уже нет."},
  {ru:"Я бы предпочёл остаться дома, а не идти в торговый центр.",opts:["I would rather staying at home than going to the shopping centre.","I would rather stay at home than go to the shopping centre.","I rather to stay at home instead go to the shopping centre."],a:1,why:"После would rather используется начальная форма глагола без to: would rather stay. В сравнении действий можно использовать rather than."},
@@ -65,6 +80,8 @@ const form=document.getElementById("quiz"), result=document.getElementById("resu
 let resultText="";
 form.addEventListener("submit",e=>{
  e.preventDefault();
+ if(!testStarted)return;
+ stopTimer();
  let score=0, answered=0;
  const review=document.getElementById("review");review.innerHTML="";
  data.forEach((q,i)=>{
@@ -87,7 +104,7 @@ form.addEventListener("submit",e=>{
  result.style.display="block";result.scrollIntoView({behavior:"smooth",block:"start"});
  document.getElementById("check").disabled=true;
 });
-document.getElementById("reset").addEventListener("click",()=>{form.reset();document.getElementById("check").disabled=false;result.style.display="none";resultText="";window.scrollTo({top:0,behavior:"smooth"});});
+document.getElementById("reset").addEventListener("click",()=>{stopTimer();form.reset();document.getElementById("check").disabled=false;result.style.display="none";resultText="";timeLeft=5*60;testStarted=false;startedAt=null;renderTimer();testArea.hidden=true;startPanel.hidden=false;window.scrollTo({top:0,behavior:"smooth"});});
 
 document.getElementById("send").addEventListener("click",async()=>{
  const status=document.getElementById("sendStatus"),btn=document.getElementById("send");
