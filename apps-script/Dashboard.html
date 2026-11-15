@@ -69,11 +69,11 @@ function renderResults(rows){
      const result=checkedById[id]||{};
      const meta=questionCatalog[id]||{};
      const selectedIndex=Number.isInteger(a.selectedIndex)?a.selectedIndex:(Number.isInteger(result.selectedIndex)?result.selectedIndex:null);
-     const correctIndex=Number.isInteger(result.correctIndex)?result.correctIndex:(Number.isInteger(a.correctIndex)?a.correctIndex:null);
+     const correctIndex=Number.isInteger(result.correctIndex)?result.correctIndex:(Number.isInteger(a.correctIndex)?a.correctIndex:(Number.isInteger(meta.correct)?meta.correct:null));
      const question=a.question||result.question||meta.prompt||('Вопрос '+(id||n+1)+' (текст не найден)');
      const selected=(a.selectedAnswer||result.selectedAnswer)||(selectedIndex!==null&&meta.opts?meta.opts[selectedIndex]:null)||'Нет ответа';
      const correct=(a.correctAnswer||result.correctAnswer)||(correctIndex!==null&&meta.opts?meta.opts[correctIndex]:null)||(correctIndex===null?'Правильный ответ не найден':'');
-     const isCorrect=typeof result.isCorrect==='boolean'?result.isCorrect:(typeof a.isCorrect==='boolean'?a.isCorrect:null);
+     const isCorrect=typeof result.isCorrect==='boolean'?result.isCorrect:(typeof a.isCorrect==='boolean'?a.isCorrect:(selectedIndex!==null&&correctIndex!==null?selectedIndex===correctIndex:null));
      const verdict=isCorrect===true?'Верно':isCorrect===false?'Ошибка':'Проверка недоступна';
      const explanation=result.explanation||a.explanation||'';
      return (n+1)+'. '+question+'\nОтвет: '+selected+'\nПравильно: '+correct+'\n'+verdict+(explanation?'\nПояснение: '+explanation:'');
