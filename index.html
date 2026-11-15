@@ -221,7 +221,9 @@ form.addEventListener("submit",async e=>{
   try{
     const response=await sendJsonp(payload);
     if(!response || !response.ok || !Array.isArray(response.results)){
-      throw new Error(response && response.error ? response.error : "Сервер вернул непонятный ответ.");
+      let diagnostic;
+      try{diagnostic=JSON.stringify(response);}catch(e){diagnostic=String(response);}
+      throw new Error("Ответ сервера не распознан. Диагностика: "+(diagnostic||"пустой ответ"));
     }
     showVerifiedResult(response,payload);
   }catch(error){
