@@ -1,265 +1,500 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#172b59">
 <title>Artyom's English Challenge — Active & Passive Voice</title>
 <style>
-:root{color-scheme:light;--ink:#172033;--muted:#64748b;--line:#dbe3ee;--blue:#2457d6;--pale:#eef4ff;--good:#e9f8ef;--bad:#fff0f0}
-*{box-sizing:border-box}body{margin:0;background:#f4f6fa;color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-main{max-width:780px;margin:0 auto;padding:24px 16px 48px}.hero{background:#172b59;color:white;padding:26px 22px;border-radius:20px;margin-bottom:20px}
-h1{font-size:clamp(25px,5vw,34px);line-height:1.15;margin:0 0 8px}.hero p{margin:0;color:#dbe6ff}.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.pill{background:#ffffff1c;border:1px solid #ffffff38;border-radius:99px;padding:5px 11px;font-size:13px}
-.instructions,#startPanel,#result{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:18px;color:#39465d}
-.question{background:white;border:1px solid var(--line);border-radius:15px;padding:18px;margin:14px 0}.qhead{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase}.prompt{font-weight:650;margin:7px 0 12px}
-.option{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;cursor:pointer}.option:has(input:checked){border-color:var(--blue);background:var(--pale)}.option input{margin-top:4px;accent-color:var(--blue)}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}.btn{border:0;border-radius:11px;padding:13px 18px;font-weight:700;font-size:15px;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e6ebf3;color:#24324a}.btn:disabled{opacity:.5;cursor:not-allowed}
-#result{display:none;margin-top:18px}#result h2{margin:0 0 8px}.score{font-size:28px;font-weight:800;color:var(--blue)}.review{border-top:1px solid var(--line);padding:11px 0}.correct{background:var(--good);border-radius:9px;padding:9px}.incorrect{background:var(--bad);border-radius:9px;padding:9px}.small{font-size:13px;color:var(--muted)}
+:root{color-scheme:light;--ink:#172033;--muted:#64748b;--line:#dbe3ee;--blue:#2457d6;--navy:#172b59;--pale:#eef4ff;--good:#e9f8ef;--bad:#fff0f0;--amber:#fff6df}
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6fa;color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+main{max-width:820px;margin:0 auto;padding:24px 16px 48px}
+.hero{background:var(--navy);color:white;padding:26px 22px;border-radius:20px;margin-bottom:20px}
+h1{font-size:clamp(25px,5vw,34px);line-height:1.15;margin:0 0 8px}
+.hero p{margin:0;color:#dbe6ff}
+.meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.pill{background:#ffffff1c;border:1px solid #ffffff38;border-radius:99px;padding:5px 11px;font-size:13px}
+.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:18px;color:#39465d}
+#startPanel{text-align:center;padding:24px}
+#startPanel h2{margin:0 0 8px;color:var(--ink)}
+#startPanel p{margin:7px 0 18px}
+#testArea[hidden],#result[hidden],.hidden{display:none!important}
+.instructions{font-size:14px;color:#526078;margin-bottom:14px}
+#timerBar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 14px;font-weight:700}
+#timer{font-variant-numeric:tabular-nums;font-size:22px;color:var(--blue)}
+.progressLine{height:7px;background:#e7ecf4;border-radius:9px;overflow:hidden;margin:12px 0 18px}
+#progressFill{height:100%;width:0;background:var(--blue);transition:width .2s}
+.question{background:white;border:1px solid var(--line);border-radius:15px;padding:18px;margin:14px 0}
+.qhead{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.035em;text-transform:uppercase}
+.prompt{font-weight:650;margin:7px 0 12px;color:var(--ink)}
+.option{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;cursor:pointer;transition:border-color .12s,background .12s}
+.option:hover{border-color:#9bb4ed}
+.option:has(input:checked){border-color:var(--blue);background:var(--pale)}
+.option input{margin-top:4px;accent-color:var(--blue);flex:0 0 auto}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 6px}
+.btn{border:0;border-radius:11px;padding:13px 18px;font-weight:700;font-size:15px;cursor:pointer}
+.primary{background:var(--blue);color:white}
+.secondary{background:#e6ebf3;color:#24324a}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+#result{margin-top:18px}
+#result h2{margin:0 0 8px;color:var(--ink)}
+.score{font-size:30px;font-weight:800;color:var(--blue);margin:4px 0}
+.small{font-size:13px;color:var(--muted)}
+.status{padding:12px 14px;border-radius:11px;background:#f3f6fb;margin:12px 0}
+.review{border-top:1px solid var(--line);padding:11px 0}
+.correct,.incorrect{border-radius:9px;padding:10px 12px}
+.correct{background:var(--good)}
+.incorrect{background:var(--bad)}
+.reviewText{overflow-wrap:anywhere}
 footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
-#startPanel{text-align:center;padding:22px}#timerBar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 14px;font-weight:700}#timer{font-variant-numeric:tabular-nums;font-size:22px;color:var(--blue)}#testArea[hidden]{display:none}
-</style></head>
-<body><main>
-<section class="hero"><h1>Artyom's English Challenge</h1><p>Active & Passive Voice · Mixed Formula Challenge · A2+</p><div class="meta"><span class="pill">15 questions</span><span class="pill">15 points</span><span class="pill">About 12–18 minutes</span></div></section>
-<section id="startPanel"><h2>Are you ready, Artyom?</h2><p>Теперь сложнее: 12 времён Active Voice и основные формы Passive Voice. Выбирай точные формулы!</p><button class="btn primary" type="button" id="startBtn">Start Test</button></section>
-<div id="testArea" hidden><div id="timerBar"><span>Time elapsed</span><span id="timer" role="timer" aria-live="off">00:00</span></div>
-<div class="instructions"><strong>Инструкция:</strong> В каждом вопросе выбери правильную формулу. В тесте смешаны все 12 времён Active Voice и основные употребительные формы Passive Voice. Обозначения: V1 — первая форма глагола, V2 — вторая, V3 — третья, V-ing — глагол с окончанием -ing.</div>
-<form id="quiz"><div id="questions"></div><div class="actions"><button class="btn primary" type="submit" id="check">Check my answers</button><button class="btn secondary" type="button" id="reset">Try again</button></div></form></div>
-<section id="result" aria-live="polite"><h2>Your result</h2><p id="elapsedResult" class="small"></p><div class="score" id="score"></div><p id="message"></p><div class="actions"><button class="btn primary" id="copy" type="button">Copy results</button><button class="btn primary" id="send" type="button">Send result</button></div><p id="sendStatus" class="small"></p><div id="review"></div></section>
-<footer>Keep going, Artyom. Every challenge makes your English stronger!</footer>
+</style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <h1>Artyom's English Challenge</h1>
+    <p>Active & Passive Voice · Formula Challenge · A2+</p>
+    <div class="meta">
+      <span class="pill" id="setPill">Set — / 5</span>
+      <span class="pill">15 questions</span>
+      <span class="pill">15/15 to unlock the next set</span>
+    </div>
+  </section>
+
+  <section id="startPanel" class="panel">
+    <h2 id="startTitle">Загружаю тест…</h2>
+    <p id="startText">Получаю текущий набор с сервера.</p>
+    <button class="btn primary" type="button" id="startBtn" disabled>Start Test</button>
+    <p id="loadStatus" class="small" role="status"></p>
+  </section>
+
+  <section id="testArea" hidden>
+    <div id="timerBar">
+      <span id="testTitle">Formula Challenge</span>
+      <span><span class="small">Time</span> <span id="timer" role="timer" aria-live="off">00:00</span></span>
+    </div>
+    <div class="progressLine"><div id="progressFill"></div></div>
+    <div class="panel instructions">
+      <strong>Инструкция:</strong> В каждом вопросе выбери один правильный вариант. Смешаны 12 времён Active Voice и употребительные формы Passive Voice. Форматы заданий: формулы, поиск ошибок, отрицания, вопросы и преобразование Active → Passive.
+      <br><br><strong>Обозначения:</strong> V1 — первая форма глагола, V2 — вторая, V3 — третья, V-ing — форма с окончанием -ing.
+    </div>
+    <form id="quiz">
+      <div id="questions"></div>
+      <div class="actions">
+        <button class="btn primary" type="submit" id="checkBtn">Проверить ответы</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="result" class="panel" hidden aria-live="polite">
+    <h2>Результат</h2>
+    <p id="elapsedResult" class="small"></p>
+    <div class="score" id="score"></div>
+    <p id="message"></p>
+    <div id="sendStatus" class="status small" role="status"></div>
+    <div class="actions">
+      <button class="btn primary hidden" id="nextBtn" type="button">Открыть следующий набор</button>
+      <button class="btn secondary hidden" id="retrySetBtn" type="button">Повторить этот набор</button>
+      <button class="btn secondary hidden" id="retrySendBtn" type="button">Повторить отправку результата</button>
+      <button class="btn secondary" id="copyBtn" type="button">Скопировать результат</button>
+    </div>
+    <div id="review"></div>
+  </section>
+  <footer>Keep going, Artyom. Every challenge makes your English stronger!</footer>
 </main>
 
 <script>
-const RESULTS_ENDPOINT = "https://script.google.com/macros/s/AKfycby7h-mc--QERnZ_N62qBu2FbjmvOHRYYzFAMH0ziH3w1w3uVgPUM2_EVX2EEw4zzc7VPw/exec";
-const TEST_ID = "active-passive-formula-a2plus-v1";
-let startedAt=null, elapsedSeconds=0, timerInterval=null, testStarted=false;
-let savedPayload=null, displayedQuestions=[];
-const startPanel=document.getElementById("startPanel");
-const testArea=document.getElementById("testArea");
-const timerDisplay=document.getElementById("timer");
-const form=document.getElementById("quiz");
-const result=document.getElementById("result");
-const root=document.getElementById("questions");
-const letters=["A","B","C","D"];
-const data=[
-{type:"Active Voice · Present Simple",prompt:"Выбери формулу Present Simple Active.",opts:["Subject + am/is/are + V3","Subject + V1(s/es)","Subject + do/does + V2","Subject + have/has + V3"]},
-{type:"Active Voice · Present Continuous",prompt:"Выбери формулу Present Continuous Active.",opts:["Subject + am/is/are + V-ing","Subject + was/were + V-ing","Subject + have/has been + V-ing","Subject + am/is/are + being + V3"]},
-{type:"Active Voice · Present Perfect",prompt:"Выбери формулу Present Perfect Active.",opts:["Subject + had + V3","Subject + have/has + V3","Subject + have/has been + V-ing","Subject + am/is/are + V3"]},
-{type:"Active Voice · Present Perfect Continuous",prompt:"Выбери формулу Present Perfect Continuous Active.",opts:["Subject + have/has been + V-ing","Subject + had been + V-ing","Subject + have/has + been + V3","Subject + am/is/are + V-ing"]},
-{type:"Active Voice · Past Simple",prompt:"Выбери формулу Past Simple Active.",opts:["Subject + was/were + V3","Subject + did + V1","Subject + V2","Subject + had + V3"]},
-{type:"Active Voice · Past Continuous",prompt:"Выбери формулу Past Continuous Active.",opts:["Subject + had been + V-ing","Subject + was/were + V-ing","Subject + have/has been + V-ing","Subject + will be + V-ing"]},
-{type:"Active Voice · Past Perfect",prompt:"Выбери формулу Past Perfect Active.",opts:["Subject + have/has + V3","Subject + will have + V3","Subject + had + V3","Subject + had been + V3"]},
-{type:"Active Voice · Past Perfect Continuous",prompt:"Выбери формулу Past Perfect Continuous Active.",opts:["Subject + had been + V-ing","Subject + had + V3","Subject + was/were being + V3","Subject + have/has been + V-ing"]},
-{type:"Active Voice · Future Simple",prompt:"Выбери формулу Future Simple Active.",opts:["Subject + will be + V3","Subject + will + V1","Subject + would + V1","Subject + will have + V3"]},
-{type:"Active Voice · Future Continuous",prompt:"Выбери формулу Future Continuous Active.",opts:["Subject + will have been + V-ing","Subject + will be + V-ing","Subject + will be + V3","Subject + shall have + V3"]},
-{type:"Active Voice · Future Perfect",prompt:"Выбери формулу Future Perfect Active.",opts:["Subject + will have + V3","Subject + will have been + V3","Subject + will be + V-ing","Subject + had + V3"]},
-{type:"Active Voice · Future Perfect Continuous",prompt:"Выбери формулу Future Perfect Continuous Active.",opts:["Subject + will be + V-ing","Subject + will have + V3","Subject + will have been + V-ing","Subject + have/has been + V-ing"]},
-{type:"Passive Voice · Simple tenses",prompt:"Выбери правильный набор формул Passive Voice для Present Simple, Past Simple и Future Simple.",opts:["am/is/are + V3; was/were + V3; will be + V3","V1(s); V2; will + V1","am/is/are + being + V3; was/were + being + V3; will be + being + V3","have/has + V3; had + V3; will have + V3"]},
-{type:"Passive Voice · Continuous tenses",prompt:"Выбери правильный набор формул Present Continuous Passive и Past Continuous Passive.",opts:["have/has been + V3; had been + V3","am/is/are + V3; was/were + V3","am/is/are + being + V3; was/were + being + V3","am/is/are + V-ing; was/were + V-ing"]},
-{type:"Passive Voice · Perfect tenses",prompt:"Выбери правильный набор формул Present Perfect, Past Perfect и Future Perfect Passive.",opts:["have/has + V3; had + V3; will have + V3","have/has been + V3; had been + V3; will have been + V3","have/has been + V-ing; had been + V-ing; will have been + V-ing","am/is/are being + V3; was/were being + V3; will be + V3"]}
-];
-data.forEach((q,i)=>{q.id="q"+String(i+1).padStart(2,"0");});
-function shuffle(items){
-  const a=items.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
+'use strict';
+
+const RESULTS_ENDPOINT = 'https://script.google.com/macros/s/AKfycby7h-mc--QERnZ_N62qBu2FbjmvOHRYYzFAMH0ziH3w1w3uVgPUM2_EVX2EEw4zzc7VPw/exec';
+const TOTAL_SETS = 5;
+const letters = ['A', 'B', 'C', 'D'];
+
+let currentTest = null;
+let displayedQuestions = [];
+let startedAt = null;
+let elapsedSeconds = 0;
+let timerInterval = null;
+let pendingPayload = null;
+let testStarted = false;
+let submissionComplete = false;
+
+const el = id => document.getElementById(id);
+const startPanel = el('startPanel');
+const testArea = el('testArea');
+const resultPanel = el('result');
+const form = el('quiz');
+const questionRoot = el('questions');
+
+function shuffle(items) {
+  const copy = items.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
   }
-  return a;
+  return copy;
 }
-function formatDuration(total){
-  const m=String(Math.floor(total/60)).padStart(2,"0");
-  const s=String(total%60).padStart(2,"0");
-  return m+":"+s;
+
+function formatDuration(total) {
+  const minutes = String(Math.floor(total / 60)).padStart(2, '0');
+  const seconds = String(total % 60).padStart(2, '0');
+  return minutes + ':' + seconds;
 }
-function updateTimer(){
-  elapsedSeconds=Math.floor((Date.now()-startedAt)/1000);
-  timerDisplay.textContent=formatDuration(elapsedSeconds);
+
+function updateTimer() {
+  if (startedAt === null) return;
+  elapsedSeconds = Math.floor((Date.now() - startedAt) / 1000);
+  el('timer').textContent = formatDuration(elapsedSeconds);
 }
-function stopTimer(){
-  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+
+function stopTimer() {
+  if (timerInterval !== null) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
 }
-function renderQuiz(){
-  root.innerHTML="";
-  displayedQuestions=shuffle(data).map(q=>{
-    const options=shuffle(q.opts.map((text,originalIndex)=>({text,originalIndex})));
-    return {q,options};
-  });
-  displayedQuestions.forEach(({q,options},i)=>{
-    const card=document.createElement("section");
-    card.className="question";
-    const head=document.createElement("div");
-    head.className="qhead";
-    head.textContent="Question "+(i+1)+" of "+displayedQuestions.length+" · "+q.type;
-    const prompt=document.createElement("div");
-    prompt.className="prompt";
-    prompt.textContent=q.prompt;
-    card.append(head,prompt);
-    options.forEach((option,j)=>{
-      const label=document.createElement("label");
-      label.className="option";
-      const radio=document.createElement("input");
-      radio.type="radio";
-      radio.name="q"+q.id;
-      radio.value=String(option.originalIndex);
-      const span=document.createElement("span");
-      span.innerHTML="<strong>"+letters[j]+".</strong> ";
-      span.appendChild(document.createTextNode(option.text));
-      label.append(radio,span);
-      card.appendChild(label);
-    });
-    root.appendChild(card);
-  });
-}
-function startTest(){
-  if(testStarted)return;
-  testStarted=true;
-  startedAt=Date.now();
-  elapsedSeconds=0;
-  renderQuiz();
-  startPanel.hidden=true;
-  testArea.hidden=false;
-  result.style.display="none";
-  timerDisplay.textContent="00:00";
-  timerInterval=setInterval(updateTimer,250);
-}
-document.getElementById("startBtn").addEventListener("click",startTest);
-function sendJsonp(payload){
-  return new Promise((resolve,reject)=>{
-    const callbackName="artyomResult_"+Date.now()+"_"+Math.floor(Math.random()*100000);
-    const script=document.createElement("script");
-    let finished=false;
-    const cleanup=()=>{
-      if(script.parentNode)script.parentNode.removeChild(script);
-      try{delete window[callbackName];}catch(e){window[callbackName]=undefined;}
+
+function jsonpRequest(params, timeoutMs = 20000) {
+  return new Promise((resolve, reject) => {
+    const callbackName = 'artyomJsonp_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
+    const script = document.createElement('script');
+    let finished = false;
+
+    const cleanup = () => {
+      if (script.parentNode) script.parentNode.removeChild(script);
+      try { delete window[callbackName]; }
+      catch (error) { window[callbackName] = undefined; }
     };
-    const timeout=setTimeout(()=>{
-      if(finished)return;
-      finished=true;cleanup();
-      reject(new Error("Сервер не ответил вовремя. Попробуй отправить результат ещё раз."));
-    },20000);
-    window[callbackName]=(response)=>{
-      if(finished)return;
-      finished=true;clearTimeout(timeout);cleanup();resolve(response);
+
+    const timeout = setTimeout(() => {
+      if (finished) return;
+      finished = true;
+      cleanup();
+      reject(new Error('Сервер не ответил вовремя. Проверь подключение и попробуй ещё раз.'));
+    }, timeoutMs);
+
+    window[callbackName] = response => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timeout);
+      cleanup();
+      resolve(response);
     };
-    script.onerror=()=>{
-      if(finished)return;
-      finished=true;clearTimeout(timeout);cleanup();
-      reject(new Error("Не удалось связаться с сервером. Проверь подключение и попробуй ещё раз."));
+
+    script.onerror = () => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timeout);
+      cleanup();
+      reject(new Error('Не удалось связаться с сервером. Проверь подключение к интернету.'));
     };
-    const query="action=submit&callback="+encodeURIComponent(callbackName)+
-      "&payload="+encodeURIComponent(JSON.stringify(payload));
-    script.src=RESULTS_ENDPOINT+"?"+query;
+
+    const query = new URLSearchParams({...params, callback: callbackName}).toString();
+    script.src = RESULTS_ENDPOINT + '?' + query;
     document.head.appendChild(script);
   });
 }
-function showVerifiedResult(response,payload){
-  const byId={};
-  response.results.forEach(x=>byId[x.questionId]=x);
-  const review=document.getElementById("review");
-  review.innerHTML="";
-  displayedQuestions.forEach(({q,options},i)=>{
-    const checked=form.querySelector('input[name="q'+q.id+'"]:checked');
-    const selected=checked?Number(checked.value):null;
-    const server=byId[q.id];
-    const ok=!!server && server.isCorrect;
-    const div=document.createElement("div");
-    div.className="review";
-    const panel=document.createElement("div");
-    panel.className=ok?"correct":"incorrect";
-    const heading=document.createElement("strong");
-    heading.textContent=(i+1)+". "+(ok?"Correct ✓":selected===null?"Not answered":"Not quite ✗");
-    panel.appendChild(heading);
-    panel.appendChild(document.createElement("br"));
-    const selectedText=selected===null?"—":q.opts[selected];
-    panel.appendChild(document.createTextNode("Your answer: "+selectedText));
-    panel.appendChild(document.createElement("br"));
-    const correctText=q.opts[server.correctIndex];
-    const answer=document.createElement("span");
-    answer.style.fontWeight="700";
-    answer.textContent="Correct answer: "+correctText;
-    panel.appendChild(answer);
-    panel.appendChild(document.createElement("br"));
-    const why=document.createElement("span");
-    why.className="small";
-    why.textContent=server.explanation;
-    panel.appendChild(why);
-    div.appendChild(panel);
-    review.appendChild(div);
-  });
-  document.getElementById("score").textContent=response.score+" / "+response.total+" points";
-  document.getElementById("message").textContent=response.passed
-    ?"Perfect score! 100%. Ты прошёл этот уровень. Результат сохранён."
-    :"Пока не 100%. Изучи ошибки и попробуй ещё раз. Следующий уровень откроется только после идеального результата.";
-  document.getElementById("elapsedResult").textContent="Time taken: "+formatDuration(payload.durationSeconds);
-  result.style.display="block";
-  result.scrollIntoView({behavior:"smooth",block:"start"});
-  document.getElementById("check").disabled=true;
-  savedPayload=payload;
-  document.getElementById("sendStatus").textContent="Результат проверен сервером и сохранён.";
-  document.getElementById("send").disabled=true;
-  document.getElementById("send").textContent="Result saved";
+
+async function loadCurrentTest() {
+  el('startBtn').disabled = true;
+  el('startTitle').textContent = 'Загружаю тест…';
+  el('startText').textContent = 'Получаю текущий набор с сервера.';
+  el('loadStatus').textContent = '';
+  try {
+    const response = await jsonpRequest({action: 'getTest'});
+    if (!response || !response.ok || !Array.isArray(response.questions) ||
+        response.questions.length !== 15 || !response.testId ||
+        !Number.isInteger(Number(response.setNumber))) {
+      throw new Error(response && response.error ? response.error : 'Сервер вернул некорректный набор.');
+    }
+
+    const ids = new Set();
+    response.questions.forEach(question => {
+      if (!question.id || ids.has(question.id) || !Array.isArray(question.options) || question.options.length !== 4) {
+        throw new Error('В полученном наборе обнаружена ошибка структуры вопроса.');
+      }
+      ids.add(question.id);
+    });
+
+    currentTest = response;
+    el('setPill').textContent = 'Set ' + response.setNumber + ' / ' + response.totalSets;
+    el('startTitle').textContent = 'Готов к набору ' + response.setNumber + ' из ' + response.totalSets + '?';
+    el('startText').textContent = response.title;
+    el('startBtn').disabled = false;
+    el('startBtn').textContent = 'Начать тест';
+    el('loadStatus').textContent = 'Набор получен. Правильные ответы хранятся на сервере.';
+    return true;
+  } catch (error) {
+    currentTest = null;
+    el('startTitle').textContent = 'Не удалось загрузить тест';
+    el('startText').textContent = 'Проверь соединение и попробуй загрузить набор ещё раз.';
+    el('loadStatus').textContent = error.message;
+    el('startBtn').disabled = false;
+    el('startBtn').textContent = 'Повторить загрузку';
+    return false;
+  }
 }
-form.addEventListener("submit",async e=>{
-  e.preventDefault();
-  if(!testStarted)return;
+
+function renderQuiz() {
+  questionRoot.innerHTML = '';
+  displayedQuestions = shuffle(currentTest.questions).map(question => ({
+    question,
+    options: shuffle(question.options.map((text, originalIndex) => ({text, originalIndex})))
+  }));
+
+  displayedQuestions.forEach(({question, options}, index) => {
+    const card = document.createElement('section');
+    card.className = 'question';
+
+    const heading = document.createElement('div');
+    heading.className = 'qhead';
+    heading.textContent = 'Question ' + (index + 1) + ' of 15 · ' + question.type;
+
+    const prompt = document.createElement('div');
+    prompt.className = 'prompt';
+    prompt.textContent = question.prompt;
+
+    card.append(heading, prompt);
+
+    options.forEach((option, optionIndex) => {
+      const label = document.createElement('label');
+      label.className = 'option';
+
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'q_' + question.id;
+      radio.value = String(option.originalIndex);
+      radio.addEventListener('change', updateProgress);
+
+      const text = document.createElement('span');
+      const letter = document.createElement('strong');
+      letter.textContent = letters[optionIndex] + '. ';
+      text.append(letter, document.createTextNode(option.text));
+
+      label.append(radio, text);
+      card.appendChild(label);
+    });
+
+    questionRoot.appendChild(card);
+  });
+
+  updateProgress();
+}
+
+function updateProgress() {
+  const answered = currentTest.questions.reduce((count, question) => {
+    return count + (form.querySelector('input[name="q_' + question.id + '"]:checked') ? 1 : 0);
+  }, 0);
+  el('progressFill').style.width = (answered / 15 * 100) + '%';
+  el('checkBtn').textContent = 'Проверить ответы (' + answered + '/15)';
+}
+
+function startTest() {
+  if (!currentTest) {
+    loadCurrentTest();
+    return;
+  }
+  if (testStarted) return;
+
+  testStarted = true;
+  submissionComplete = false;
+  pendingPayload = null;
+  startedAt = Date.now();
+  elapsedSeconds = 0;
+  form.reset();
+  renderQuiz();
+
+  startPanel.hidden = true;
+  resultPanel.hidden = true;
+  testArea.hidden = false;
+  el('timer').textContent = '00:00';
+  el('testTitle').textContent = 'Набор ' + currentTest.setNumber + ' из ' + currentTest.totalSets;
+  el('checkBtn').disabled = false;
+  timerInterval = setInterval(updateTimer, 250);
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function makePayload() {
+  const answers = displayedQuestions.map(({question}) => {
+    const chosen = form.querySelector('input[name="q_' + question.id + '"]:checked');
+    return {
+      questionId: question.id,
+      selectedIndex: chosen ? Number(chosen.value) : null
+    };
+  });
+  return {
+    student: 'Артём',
+    testId: currentTest.testId,
+    setNumber: currentTest.setNumber,
+    attemptId: 'att_' + Date.now() + '_' + Math.random().toString(36).slice(2, 12),
+    durationSeconds: elapsedSeconds,
+    answers
+  };
+}
+
+async function submitPendingResult() {
+  if (!pendingPayload || submissionComplete) return;
+
+  el('retrySendBtn').classList.add('hidden');
+  el('sendStatus').textContent = 'Проверяю ответы и сохраняю результат на сервере…';
+
+  try {
+    const response = await jsonpRequest({
+      action: 'submit',
+      payload: JSON.stringify(pendingPayload)
+    });
+
+    if (!response || !response.ok || !Array.isArray(response.results)) {
+      const diagnostic = response ? JSON.stringify(response) : 'пустой ответ';
+      throw new Error('Не удалось подтвердить результат. ' + diagnostic);
+    }
+
+    submissionComplete = true;
+    testStarted = false;
+    showVerifiedResult(response, pendingPayload);
+  } catch (error) {
+    el('sendStatus').textContent = error.message + ' Повторная отправка использует тот же ID попытки, чтобы не создать дубль.';
+    el('retrySendBtn').classList.remove('hidden');
+  }
+}
+
+function showVerifiedResult(response, payload) {
+  stopTimer();
+  testArea.hidden = true;
+  resultPanel.hidden = false;
+
+  const byId = {};
+  response.results.forEach(item => { byId[item.questionId] = item; });
+
+  el('score').textContent = response.score + ' / ' + response.total;
+  el('elapsedResult').textContent = 'Время: ' + formatDuration(payload.durationSeconds);
+  el('sendStatus').textContent = 'Проверено сервером. Попытка сохранена в журнале результатов.';
+
+  if (response.passed && response.setNumber < TOTAL_SETS) {
+    el('message').textContent = 'Отлично! 15 из 15. Следующий набор открыт.';
+    el('nextBtn').textContent = 'Открыть набор ' + (response.setNumber + 1);
+    el('nextBtn').classList.remove('hidden');
+    el('retrySetBtn').classList.add('hidden');
+  } else if (response.passed && response.setNumber === TOTAL_SETS) {
+    el('message').textContent = 'Идеально! Все 5 наборов пройдены. Тема завершена. Ты останешься на наборе 5, пока преподаватель не сменит тему.';
+    el('nextBtn').classList.add('hidden');
+    el('retrySetBtn').textContent = 'Повторить набор 5';
+    el('retrySetBtn').classList.remove('hidden');
+  } else {
+    el('message').textContent = 'Пока не 15 из 15. Изучи разбор ошибок и повтори этот же набор. Следующий набор пока закрыт.';
+    el('nextBtn').classList.add('hidden');
+    el('retrySetBtn').textContent = 'Повторить этот набор';
+    el('retrySetBtn').classList.remove('hidden');
+  }
+
+  const review = el('review');
+  review.innerHTML = '';
+  currentTest.questions.forEach((question, index) => {
+    const server = byId[question.id];
+    const submitted = payload.answers.find(answer => answer.questionId === question.id);
+    const selectedIndex = submitted ? submitted.selectedIndex : null;
+    const correct = !!server && server.isCorrect;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'review';
+
+    const panel = document.createElement('div');
+    panel.className = correct ? 'correct' : 'incorrect';
+
+    const title = document.createElement('strong');
+    title.textContent = (index + 1) + '. ' + (correct ? 'Верно ✓' : selectedIndex === null ? 'Нет ответа' : 'Ошибка ✗');
+    panel.appendChild(title);
+    panel.appendChild(document.createElement('br'));
+
+    const questionText = document.createElement('div');
+    questionText.className = 'reviewText';
+    questionText.textContent = question.prompt;
+    panel.appendChild(questionText);
+
+    const chosenText = selectedIndex === null ? 'Нет ответа' : question.options[selectedIndex];
+    const userAnswer = document.createElement('div');
+    userAnswer.textContent = 'Твой ответ: ' + chosenText;
+    panel.appendChild(userAnswer);
+
+    const rightAnswer = document.createElement('div');
+    rightAnswer.textContent = 'Правильный ответ: ' + question.options[server.correctIndex];
+    rightAnswer.style.fontWeight = '700';
+    panel.appendChild(rightAnswer);
+
+    const explanation = document.createElement('div');
+    explanation.className = 'small';
+    explanation.textContent = server.explanation;
+    panel.appendChild(explanation);
+
+    wrapper.appendChild(panel);
+    review.appendChild(wrapper);
+  });
+
+  resultPanel.scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+form.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (!testStarted || pendingPayload) return;
+
   stopTimer();
   updateTimer();
-  const answers=displayedQuestions.map(({q})=>{
-    const chosen=form.querySelector('input[name="q'+q.id+'"]:checked');
-    return {questionId:q.id,selectedIndex:chosen?Number(chosen.value):null};
-  });
-  const payload={
-    student:"Артём",
-    testId:TEST_ID,
-    attemptId:"att_"+Date.now()+"_"+Math.random().toString(36).slice(2,12),
-    durationSeconds:elapsedSeconds,
-    answers:answers
-  };
-  const checkButton=document.getElementById("check");
-  checkButton.disabled=true;
-  document.getElementById("sendStatus").textContent="Проверяю ответы на сервере…";
-  result.style.display="block";
-  result.scrollIntoView({behavior:"smooth",block:"start"});
-  try{
-    const response=await sendJsonp(payload);
-    if(!response || !response.ok || !Array.isArray(response.results)){
-      let diagnostic;
-      try{diagnostic=JSON.stringify(response);}catch(e){diagnostic=String(response);}
-      throw new Error("Ответ сервера не распознан. Диагностика: "+(diagnostic||"пустой ответ"));
-    }
-    showVerifiedResult(response,payload);
-  }catch(error){
-    checkButton.disabled=false;
-    document.getElementById("sendStatus").textContent=error.message;
-    document.getElementById("message").textContent="Проверка пока не завершена. Нажми Check my answers ещё раз.";
-  }
+  pendingPayload = makePayload();
+  el('checkBtn').disabled = true;
+  resultPanel.hidden = false;
+  el('score').textContent = '…';
+  el('message').textContent = 'Ответы отправлены на серверную проверку.';
+  el('elapsedResult').textContent = 'Время: ' + formatDuration(elapsedSeconds);
+  el('sendStatus').textContent = 'Проверяю…';
+  el('retrySendBtn').classList.add('hidden');
+  resultPanel.scrollIntoView({behavior: 'smooth', block: 'start'});
+  await submitPendingResult();
 });
-document.getElementById("reset").addEventListener("click",()=>{
-  stopTimer();
-  form.reset();
-  testStarted=false;
-  startedAt=null;
-  elapsedSeconds=0;
-  timerDisplay.textContent="00:00";
-  testArea.hidden=true;
-  startPanel.hidden=false;
-  document.getElementById("check").disabled=false;
-  result.style.display="none";
-  savedPayload=null;
-  document.getElementById("sendStatus").textContent="";
-  document.getElementById("send").disabled=false;
-  document.getElementById("send").textContent="Send result";
-  window.scrollTo({top:0,behavior:"smooth"});
+
+el('startBtn').addEventListener('click', () => {
+  if (!currentTest) loadCurrentTest();
+  else startTest();
 });
-document.getElementById("send").addEventListener("click",()=>{
-  document.getElementById("sendStatus").textContent="Результат отправляется автоматически после проверки.";
+
+el('retrySendBtn').addEventListener('click', submitPendingResult);
+
+el('retrySetBtn').addEventListener('click', async () => {
+  if (!submissionComplete) return;
+  resultPanel.hidden = true;
+  startPanel.hidden = false;
+  pendingPayload = null;
+  submissionComplete = false;
+  await loadCurrentTest();
+  if (currentTest) startTest();
 });
-document.getElementById("copy").addEventListener("click",async()=>{
-  const text="Artyom's English Challenge\n"+document.getElementById("score").textContent+
-    "\n"+document.getElementById("message").textContent;
-  try{
+
+el('nextBtn').addEventListener('click', async () => {
+  if (!submissionComplete) return;
+  resultPanel.hidden = true;
+  startPanel.hidden = false;
+  pendingPayload = null;
+  submissionComplete = false;
+  await loadCurrentTest();
+});
+
+el('copyBtn').addEventListener('click', async () => {
+  const text = [
+    "Artyom's English Challenge",
+    'Набор: ' + (currentTest ? currentTest.setNumber : '—'),
+    'Результат: ' + el('score').textContent,
+    el('message').textContent,
+    el('elapsedResult').textContent
+  ].join('\n');
+  try {
     await navigator.clipboard.writeText(text);
-    document.getElementById("copy").textContent="Copied!";
-  }catch(e){
-    document.getElementById("copy").textContent="Copy unavailable";
+    el('copyBtn').textContent = 'Скопировано';
+  } catch (error) {
+    el('copyBtn').textContent = 'Не удалось скопировать';
   }
 });
-</script></body></html>
+
+loadCurrentTest();
+</script>
+</body>
+</html>
