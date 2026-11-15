@@ -57,6 +57,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
     <p>Active & Passive Voice · Formula Challenge · A2+</p>
     <div class="meta">
       <span class="pill" id="setPill">Set — / 5</span>
+      <span class="pill" id="pointsPill">⭐ Баллы: —</span>
       <span class="pill">15 questions</span>
       <span class="pill">15/15 to unlock the next set</span>
     </div>
@@ -91,6 +92,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
     <h2>Результат</h2>
     <p id="elapsedResult" class="small"></p>
     <div class="score" id="score"></div>
+    <p id="pointsResult" style="font-weight:700;color:#128052"></p>
     <p id="message"></p>
     <div id="sendStatus" class="status small" role="status"></div>
     <div class="actions">
@@ -219,6 +221,7 @@ async function loadCurrentTest() {
 
     currentTest = response;
     el('setPill').textContent = 'Set ' + response.setNumber + ' / ' + response.totalSets;
+    el('pointsPill').textContent = '⭐ Баллы: ' + (Number.isFinite(Number(response.pointsBalance)) && response.pointsBalance !== undefined ? response.pointsBalance : '—');
     el('startTitle').textContent = 'Готов к набору ' + response.setNumber + ' из ' + response.totalSets + '?';
     el('startText').textContent = response.title;
     el('startBtn').disabled = false;
@@ -368,6 +371,12 @@ function showVerifiedResult(response, payload) {
   response.results.forEach(item => { byId[item.questionId] = item; });
 
   el('score').textContent = response.score + ' / ' + response.total;
+  if (response.pointsBalance !== undefined) {
+    el('pointsPill').textContent = '⭐ Баллы: ' + response.pointsBalance;
+    el('pointsResult').textContent = (response.pointsAwarded ? '🏆 +' + response.pointsAwarded + ' баллов! ' : '') + 'Всего баллов: ' + response.pointsBalance;
+  } else {
+    el('pointsResult').textContent = 'Баллы появятся после обновления серверного кода.';
+  }
   el('elapsedResult').textContent = 'Время: ' + formatDuration(payload.durationSeconds);
   el('sendStatus').textContent = 'Проверено сервером. Попытка сохранена в журнале результатов.';
 
