@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Даша — English Test: To be 05</title>
+<title>Даша — English Test: To be 06</title>
 <style>
 :root{--ink:#27334a;--muted:#6d7890;--purple:#7055d9;--pink:#ffe8f0;--line:#e5e9f2;--green:#e6f7eb}
 *{box-sizing:border-box}body{margin:0;padding:16px;background:linear-gradient(140deg,#fff4f8,#f1f5ff);font-family:Arial,sans-serif;color:var(--ink)}
@@ -20,9 +20,9 @@ button{border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:
 </head>
 <body><main>
 <section class="hero">
-<div class="art">🦋 🌸 🐱</div><span class="tag">Уровень A1+ · Тест 05</span>
+<div class="art">🦋 🌸 🐱</div><span class="tag">Уровень A1 · Тест 06</span>
 <h1>Даша и глагол to be — новый вызов!</h1>
-<div class="intro">10 новых заданий: am, is, are, was, were, отрицания, вопросы и короткие ответы. Читай внимательно и выбирай правильный вариант!</div>
+<div class="intro">10 новых заданий только на am, is, are: предложения, вопросы, отрицания и переводы. Без прошедшего и будущего времени!</div>
 <div class="progress"><div class="bar" id="bar"></div></div><div class="small" id="progressText">Отвечено: 0 из 10</div>
 </section>
 <div id="quiz"></div>
@@ -37,126 +37,126 @@ button{border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:
 <script>
 const RESULTS_ENDPOINT="https://script.google.com/macros/s/AKfycbxGweNqBvYEs0INITyn4KwwlyfWjEjKisQ4LvYnVfTljWPfaCf71_REpMzWgg4zwFczng/exec";
 const questions=[
- {
-  "pic": "🏫",
-  "q": "Yesterday I ___ at school.",
-  "ru": "Вчера я была в школе.",
-  "a": [
-   "am",
-   "was",
-   "were"
-  ],
-  "c": 1,
-  "why": "Yesterday — прошлое время. С I используется was."
- },
- {
-  "pic": "🐶",
-  "q": "My dogs ___ very hungry now.",
-  "ru": "Мои собаки сейчас очень голодные.",
-  "a": [
-   "is",
-   "was",
-   "are"
-  ],
-  "c": 2,
-  "why": "Dogs — множественное число, поэтому are."
- },
- {
-  "pic": "👧",
-  "q": "___ she your best friend?",
-  "ru": "Она твоя лучшая подруга?",
-  "a": [
-   "Is",
-   "Are",
-   "Am"
-  ],
-  "c": 0,
-  "why": "С she используется is, а в вопросе is ставится в начале."
- },
- {
-  "pic": "🌧️",
-  "q": "It ___ sunny yesterday. It was rainy.",
-  "ru": "Вчера не было солнечно. Было дождливо.",
-  "a": [
-   "wasn't",
-   "isn't",
-   "weren't"
-  ],
-  "c": 0,
-  "why": "Yesterday — прошлое время, с it отрицание wasn't."
- },
- {
-  "pic": "👨‍👩‍👧",
-  "q": "My mum and dad ___ at home last night.",
-  "ru": "Мама и папа были дома вчера вечером.",
-  "a": [
-   "was",
-   "were",
-   "are"
-  ],
-  "c": 1,
-  "why": "My mum and dad — двое людей; в прошлом времени were."
- },
- {
-  "pic": "🎒",
-  "q": "There ___ two books in my bag.",
-  "ru": "В моей сумке две книги.",
-  "a": [
-   "are",
-   "is",
-   "am"
-  ],
-  "c": 0,
-  "why": "There are используется с несколькими предметами."
- },
- {
-  "pic": "🎂",
-  "q": "How old ___ you when you started school?",
-  "ru": "Сколько тебе было лет, когда ты пошла в школу?",
-  "a": [
-   "are",
-   "was",
-   "were"
-  ],
-  "c": 2,
-  "why": "Вопрос о прошлом: How old were you...?"
- },
- {
-  "pic": "🧸",
-  "q": "Выбери правильное отрицание: «Игрушка не новая».",
-  "ru": "Используй настоящее время.",
-  "a": [
-   "The toy aren't new.",
-   "The toy isn't new.",
-   "The toy am not new."
-  ],
-  "c": 1,
-  "why": "Toy — один предмет, значит is not (isn't)."
- },
- {
-  "pic": "👫",
-  "q": "Were the children tired? — No, they ___.",
-  "ru": "Дети устали? — Нет.",
-  "a": [
-   "wasn't",
-   "aren't",
-   "weren't"
-  ],
-  "c": 2,
-  "why": "Were ...? — No, they weren't. Ответ сохраняет прошедшее время."
- },
- {
-  "pic": "📍",
-  "q": "Выбери правильный вопрос: «Где вчера была Даша?»",
-  "ru": "Вопрос о прошлом.",
-  "a": [
-   "Where was Dasha yesterday?",
-   "Where were Dasha yesterday?",
-   "Where Dasha was yesterday?"
-  ],
-  "c": 0,
-  "why": "Dasha — один человек, поэтому was. Порядок слов: Where + was + Dasha...?"
- }
+  {
+    "pic": "🌞",
+    "q": "I ___ happy today.",
+    "ru": "Я сегодня счастлива.",
+    "a": [
+      "is",
+      "am",
+      "are"
+    ],
+    "c": 1,
+    "why": "С I всегда используем am."
+  },
+  {
+    "pic": "🐱",
+    "q": "My cat ___ small.",
+    "ru": "Моя кошка маленькая.",
+    "a": [
+      "are",
+      "is",
+      "am"
+    ],
+    "c": 1,
+    "why": "Cat — один предмет или животное, поэтому is."
+  },
+  {
+    "pic": "👫",
+    "q": "We ___ friends.",
+    "ru": "Мы друзья.",
+    "a": [
+      "am",
+      "is",
+      "are"
+    ],
+    "c": 2,
+    "why": "С we используем are."
+  },
+  {
+    "pic": "🎒",
+    "q": "Выбери правильный перевод: «Она ученица».",
+    "ru": "Выбери предложение с правильным to be.",
+    "a": [
+      "She are a pupil.",
+      "She is a pupil.",
+      "She am a pupil."
+    ],
+    "c": 1,
+    "why": "С she используется is."
+  },
+  {
+    "pic": "❓",
+    "q": "___ you ready?",
+    "ru": "Ты готова?",
+    "a": [
+      "Are",
+      "Is",
+      "Am"
+    ],
+    "c": 0,
+    "why": "В вопросе с you форма are ставится перед подлежащим."
+  },
+  {
+    "pic": "🐶",
+    "q": "The dogs ___ not hungry.",
+    "ru": "Собаки не голодные.",
+    "a": [
+      "is",
+      "am",
+      "are"
+    ],
+    "c": 2,
+    "why": "Dogs — множественное число, поэтому are not."
+  },
+  {
+    "pic": "🧸",
+    "q": "Выбери правильное отрицание: «Мишка не большой».",
+    "ru": "Речь об одной игрушке.",
+    "a": [
+      "The bear isn't big.",
+      "The bear aren't big.",
+      "The bear am not big."
+    ],
+    "c": 0,
+    "why": "Bear — один, значит is not или isn't."
+  },
+  {
+    "pic": "👦",
+    "q": "Tom and Ben ___ brothers.",
+    "ru": "Том и Бен — братья.",
+    "a": [
+      "is",
+      "are",
+      "am"
+    ],
+    "c": 1,
+    "why": "Два человека — множественное число, поэтому are."
+  },
+  {
+    "pic": "🌸",
+    "q": "___ she your sister?",
+    "ru": "Она твоя сестра?",
+    "a": [
+      "Am",
+      "Are",
+      "Is"
+    ],
+    "c": 2,
+    "why": "В вопросе с she используем Is в начале."
+  },
+  {
+    "pic": "🏡",
+    "q": "Выбери правильный перевод: «Я не дома».",
+    "ru": "Используй отрицание с to be.",
+    "a": [
+      "I isn't at home.",
+      "I am not at home.",
+      "I are not at home."
+    ],
+    "c": 1,
+    "why": "С I используется am, отрицание am not."
+  }
 ];
 let checked=false,score=0,startedAt=Date.now();
 const quiz=document.getElementById("quiz");
@@ -185,7 +185,7 @@ function sendResult(){
  if(!checked)return;
  const btn=document.getElementById("sendBtn"),status=document.getElementById("sendStatus");btn.disabled=true;btn.textContent="Отправляем...";
  const answers=questions.map((q,i)=>{const n=Number(document.querySelector('input[name="q'+i+'"]:checked').value);return {question:q.q,selectedAnswer:q.a[n],correctAnswer:q.a[q.c],isCorrect:n===q.c,explanation:q.why};});
- const payload={student:"Даша",testTitle:"To be: present and past — Challenge 05",level:"A1",score:score,total:questions.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:answers};
+ const payload={student:"Даша",testTitle:"To be: am/is/are — Challenge 06",level:"A1",score:score,total:questions.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:answers};
  fetch(RESULTS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)})
  .then(()=>{btn.textContent="Отправлено";status.textContent="Запрос отправлен. Проверь общий журнал — там должна появиться попытка Даши.";})
  .catch(()=>{btn.disabled=false;btn.textContent="Повторить отправку";status.textContent="Не получилось отправить. Проверь интернет и попробуй ещё раз.";});
