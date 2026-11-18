@@ -35,7 +35,7 @@ button{border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:
 <p class="small" style="text-align:center">Если нужно, попроси взрослого прочитать задание. 💜</p>
 </main>
 <script>
-const RESULTS_ENDPOINT="https://script.google.com/macros/s/AKfycbxGweNqBvYEs0INITyn4KwwlyfWjEjKisQ4LvYnVfTljWPfaCf71_REpMzWgg4zwFczng/exec";
+const RESULTS_ENDPOINT="https://script.google.com/macros/s/AKfycby7h-mc--QERnZ_N62qBu2FbjmvOHRYYzFAMH0ziH3w1w3uVgPUM2_EVX2EEw4zzc7VPw/exec";
 const questions=[
   {
     "pic": "🦊",
@@ -187,7 +187,7 @@ function sendResult(){
  const answers=questions.map((q,i)=>{const n=Number(document.querySelector('input[name="q'+i+'"]:checked').value);return {question:q.q,selectedAnswer:q.a[n],correctAnswer:q.a[q.c],isCorrect:n===q.c,explanation:q.why};});
  const payload={student:"Даша",testTitle:"To be: am/is/are — Challenge 07",level:"A1",score:score,total:questions.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:answers};
  fetch(RESULTS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)})
- .then(()=>{btn.textContent="Отправлено";status.textContent="Запрос отправлен. Проверь общий журнал — там должна появиться попытка Даши.";})
+ .then(()=>{btn.textContent="Отправлено";status.textContent="Запрос отправлен в общий журнал. После обновления серверного Code.gs придёт уведомление в Telegram.";})
  .catch(()=>{btn.disabled=false;btn.textContent="Повторить отправку";status.textContent="Не получилось отправить. Проверь интернет и попробуй ещё раз.";});
 }
 </script></body></html>
