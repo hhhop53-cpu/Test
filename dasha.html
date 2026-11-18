@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Даша — English Test: To be 06</title>
+<title>Даша — English Test: To be 07</title>
 <style>
 :root{--ink:#27334a;--muted:#6d7890;--purple:#7055d9;--pink:#ffe8f0;--line:#e5e9f2;--green:#e6f7eb}
 *{box-sizing:border-box}body{margin:0;padding:16px;background:linear-gradient(140deg,#fff4f8,#f1f5ff);font-family:Arial,sans-serif;color:var(--ink)}
@@ -20,7 +20,7 @@ button{border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:
 </head>
 <body><main>
 <section class="hero">
-<div class="art">🦋 🌸 🐱</div><span class="tag">Уровень A1 · Тест 06</span>
+<div class="art">🦋 🌸 🐱</div><span class="tag">Уровень A1 · Тест 07</span>
 <h1>Даша и глагол to be — новый вызов!</h1>
 <div class="intro">10 новых заданий только на am, is, are: предложения, вопросы, отрицания и переводы. Без прошедшего и будущего времени!</div>
 <div class="progress"><div class="bar" id="bar"></div></div><div class="small" id="progressText">Отвечено: 0 из 10</div>
@@ -38,124 +38,124 @@ button{border:0;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:
 const RESULTS_ENDPOINT="https://script.google.com/macros/s/AKfycbxGweNqBvYEs0INITyn4KwwlyfWjEjKisQ4LvYnVfTljWPfaCf71_REpMzWgg4zwFczng/exec";
 const questions=[
   {
-    "pic": "🌞",
-    "q": "I ___ happy today.",
-    "ru": "Я сегодня счастлива.",
-    "a": [
-      "is",
-      "am",
-      "are"
-    ],
-    "c": 1,
-    "why": "С I всегда используем am."
-  },
-  {
-    "pic": "🐱",
-    "q": "My cat ___ small.",
-    "ru": "Моя кошка маленькая.",
+    "pic": "🦊",
+    "q": "The fox ___ orange.",
+    "ru": "Лиса оранжевая.",
     "a": [
       "are",
+      "am",
+      "is"
+    ],
+    "c": 2,
+    "why": "The fox — одно животное, поэтому is."
+  },
+  {
+    "pic": "🎨",
+    "q": "I ___ good at drawing.",
+    "ru": "Я хорошо рисую.",
+    "a": [
+      "am",
+      "are",
+      "is"
+    ],
+    "c": 0,
+    "why": "С I употребляется am."
+  },
+  {
+    "pic": "👩‍👧",
+    "q": "My mum and I ___ happy.",
+    "ru": "Мы с мамой счастливы.",
+    "a": [
       "is",
+      "are",
       "am"
     ],
     "c": 1,
-    "why": "Cat — один предмет или животное, поэтому is."
+    "why": "My mum and I — два человека, поэтому are."
   },
   {
-    "pic": "👫",
-    "q": "We ___ friends.",
-    "ru": "Мы друзья.",
+    "pic": "🌳",
+    "q": "Выбери перевод: «Дерево высокое».",
+    "ru": "Одно дерево.",
     "a": [
-      "am",
-      "is",
-      "are"
+      "The tree are tall.",
+      "The tree is tall.",
+      "The tree am tall."
     ],
-    "c": 2,
-    "why": "С we используем are."
+    "c": 1,
+    "why": "The tree — единственное число, значит is."
   },
   {
     "pic": "🎒",
-    "q": "Выбери правильный перевод: «Она ученица».",
-    "ru": "Выбери предложение с правильным to be.",
-    "a": [
-      "She are a pupil.",
-      "She is a pupil.",
-      "She am a pupil."
-    ],
-    "c": 1,
-    "why": "С she используется is."
-  },
-  {
-    "pic": "❓",
-    "q": "___ you ready?",
-    "ru": "Ты готова?",
+    "q": "___ your bag blue?",
+    "ru": "Твой рюкзак синий?",
     "a": [
       "Are",
-      "Is",
-      "Am"
+      "Am",
+      "Is"
     ],
-    "c": 0,
-    "why": "В вопросе с you форма are ставится перед подлежащим."
+    "c": 2,
+    "why": "Bag — один предмет, вопрос начинается с Is."
   },
   {
-    "pic": "🐶",
-    "q": "The dogs ___ not hungry.",
-    "ru": "Собаки не голодные.",
+    "pic": "👧",
+    "q": "She ___ not tired.",
+    "ru": "Она не устала.",
     "a": [
       "is",
       "am",
       "are"
     ],
-    "c": 2,
-    "why": "Dogs — множественное число, поэтому are not."
-  },
-  {
-    "pic": "🧸",
-    "q": "Выбери правильное отрицание: «Мишка не большой».",
-    "ru": "Речь об одной игрушке.",
-    "a": [
-      "The bear isn't big.",
-      "The bear aren't big.",
-      "The bear am not big."
-    ],
     "c": 0,
-    "why": "Bear — один, значит is not или isn't."
+    "why": "С she употребляется is, отрицание is not."
   },
   {
-    "pic": "👦",
-    "q": "Tom and Ben ___ brothers.",
-    "ru": "Том и Бен — братья.",
+    "pic": "🚲",
+    "q": "Выбери правильный вопрос: «Ты дома?»",
+    "ru": "Выбери верный порядок слов.",
     "a": [
-      "is",
+      "Is you at home?",
+      "Am you at home?",
+      "Are you at home?"
+    ],
+    "c": 2,
+    "why": "С you используется are, в вопросе Are стоит первым."
+  },
+  {
+    "pic": "📚",
+    "q": "These books ___ interesting.",
+    "ru": "Эти книги интересные.",
+    "a": [
       "are",
+      "is",
       "am"
     ],
-    "c": 1,
-    "why": "Два человека — множественное число, поэтому are."
+    "c": 0,
+    "why": "Books — множественное число, поэтому are."
   },
   {
-    "pic": "🌸",
-    "q": "___ she your sister?",
-    "ru": "Она твоя сестра?",
+    "pic": "🐰",
+    "q": "___ I your friend?",
+    "ru": "Я твой друг?",
     "a": [
+      "Is",
       "Am",
-      "Are",
-      "Is"
-    ],
-    "c": 2,
-    "why": "В вопросе с she используем Is в начале."
-  },
-  {
-    "pic": "🏡",
-    "q": "Выбери правильный перевод: «Я не дома».",
-    "ru": "Используй отрицание с to be.",
-    "a": [
-      "I isn't at home.",
-      "I am not at home.",
-      "I are not at home."
+      "Are"
     ],
     "c": 1,
-    "why": "С I используется am, отрицание am not."
+    "why": "С I используем am, в вопросе Am I...?"
+  },
+  {
+    "pic": "👨‍🏫",
+    "q": "Выбери перевод: «Они не учителя».",
+    "ru": "Используй отрицание в настоящем времени.",
+    "a": [
+      "They isn't teachers.",
+      "They aren't teachers.",
+      "They am not teachers."
+    ],
+    "c": 1,
+    "why": "С they используем are not (aren't)."
   }
 ];
 let checked=false,score=0,startedAt=Date.now();
@@ -185,7 +185,7 @@ function sendResult(){
  if(!checked)return;
  const btn=document.getElementById("sendBtn"),status=document.getElementById("sendStatus");btn.disabled=true;btn.textContent="Отправляем...";
  const answers=questions.map((q,i)=>{const n=Number(document.querySelector('input[name="q'+i+'"]:checked').value);return {question:q.q,selectedAnswer:q.a[n],correctAnswer:q.a[q.c],isCorrect:n===q.c,explanation:q.why};});
- const payload={student:"Даша",testTitle:"To be: am/is/are — Challenge 06",level:"A1",score:score,total:questions.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:answers};
+ const payload={student:"Даша",testTitle:"To be: am/is/are — Challenge 07",level:"A1",score:score,total:questions.length,durationSeconds:Math.round((Date.now()-startedAt)/1000),answers:answers};
  fetch(RESULTS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)})
  .then(()=>{btn.textContent="Отправлено";status.textContent="Запрос отправлен. Проверь общий журнал — там должна появиться попытка Даши.";})
  .catch(()=>{btn.disabled=false;btn.textContent="Повторить отправку";status.textContent="Не получилось отправить. Проверь интернет и попробуй ещё раз.";});
