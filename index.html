@@ -103,7 +103,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
     </div>
     <div id="review"></div>
   </section>
-  <footer>Keep going, Artyom. Every challenge makes your English stronger!</footer>
+  <section class="panel" id="rewardHistoryPanel"><h2 style="margin-top:0;color:#172033">⭐ История баллов</h2><p id="rewardHistoryStatus" class="small">Загружаю историю…</p><div id="rewardHistoryEntries"></div></section>\n  <footer>Keep going, Artyom. Every challenge makes your English stronger!</footer>
 </main>
 
 <script>
@@ -198,7 +198,7 @@ function jsonpRequest(params, timeoutMs = 20000) {
   });
 }
 
-async function loadCurrentTest() {
+async function loadRewardHistory() {\n  const status=el('rewardHistoryStatus');\n  const root=el('rewardHistoryEntries');\n  try {\n    const data=await jsonpRequest({action:'getRewards'});\n    if(!data||!data.ok||!Array.isArray(data.history)) throw new Error(data&&data.error||'История пока не подключена на сервере');\n    status.textContent='Баланс: '+data.pointsBalance+' · Начислено: '+data.earned+' · Потрачено: '+data.spent;\n    root.replaceChildren();\n    if(!data.history.length){const p=document.createElement('p');p.textContent='Операций пока нет';root.append(p);}\n    data.history.slice(0,30).forEach(item=>{const p=document.createElement('div');p.className='review';p.textContent=(item.type==='earn'?'➕ +':'➖ −')+item.amount+' баллов · '+(item.reason||'Операция')+' · '+(item.date||'');root.append(p);});\n  }catch(error){status.textContent='История появится после обновления серверной части.';root.replaceChildren();}\n}\n\nasync function loadCurrentTest() {
   el('startBtn').disabled = true;
   el('startTitle').textContent = 'Загружаю тест…';
   el('startText').textContent = 'Получаю текущий набор с сервера.';
