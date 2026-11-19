@@ -198,7 +198,20 @@ function jsonpRequest(params, timeoutMs = 20000) {
   });
 }
 
-async function loadRewardHistory() {\n  const status=el('rewardHistoryStatus');\n  const root=el('rewardHistoryEntries');\n  try {\n    const data=await jsonpRequest({action:'getRewards'});\n    if(!data||!data.ok||!Array.isArray(data.history)) throw new Error(data&&data.error||'История пока не подключена на сервере');\n    status.textContent='Баланс: '+data.pointsBalance+' · Начислено: '+data.earned+' · Потрачено: '+data.spent;\n    root.replaceChildren();\n    if(!data.history.length){const p=document.createElement('p');p.textContent='Операций пока нет';root.append(p);}\n    data.history.slice(0,30).forEach(item=>{const p=document.createElement('div');p.className='review';p.textContent=(item.type==='earn'?'➕ +':'➖ −')+item.amount+' баллов · '+(item.reason||'Операция')+' · '+(item.date||'');root.append(p);});\n  }catch(error){status.textContent='История появится после обновления серверной части.';root.replaceChildren();}\n}\n\nasync function loadCurrentTest() {
+async function loadRewardHistory() {
+  const status=el('rewardHistoryStatus');
+  const root=el('rewardHistoryEntries');
+  try {
+    const data=await jsonpRequest({action:'getRewards'});
+    if(!data||!data.ok||!Array.isArray(data.history)) throw new Error(data&&data.error||'История пока не подключена на сервере');
+    status.textContent='Баланс: '+data.pointsBalance+' · Начислено: '+data.earned+' · Потрачено: '+data.spent;
+    root.replaceChildren();
+    if(!data.history.length){const p=document.createElement('p');p.textContent='Операций пока нет';root.append(p);}
+    data.history.slice(0,30).forEach(item=>{const p=document.createElement('div');p.className='review';p.textContent=(item.type==='earn'?'➕ +':'➖ −')+item.amount+' баллов · '+(item.reason||'Операция')+' · '+(item.date||'');root.append(p);});
+  }catch(error){status.textContent='История появится после обновления серверной части.';root.replaceChildren();}
+}
+
+async function loadCurrentTest() {
   el('startBtn').disabled = true;
   el('startTitle').textContent = 'Загружаю тест…';
   el('startText').textContent = 'Получаю текущий набор с сервера.';
