@@ -1,5 +1,13 @@
 {
   "schemaVersion": 1,
   "student": "Артём",
-  "transactions": []
+  "transactions": [
+    {
+      "id": "spend-2026-11-20-001",
+      "type": "spend",
+      "amount": 60,
+      "date": "2026-11-20",
+      "reason": "Награда — списание по подтверждённой команде родителя"
+    }
+  ]
 }
