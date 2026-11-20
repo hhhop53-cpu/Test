@@ -233,9 +233,9 @@ async function loadCurrentTest() {
     });
 
     currentTest = response;
-    el('setPill').textContent = 'Set ' + response.setNumber + ' / ' + response.totalSets;
+    el('setPill').textContent = 'Набор ' + response.setNumber + ' / ' + response.totalSets;
     el('pointsPill').textContent = '⭐ Баллы: ' + (Number.isFinite(Number(response.pointsBalance)) && response.pointsBalance !== undefined ? response.pointsBalance : '—');
-    el('startTitle').textContent = 'Готов к набору ' + response.setNumber + ' из ' + response.totalSets + '?';
+    el('startTitle').textContent = 'Готов к тесту?';
     el('startText').textContent = response.title;
     el('startBtn').disabled = false;
     el('startBtn').textContent = 'Начать тест';
