@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#172b59">
-<title>Artyom's English Challenge — Active & Passive Voice</title>
+<title>Artyom's English Challenge — English Adverbs</title>
 <style>
 :root{color-scheme:light;--ink:#172033;--muted:#64748b;--line:#dbe3ee;--blue:#2457d6;--navy:#172b59;--pale:#eef4ff;--good:#e9f8ef;--bad:#fff0f0;--amber:#fff6df}
 *{box-sizing:border-box}
@@ -54,9 +54,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
 <main>
   <section class="hero">
     <h1>Artyom's English Challenge</h1>
-    <p>Active & Passive Voice · Formula Challenge · A2+</p>
+    <p>English Adverbs · Recently, Rarely, Hardly & More · A2–B1</p>
     <div class="meta">
-      <span class="pill" id="setPill">Set — / 5</span>
+      <span class="pill" id="setPill">Set — / 15</span>
       <span class="pill" id="pointsPill">⭐ Баллы: —</span>
       <span class="pill">15 questions</span>
       <span class="pill">15/15 to unlock the next set</span>
@@ -77,8 +77,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
     </div>
     <div class="progressLine"><div id="progressFill"></div></div>
     <div class="panel instructions">
-      <strong>Инструкция:</strong> В каждом вопросе выбери один правильный вариант. Смешаны 12 времён Active Voice и употребительные формы Passive Voice. Форматы заданий: формулы, поиск ошибок, отрицания, вопросы и преобразование Active → Passive.
-      <br><br><strong>Обозначения:</strong> V1 — первая форма глагола, V2 — вторая, V3 — третья, V-ing — форма с окончанием -ing.
+      <strong>Инструкция:</strong> В каждом вопросе выбери один правильный вариант. Тренируем наречия recently, rarely, seldom, lately, certainly, maybe, perhaps, therefore, hardly и hardly ever. Задания: вставь пропущенное, найди ошибку, переведи с русского на английский и с английского на русский.
+      <br><br><strong>Баллы:</strong> 15/15 — +60 за впервые пройденный набор; менее 15/15 — штраф −10 за каждую новую попытку в блоке наречий.
     </div>
     <form id="quiz">
       <div id="questions"></div>
@@ -110,7 +110,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
 'use strict';
 
 const RESULTS_ENDPOINT = 'https://script.google.com/macros/s/AKfycby7h-mc--QERnZ_N62qBu2FbjmvOHRYYzFAMH0ziH3w1w3uVgPUM2_EVX2EEw4zzc7VPw/exec';
-const TOTAL_SETS = 5;
+const TOTAL_SETS = 15;
 const letters = ['A', 'B', 'C', 'D'];
 
 let currentTest = null;
@@ -204,7 +204,7 @@ async function loadRewardHistory() {
   try {
     const data=await jsonpRequest({action:'getRewards'});
     if(!data||!data.ok||!Array.isArray(data.history)) throw new Error(data&&data.error||'История пока не подключена на сервере');
-    status.textContent='Баланс: '+data.pointsBalance+' · Начислено: '+data.earned+' · Потрачено: '+data.spent;
+    status.textContent='Баланс: '+data.pointsBalance+' · Начислено: '+data.earned+' · Списано (включая штрафы): '+data.spent;
     root.replaceChildren();
     if(!data.history.length){const p=document.createElement('p');p.textContent='Операций пока нет';root.append(p);}
     data.history.slice(0,30).forEach(item=>{const p=document.createElement('div');p.className='review';p.textContent=(item.type==='earn'?'➕ +':'➖ −')+item.amount+' баллов · '+(item.reason||'Операция')+' · '+(item.date||'');root.append(p);});
@@ -386,7 +386,7 @@ function showVerifiedResult(response, payload) {
   el('score').textContent = response.score + ' / ' + response.total;
   if (response.pointsBalance !== undefined) {
     el('pointsPill').textContent = '⭐ Баллы: ' + response.pointsBalance;
-    el('pointsResult').textContent = (response.pointsAwarded ? '🏆 +' + response.pointsAwarded + ' баллов! ' : '') + 'Всего баллов: ' + response.pointsBalance;
+    el('pointsResult').textContent = (response.pointsAwarded ? '🏆 +' + response.pointsAwarded + ' баллов! ' : '') + (response.pointsPenalty ? '⚠️ −' + response.pointsPenalty + ' баллов за попытку. ' : '') + 'Всего баллов: ' + response.pointsBalance;
   } else {
     el('pointsResult').textContent = 'Баллы появятся после обновления серверного кода.';
   }
@@ -399,9 +399,9 @@ function showVerifiedResult(response, payload) {
     el('nextBtn').classList.remove('hidden');
     el('retrySetBtn').classList.add('hidden');
   } else if (response.passed && response.setNumber === TOTAL_SETS) {
-    el('message').textContent = 'Идеально! Все 5 наборов пройдены. Тема завершена. Ты останешься на наборе 5, пока преподаватель не сменит тему.';
+    el('message').textContent = 'Идеально! Все 15 наборов пройдены. Блок наречий завершён.';
     el('nextBtn').classList.add('hidden');
-    el('retrySetBtn').textContent = 'Повторить набор 5';
+    el('retrySetBtn').textContent = 'Повторить набор 15';
     el('retrySetBtn').classList.remove('hidden');
   } else {
     el('message').textContent = 'Пока не 15 из 15. Изучи разбор ошибок и повтори этот же набор. Следующий набор пока закрыт.';
