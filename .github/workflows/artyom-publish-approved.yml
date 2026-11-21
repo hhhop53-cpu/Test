@@ -23,6 +23,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
       - name: Check GitHub code
         run: |
           set -euo pipefail
@@ -56,8 +57,12 @@ jobs:
           python3 -m json.tool "$stage/appsscript.json" > /dev/null
           # Abort if Google HEAD changed since the GitHub baseline.
           # Allow only one trailing whitespace byte (the observed Google serialization difference).
-          git show f1281456bbfb52a585a68182555cb79b83f4151d:apps-script/artyom/Code.js > "$RUNNER_TEMP/artyom-baseline-code.js"
-          git show f1281456bbfb52a585a68182555cb79b83f4151d:apps-script/artyom/Dashboard.html > "$RUNNER_TEMP/artyom-baseline-dashboard.html"
+          # Historical source requires full checkout history; verify it before staging.
+          BASELINE_COMMIT=f1281456bbfb52a585a68182555cb79b83f4151d
+          git cat-file -e "$BASELINE_COMMIT:apps-script/artyom/Code.js"
+          git cat-file -e "$BASELINE_COMMIT:apps-script/artyom/Dashboard.html"
+          git show "$BASELINE_COMMIT:apps-script/artyom/Code.js" > "$RUNNER_TEMP/artyom-baseline-code.js"
+          git show "$BASELINE_COMMIT:apps-script/artyom/Dashboard.html" > "$RUNNER_TEMP/artyom-baseline-dashboard.html"
           python3 - "$stage" <<'PY'
           from pathlib import Path
           import sys
@@ -87,10 +92,19 @@ jobs:
               sys.exit("Unexpected files in release stage; aborting.")
           print("Staging validated. Existing deployment will be updated in place.")
           PY
+          # Check the supported deployment command before making any remote writes.
+          if clasp create-deployment --help > /dev/null 2>&1; then
+            deploy_command=create-deployment
+          elif clasp deploy --help > /dev/null 2>&1; then
+            deploy_command=deploy
+          else
+            echo "::error::No supported clasp deploy command found; refusing to push"
+            exit 1
+          fi
           (
             cd "$stage"
             clasp push --force
-            clasp deploy --deploymentId "$DEPLOYMENT_ID" --description "Artyom release from GitHub commit $GITHUB_SHA"
+            clasp "$deploy_command" --deploymentId "$DEPLOYMENT_ID" --description "Artyom release from GitHub commit $GITHUB_SHA"
             clasp deployments > "$RUNNER_TEMP/artyom-deployments-after.txt"
           )
           grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/artyom-deployments-after.txt"
