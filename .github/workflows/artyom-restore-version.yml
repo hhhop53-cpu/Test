@@ -1,0 +1,51 @@
+name: Artyom Apps Script - restore previous deployment version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_number:
+        description: 'Existing Apps Script version number to restore (verify in Apps Script first)'
+        required: true
+        type: string
+      confirmation:
+        description: 'Type RESTORE_ARTYOM to update the existing deployment to that version'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: artyom-apps-script-publication
+  cancel-in-progress: false
+
+jobs:
+  restore:
+    if: ${{ inputs.confirmation == 'RESTORE_ARTYOM' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install clasp
+        run: npm install --global @google/clasp
+      - name: Restore existing deployment to selected immutable version
+        env:
+          CLASP_CREDENTIALS_JSON: ${{ secrets.CLASP_CREDENTIALS_JSON }}
+          SCRIPT_ID: 1RM7ynJPf5CTAHGLjV9Ciud7wFswr8V7B77udf2O0grgwvk070fq9UtRH
+          DEPLOYMENT_ID: AKfycby7h-mc--QERnZ_N62qBu2FbjmvOHRYYzFAMH0ziH3w1w3uVgPUM2_EVX2EEw4zzc7VPw
+          VERSION_NUMBER: ${{ inputs.version_number }}
+        run: |
+          set -euo pipefail
+          [[ "$VERSION_NUMBER" =~ ^[1-9][0-9]*$ ]] || { echo "::error::Version must be a positive integer"; exit 1; }
+          test -n "$CLASP_CREDENTIALS_JSON"
+          printf '%s' "$CLASP_CREDENTIALS_JSON" > "$HOME/.clasprc.json"
+          chmod 600 "$HOME/.clasprc.json"
+          trap 'rm -f "$HOME/.clasprc.json"' EXIT
+          mkdir -p "$RUNNER_TEMP/artyom-restore"
+          printf '{"scriptId":"%s"}\n' "$SCRIPT_ID" > "$RUNNER_TEMP/artyom-restore/.clasp.json"
+          cd "$RUNNER_TEMP/artyom-restore"
+          clasp deployments > "$RUNNER_TEMP/deployments-before.txt"
+          grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/deployments-before.txt"
+          echo "Updating existing deployment to explicitly selected version $VERSION_NUMBER"
+          clasp deploy --deploymentId "$DEPLOYMENT_ID" --versionNumber "$VERSION_NUMBER" --description "Restore Artyom deployment to version $VERSION_NUMBER"
+          clasp deployments > "$RUNNER_TEMP/deployments-after.txt"
+          grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/deployments-after.txt"
+          echo "Deployment restored; Apps Script HEAD was not changed."
