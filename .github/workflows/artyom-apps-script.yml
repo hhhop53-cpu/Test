@@ -43,3 +43,24 @@ jobs:
           trap 'rm -f "$HOME/.clasprc.json"' EXIT
           clasp list > /dev/null
           echo "Clasp authentication succeeded. No files were pushed or deployed."
+
+      - name: Verify existing Apps Script deployment (read-only)
+        env:
+          CLASP_CREDENTIALS_JSON: ${{ secrets.CLASP_CREDENTIALS_JSON }}
+          SCRIPT_ID: 1RM7ynJPf5CTAHGLjV9Ciud7wFswr8V7B77udf2O0grgwvk070fq9UtRH
+          DEPLOYMENT_ID: AKfycby7h-mc--QERnZ_N62qBu2FbjmvOHRYYzFAMH0ziH3w1w3uVgPUM2_EVX2EEw4zzc7VPw
+        run: |
+          set -euo pipefail
+          test -n "$CLASP_CREDENTIALS_JSON"
+          printf '%s' "$CLASP_CREDENTIALS_JSON" > "$HOME/.clasprc.json"
+          chmod 600 "$HOME/.clasprc.json"
+          trap 'rm -f "$HOME/.clasprc.json" .clasp.json deployments.txt' EXIT
+          printf '{"scriptId":"%s"}\n' "$SCRIPT_ID" > .clasp.json
+          clasp deployments > deployments.txt
+          if grep -Fq "$DEPLOYMENT_ID" deployments.txt; then
+            echo "Confirmed: existing deployment belongs to the configured Apps Script project."
+            echo "Read-only verification complete. No push or deploy occurred."
+          else
+            echo "::error::Configured deployment was not found for this Apps Script project."
+            exit 1
+          fi
