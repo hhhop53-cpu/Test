@@ -60,7 +60,7 @@ jobs:
               print(f"{label}: GitHub={len(a)} bytes, Google={len(b)} bytes")
               if a == b:
                   print(f"MATCH exact: {label}")
-              elif a.rstrip(b"\\r\\n") == b.rstrip(b"\\r\\n"):
+              elif a.rstrip(b"\r\n") == b.rstrip(b"\r\n"):
                   print(f"MATCH except trailing newline(s): {label}")
               else:
                   failed = True
