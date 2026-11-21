@@ -83,13 +83,13 @@ jobs:
           test -s "$RUNNER_TEMP/artyom-google-backup/appsscript.json" || { echo "::error::Google manifest missing"; exit 1; }
           echo "::notice::Google manifest backed up; GitHub manifest still needs to be added before publishing."
           echo "Preflight passed for Code.js and Dashboard.html. No push, version creation, or deployment performed."
-      - name: Save preflight backup
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: artyom-apps-script-preflight-backup
-          path: |
-            ${{ runner.temp }}/artyom-google-backup/Код.js
-            ${{ runner.temp }}/artyom-google-backup/Dashboard.html
-            ${{ runner.temp }}/artyom-google-backup/appsscript.json
-          retention-days: 7
+      - name: Verify preserved manifest and staging file names (NO DEPLOY)
+        run: |
+          set -euo pipefail
+          test -s "$RUNNER_TEMP/artyom-google-backup/appsscript.json"
+          test -s "$RUNNER_TEMP/artyom-google-backup/Код.js"
+          test -s "$RUNNER_TEMP/artyom-google-backup/Dashboard.html"
+          test ! -e "$RUNNER_TEMP/artyom-google-backup/Code.js"
+          python3 -m json.tool "$RUNNER_TEMP/artyom-google-backup/appsscript.json" > /dev/null
+          echo "Ready for staging: original Код.js, Dashboard.html, and Google manifest retained."
+          echo "NO PUSH OR DEPLOY performed."
