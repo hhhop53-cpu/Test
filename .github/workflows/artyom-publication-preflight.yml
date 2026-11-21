@@ -45,13 +45,18 @@ jobs:
             clasp deployments > "$RUNNER_TEMP/deployments.txt"
           )
           grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/deployments.txt"
-          for file in Code.js Dashboard.html; do
-            cmp "apps-script/artyom/$file" "$RUNNER_TEMP/artyom-google-backup/$file" || {
-              echo "::error::Source mismatch: $file. Publication must be blocked."
-              exit 1
-            }
-            echo "MATCH: $file"
-          done
+          # The Google project uses a Cyrillic filename: Код.js
+          # The GitHub copy was saved under the Latin name: Code.js
+          cmp "apps-script/artyom/Code.js" "$RUNNER_TEMP/artyom-google-backup/Код.js" || {
+            echo "::error::Source mismatch: GitHub Code.js vs Google Код.js"
+            exit 1
+          }
+          echo "MATCH: GitHub Code.js = Google Код.js"
+          cmp "apps-script/artyom/Dashboard.html" "$RUNNER_TEMP/artyom-google-backup/Dashboard.html" || {
+            echo "::error::Source mismatch: Dashboard.html"
+            exit 1
+          }
+          echo "MATCH: Dashboard.html"
           test -s "$RUNNER_TEMP/artyom-google-backup/appsscript.json" || { echo "::error::Google manifest missing"; exit 1; }
           echo "::notice::Google manifest backed up; GitHub manifest still needs to be added before publishing."
           echo "Preflight passed for Code.js and Dashboard.html. No push, version creation, or deployment performed."
@@ -60,7 +65,7 @@ jobs:
         with:
           name: artyom-apps-script-preflight-backup
           path: |
-            ${{ runner.temp }}/artyom-google-backup/Code.js
+            ${{ runner.temp }}/artyom-google-backup/Код.js
             ${{ runner.temp }}/artyom-google-backup/Dashboard.html
             ${{ runner.temp }}/artyom-google-backup/appsscript.json
           retention-days: 7
