@@ -58,8 +58,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
     <div class="meta">
       <span class="pill" id="setPill">Set — / 15</span>
       <span class="pill" id="pointsPill">⭐ Баллы: —</span>
-      <span class="pill">15 questions</span>
-      <span class="pill">15/15 to unlock the next set</span>
+      <span class="pill" id="questionCountPill">15 questions</span>
+      <span class="pill" id="passingScorePill">15/15 to unlock the next set</span>
     </div>
   </section>
 
@@ -219,7 +219,7 @@ async function loadCurrentTest() {
   try {
     const response = await jsonpRequest({action: 'getTest'});
     if (!response || !response.ok || !Array.isArray(response.questions) ||
-        response.questions.length !== 15 || !response.testId ||
+        ![15, 16].includes(response.questions.length) || !response.testId ||
         !Number.isInteger(Number(response.setNumber))) {
       throw new Error(response && response.error ? response.error : 'Сервер вернул некорректный набор.');
     }
@@ -233,6 +233,8 @@ async function loadCurrentTest() {
     });
 
     currentTest = response;
+    el('questionCountPill').textContent = response.questions.length + ' questions';
+    el('passingScorePill').textContent = response.questions.length + '/' + response.questions.length + ' to unlock the next set';
     el('setPill').textContent = 'Набор ' + response.setNumber + ' / ' + response.totalSets;
     el('pointsPill').textContent = '⭐ Баллы: ' + (Number.isFinite(Number(response.pointsBalance)) && response.pointsBalance !== undefined ? response.pointsBalance : '—');
     el('startTitle').textContent = 'Готов к тесту?';
@@ -254,7 +256,7 @@ async function loadCurrentTest() {
 
 function renderQuiz() {
   questionRoot.innerHTML = '';
-  displayedQuestions = shuffle(currentTest.questions).map(question => ({
+  displayedQuestions = [currentTest.questions[0]].concat(shuffle(currentTest.questions.slice(1))).map(question => ({
     question,
     options: shuffle(question.options.map((text, originalIndex) => ({text, originalIndex})))
   }));
@@ -265,7 +267,7 @@ function renderQuiz() {
 
     const heading = document.createElement('div');
     heading.className = 'qhead';
-    heading.textContent = 'Question ' + (index + 1) + ' of 15 · ' + question.type;
+    heading.textContent = 'Question ' + (index + 1) + ' of ' + currentTest.questions.length + ' · ' + question.type;
 
     const prompt = document.createElement('div');
     prompt.className = 'prompt';
@@ -302,7 +304,7 @@ function updateProgress() {
   const answered = currentTest.questions.reduce((count, question) => {
     return count + (form.querySelector('input[name="q_' + question.id + '"]:checked') ? 1 : 0);
   }, 0);
-  el('progressFill').style.width = (answered / 15 * 100) + '%';
+  el('progressFill').style.width = (answered / currentTest.questions.length * 100) + '%';
   el('checkBtn').textContent = 'Проверить ответы (' + answered + '/15)';
 }
 
@@ -394,7 +396,7 @@ function showVerifiedResult(response, payload) {
   el('sendStatus').textContent = 'Проверено сервером. Попытка сохранена в журнале результатов.';
 
   if (response.passed && response.setNumber < TOTAL_SETS) {
-    el('message').textContent = 'Отлично! 15 из 15. Следующий набор открыт.';
+    el('message').textContent = 'Отлично! ' + response.total + ' из ' + response.total + '. Следующий набор открыт.';
     el('nextBtn').textContent = 'Открыть набор ' + (response.setNumber + 1);
     el('nextBtn').classList.remove('hidden');
     el('retrySetBtn').classList.add('hidden');
@@ -404,7 +406,7 @@ function showVerifiedResult(response, payload) {
     el('retrySetBtn').textContent = 'Повторить набор 15';
     el('retrySetBtn').classList.remove('hidden');
   } else {
-    el('message').textContent = 'Пока не 15 из 15. Изучи разбор ошибок и повтори этот же набор. Следующий набор пока закрыт.';
+    el('message').textContent = 'Пока не ' + response.total + ' из ' + response.total + '. Изучи разбор ошибок и повтори этот же набор. Следующий набор пока закрыт.';
     el('nextBtn').classList.add('hidden');
     el('retrySetBtn').textContent = 'Повторить этот набор';
     el('retrySetBtn').classList.remove('hidden');
