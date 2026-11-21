@@ -93,18 +93,14 @@ jobs:
           print("Staging validated. Existing deployment will be updated in place.")
           PY
           # Check the supported deployment command before making any remote writes.
-          if clasp create-deployment --help > /dev/null 2>&1; then
-            deploy_command=create-deployment
-          elif clasp deploy --help > /dev/null 2>&1; then
-            deploy_command=deploy
-          else
-            echo "::error::No supported clasp deploy command found; refusing to push"
+          if ! clasp create-deployment --help > /dev/null 2>&1; then
+            echo "::error::clasp create-deployment is unavailable; refusing to push"
             exit 1
           fi
           (
             cd "$stage"
             clasp push --force
-            clasp "$deploy_command" --deploymentId "$DEPLOYMENT_ID" --description "Artyom release from GitHub commit $GITHUB_SHA"
+            clasp create-deployment --deploymentId "$DEPLOYMENT_ID" --description "Artyom release from GitHub commit $GITHUB_SHA"
             clasp deployments > "$RUNNER_TEMP/artyom-deployments-after.txt"
           )
           grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/artyom-deployments-after.txt"
