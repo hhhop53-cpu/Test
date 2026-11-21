@@ -47,20 +47,36 @@ jobs:
           grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/deployments.txt"
           # The Google project uses a Cyrillic filename: Код.js
           # The GitHub copy was saved under the Latin name: Code.js
-          cmp "apps-script/artyom/Code.js" "$RUNNER_TEMP/artyom-google-backup/Код.js" || {
-            echo "::error::Source mismatch: GitHub Code.js vs Google Код.js"
-            exit 1
-          }
-          echo "MATCH: GitHub Code.js = Google Код.js"
-          cmp "apps-script/artyom/Dashboard.html" "$RUNNER_TEMP/artyom-google-backup/Dashboard.html" || {
-            echo "::error::Source mismatch: Dashboard.html"
-            exit 1
-          }
-          echo "MATCH: Dashboard.html"
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, os, sys
+          pairs = [
+              ("Code.js / Код.js", Path("apps-script/artyom/Code.js"), Path(os.environ["RUNNER_TEMP"]) / "artyom-google-backup" / "Код.js"),
+              ("Dashboard.html", Path("apps-script/artyom/Dashboard.html"), Path(os.environ["RUNNER_TEMP"]) / "artyom-google-backup" / "Dashboard.html"),
+          ]
+          failed = False
+          for label, github, google in pairs:
+              a, b = github.read_bytes(), google.read_bytes()
+              print(f"{label}: GitHub={len(a)} bytes, Google={len(b)} bytes")
+              if a == b:
+                  print(f"MATCH exact: {label}")
+              elif a.rstrip(b"\\r\\n") == b.rstrip(b"\\r\\n"):
+                  print(f"MATCH except trailing newline(s): {label}")
+              else:
+                  failed = True
+                  first = next((i for i,(x,y) in enumerate(zip(a,b)) if x != y), min(len(a),len(b)))
+                  print(f"DIFFERENT: {label}; first differing byte offset={first}")
+                  print(f"SHA256 GitHub={hashlib.sha256(a).hexdigest()}")
+                  print(f"SHA256 Google={hashlib.sha256(b).hexdigest()}")
+          if failed:
+              print("::error::Source differs beyond trailing line endings; publication remains blocked.")
+              sys.exit(1)
+          PY
           test -s "$RUNNER_TEMP/artyom-google-backup/appsscript.json" || { echo "::error::Google manifest missing"; exit 1; }
           echo "::notice::Google manifest backed up; GitHub manifest still needs to be added before publishing."
           echo "Preflight passed for Code.js and Dashboard.html. No push, version creation, or deployment performed."
       - name: Save preflight backup
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: artyom-apps-script-preflight-backup
