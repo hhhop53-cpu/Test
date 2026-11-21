@@ -704,6 +704,18 @@ const TEST_SETS = [
   }
 ];
 
+// Pin the extra vocabulary question to the set active on first request after release.
+// Other sets keep their original 15 questions.
+const BARELY_EXTRA_SET_KEY = 'ARTYOM_BARELY_EXTRA_SET_NUMBER';
+function barelyExtraSetNumber_() {
+  const props = PropertiesService.getScriptProperties();
+  const saved = Number(props.getProperty(BARELY_EXTRA_SET_KEY));
+  if (Number.isInteger(saved) && saved >= 1 && saved <= TOTAL_SETS) return saved;
+  const active = currentSetIndex_() + 1;
+  props.setProperty(BARELY_EXTRA_SET_KEY, String(active));
+  return active;
+}
+
 function buildSetQuestions_(setNumber) {
   const set = TEST_SETS[setNumber - 1];
   const source = set && set.questions;
@@ -730,7 +742,16 @@ function buildSetQuestions_(setNumber) {
     throw new Error('В каждом наборе должно быть 8 Active и 7 Passive вопросов. Набор ' + setNumber);
   }
 
-  return source.map(function(item, index) {
+  const questions = setNumber === barelyExtraSetNumber_()
+    ? [q_('Vocabulary · barely', 'Как перевести предложение: I could barely hear the teacher?',
+        'Я прекрасно слышал учителя.',
+        'Я едва мог слышать учителя.',
+        'Я часто слышал учителя.',
+        'Я специально не слушал учителя.',
+        1, 'Barely означает «едва», «еле», «почти не».')].concat(source)
+    : source;
+
+  return questions.map(function(item, index) {
     return {
       id: 'q' + String(index + 1).padStart(2, '0'),
       type: item.type,
@@ -1006,7 +1027,7 @@ function verifyAndSave_(data) {
   }
 
   const answers = Array.isArray(data.answers) ? data.answers : [];
-  if (answers.length !== 15) throw new Error('В тесте должно быть 15 ответов.');
+  if (answers.length !== buildSetQuestions_(currentSetIndex_() + 1).length) throw new Error('Неверное количество ответов в тесте.');
 
   const lock = LockService.getScriptLock();
   lock.waitLock(15000);
@@ -1027,7 +1048,7 @@ function verifyAndSave_(data) {
           let savedData = {};
           try { savedData = JSON.parse(String(savedRow[4] || '{}')); } catch (ignore) {}
           const savedSetNumber = Number(savedData.setNumber || 0);
-          const savedPassed = Number(savedRow[0]) === Number(savedRow[1]) && Number(savedRow[1]) === 15;
+          const savedPassed = Number(savedRow[0]) === Number(savedRow[1]) && Number(savedRow[1]) >= 15;
 
           // Recover the rare case where the row was appended but progress write failed.
           if (savedPassed && savedSetNumber >= 1 && savedSetNumber <= TOTAL_SETS) {
@@ -1106,16 +1127,16 @@ function verifyAndSave_(data) {
       });
     });
 
-    if (Object.keys(seen).length !== 15) {
+    if (Object.keys(seen).length !== bank.length) {
       throw new Error('Не все вопросы присутствуют в отправке.');
     }
 
-    // Normalize saved order to q01...q15, not the client's randomized screen order.
+    // Normalize saved order by question ID, not the client's randomized screen order.
     checked.sort(function(a, b) {
       return a.questionId.localeCompare(b.questionId);
     });
 
-    const total = 15;
+    const total = bank.length;
     const passed = score === total;
     const rewardGranted = passed && !rewardBefore.earnedSets[String(currentSetNumber)];
     const pointsAwarded = rewardGranted ? REWARD_POINTS : 0;
