@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Общий журнал английских тестов</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f6fa;color:#172033;margin:0;padding:20px}main{max-width:900px;margin:auto}
+.hero{background:#172b59;color:#fff;padding:22px;border-radius:16px;margin-bottom:18px}h1{margin:0 0 6px;font-size:25px}
+.muted{color:#64748b}.hero .muted{color:#dbe6ff}.card{background:#fff;border:1px solid #dbe3ee;border-radius:14px;padding:17px;margin:12px 0}
+.top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.score{font-size:22px;font-weight:800;color:#2457d6}
+button{border:0;background:#2457d6;color:white;padding:10px 14px;border-radius:9px;font-weight:bold;cursor:pointer}
+details{margin-top:12px;border-top:1px solid #e5eaf1;padding-top:10px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.5 Arial,sans-serif}
+#status{margin:14px 0}.empty{background:#fff;padding:20px;border-radius:12px}.section-title{font-size:20px;margin:24px 0 10px}
+.live{border-left:5px solid #16a36a}.progress-track{height:12px;background:#e8edf4;border-radius:20px;overflow:hidden;margin:13px 0}.progress-fill{height:100%;background:#16a36a;border-radius:20px}
+.live-status{font-weight:bold;color:#128052}.small{font-size:13px;color:#64748b}
+</style></head>
+<body><main>
+<section class="hero"><h1>Общий журнал английских тестов</h1><div class="muted">Артём и Даша · текущий прогресс и завершённые тесты</div></section>
+<div class="top"><div id="status" class="muted">Загружаю данные…</div><button onclick="loadAll()">Обновить</button></div>
+<h2 class="section-title">Сейчас проходят тест</h2><div id="liveList"></div>
+<h2 class="section-title">Завершённые тесты</h2><div id="list"></div>
+</main><script>
+function fmtDate(v){try{return new Date(v).toLocaleString('ru-RU',{dateStyle:'short',timeStyle:'medium'});}catch(e){return v;}}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function loadAll() {
+  const status = document.getElementById('status');
+  const liveList = document.getElementById('liveList');
+
+  status.textContent = 'Запрашиваю результаты с сервера…';
+
+  liveList.innerHTML =
+    '<div class="empty">Отслеживание текущего прогресса временно отключено.</div>';
+
+  google.script.run
+    .withSuccessHandler(function(rows) {
+      status.textContent =
+        'Сервер вернул записей: ' +
+        (Array.isArray(rows) ? rows.length : 'не массив');
+
+      try {
+        renderResults(rows);
+      } catch (error) {
+        status.textContent =
+          'Ошибка отображения: ' + error.message;
+        console.error(error);
+      }
+    })
+    .withFailureHandler(function(error) {
+      status.textContent =
+        'Ошибка получения результатов: ' + error.message;
+    })
+    .getResults();
+}
+
+function renderProgress(rows){
+ const box=document.getElementById('liveList');
+ const active=rows.filter(r=>r.status==='В процессе'&&(Date.now()-new Date(r.updatedAt).getTime())<300000);
+ if(!active.length){box.innerHTML='<div class="empty">Сейчас никто не проходит тест. Когда Даша или Артём начнут отвечать, здесь появится их прогресс.</div>';return;}
+ box.innerHTML=active.map(r=>{
+  const total=Number(r.total)||0,answered=Number(r.answered)||0,pct=total?Math.round(answered/total*100):0;
+  return '<article class="card live"><div class="top"><div><strong>'+esc(r.student)+'</strong><div>'+esc(r.testTitle)+'</div><div class="small">Уровень '+esc(r.level)+'</div></div><div class="live-status">В процессе</div></div><div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div><strong>Отвечено: '+answered+' из '+total+' ('+pct+'%)</strong><div class="small">Последнее действие: '+esc(fmtDate(r.updatedAt))+'</div></article>';
+ }).join('');
+}
+const questionCatalog = {
+ q01:{prompt:"Выбери формулу Present Simple Active.",opts:["Subject + am/is/are + V3","Subject + V1(s/es)","Subject + do/does + V2","Subject + have/has + V3"]},
+ q02:{prompt:"Выбери формулу Present Continuous Active.",opts:["Subject + am/is/are + V-ing","Subject + was/were + V-ing","Subject + have/has been + V-ing","Subject + am/is/are + being + V3"]},
+ q03:{prompt:"Выбери формулу Present Perfect Active.",opts:["Subject + had + V3","Subject + have/has + V3","Subject + have/has been + V-ing","Subject + am/is/are + V3"]},
+ q04:{prompt:"Выбери формулу Present Perfect Continuous Active.",opts:["Subject + have/has been + V-ing","Subject + had been + V-ing","Subject + have/has + been + V3","Subject + am/is/are + V-ing"]},
+ q05:{prompt:"Выбери формулу Past Simple Active.",opts:["Subject + was/were + V3","Subject + did + V1","Subject + V2","Subject + had + V3"]},
+ q06:{prompt:"Выбери формулу Past Continuous Active.",opts:["Subject + had been + V-ing","Subject + was/were + V-ing","Subject + have/has been + V-ing","Subject + will be + V-ing"]},
+ q07:{prompt:"Выбери формулу Past Perfect Active.",opts:["Subject + have/has + V3","Subject + will have + V3","Subject + had + V3","Subject + had been + V3"]},
+ q08:{prompt:"Выбери формулу Past Perfect Continuous Active.",opts:["Subject + had been + V-ing","Subject + had + V3","Subject + was/were being + V3","Subject + have/has been + V-ing"]},
+ q09:{prompt:"Выбери формулу Future Simple Active.",opts:["Subject + will be + V3","Subject + will + V1","Subject + would + V1","Subject + will have + V3"]},
+ q10:{prompt:"Выбери формулу Future Continuous Active.",opts:["Subject + will have been + V-ing","Subject + will be + V-ing","Subject + will be + V3","Subject + shall have + V3"]},
+ q11:{prompt:"Выбери формулу Future Perfect Active.",opts:["Subject + will have + V3","Subject + will have been + V3","Subject + will be + V-ing","Subject + had + V3"]},
+ q12:{prompt:"Выбери формулу Future Perfect Continuous Active.",opts:["Subject + will be + V-ing","Subject + will have + V3","Subject + will have been + V-ing","Subject + have/has been + V-ing"]},
+ q13:{prompt:"Выбери правильный набор формул Passive Voice для Present Simple, Past Simple и Future Simple.",opts:["am/is/are + V3; was/were + V3; will be + V3","V1(s); V2; will + V1","am/is/are + being + V3; was/were + being + V3; will be + being + V3","have/has + V3; had + V3; will have + V3"]},
+ q14:{prompt:"Выбери правильный набор формул Present Continuous Passive и Past Continuous Passive.",opts:["have/has been + V3; had been + V3","am/is/are + V3; was/were + V3","am/is/are + being + V3; was/were + being + V3","am/is/are + V-ing; was/were + V-ing"]},
+ q15:{prompt:"Выбери правильный набор формул Present Perfect, Past Perfect и Future Perfect Passive.",opts:["have/has + V3; had + V3; will have + V3","have/has been + V3; had been + V3; will have been + V3","have/has been + V-ing; had been + V-ing; will have been + V-ing","am/is/are being + V3; was/were being + V3; will be + V3"]}
+};
+function renderResults(rows){
+ const list=document.getElementById('list');
+ document.getElementById('status').textContent='Завершённых попыток: '+rows.length;
+ if(!rows.length){list.innerHTML='<div class="empty">Пока нет завершённых тестов. После проверки ответов ребёнок нажимает кнопку «Отправить результат».</div>';return;}
+ list.innerHTML=rows.map(r=>{
+  let detail=r.details||'';
+  try{
+   const d=JSON.parse(r.raw||'{}');
+   if(Array.isArray(d.answers)){
+    const checked=Array.isArray(d.results)?d.results:[];
+    const checkedById={};
+    checked.forEach(x=>{if(x&&x.questionId)checkedById[x.questionId]=x;});
+    const lines=d.answers.map((a,n)=>{
+     const id=a.questionId||a.id||'';
+     const result=checkedById[id]||{};
+     const meta=questionCatalog[id]||{};
+     const selectedIndex=Number.isInteger(a.selectedIndex)?a.selectedIndex:(Number.isInteger(result.selectedIndex)?result.selectedIndex:null);
+     const correctIndex=Number.isInteger(result.correctIndex)?result.correctIndex:(Number.isInteger(a.correctIndex)?a.correctIndex:(Number.isInteger(meta.correct)?meta.correct:null));
+     const question=a.question||result.question||meta.prompt||('Вопрос '+(id||n+1)+' (текст не найден)');
+     const selected=(a.selectedAnswer||result.selectedAnswer)||(selectedIndex!==null&&meta.opts?meta.opts[selectedIndex]:null)||'Нет ответа';
+     const correct=(a.correctAnswer||result.correctAnswer)||(correctIndex!==null&&meta.opts?meta.opts[correctIndex]:null)||(correctIndex===null?'Правильный ответ не найден':'');
+     const isCorrect=typeof result.isCorrect==='boolean'?result.isCorrect:(typeof a.isCorrect==='boolean'?a.isCorrect:(selectedIndex!==null&&correctIndex!==null?selectedIndex===correctIndex:null));
+     const verdict=isCorrect===true?'Верно':isCorrect===false?'Ошибка':'Проверка недоступна';
+     const explanation=result.explanation||a.explanation||'';
+     return (n+1)+'. '+question+'\nОтвет: '+selected+'\nПравильно: '+correct+'\n'+verdict+(explanation?'\nПояснение: '+explanation:'');
+    });
+    detail=lines.join('\n\n');
+   }
+  }catch(e){}
+  return '<article class="card"><div class="top"><div><strong>'+esc(r.testTitle)+'</strong><div class="muted">'+esc(r.student)+' · '+esc(r.level)+'</div><div class="muted">Отправлено: '+esc(fmtDate(r.submittedAt))+'</div></div><div class="score">'+esc(r.score)+' / '+esc(r.total)+'</div></div><details><summary>Посмотреть ответы и правильные варианты</summary><pre>'+esc(detail||'Подробный разбор для этой попытки не сохранён.')+'</pre></details></article>';
+ }).join('');
+}
+loadAll();
+</script></body></html>
