@@ -1,0 +1,77 @@
+name: Artyom Apps Script - publish approved release
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type PUBLISH_ARTYOM to update the existing web app deployment'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: artyom-apps-script-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: ${{ inputs.confirmation == 'PUBLISH_ARTYOM' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Check GitHub code
+        run: |
+          set -euo pipefail
+          node --check apps-script/artyom/Code.js
+          test -s apps-script/artyom/Dashboard.html
+      - name: Install clasp
+        run: npm install --global @google/clasp
+      - name: Verify deployment, stage, and publish approved code
+        env:
+          CLASP_CREDENTIALS_JSON: ${{ secrets.CLASP_CREDENTIALS_JSON }}
+          SCRIPT_ID: 1RM7ynJPf5CTAHGLjV9Ciud7wFswr8V7B77udf2O0grgwvk070fq9UtRH
+          DEPLOYMENT_ID: AKfycby7h-mc--QERnZ_N62qBu2FbjmvOHRYYzFAMH0ziH3w1w3uVgPUM2_EVX2EEw4zzc7VPw
+        run: |
+          set -euo pipefail
+          test -n "$CLASP_CREDENTIALS_JSON"
+          printf '%s' "$CLASP_CREDENTIALS_JSON" > "$HOME/.clasprc.json"
+          chmod 600 "$HOME/.clasprc.json"
+          trap 'rm -f "$HOME/.clasprc.json"' EXIT
+          stage="$RUNNER_TEMP/artyom-release-stage"
+          mkdir -p "$stage"
+          printf '{"scriptId":"%s"}\n' "$SCRIPT_ID" > "$stage/.clasp.json"
+          (
+            cd "$stage"
+            clasp pull
+            clasp deployments > "$RUNNER_TEMP/artyom-deployments-before.txt"
+          )
+          grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/artyom-deployments-before.txt"
+          test -s "$stage/Код.js"
+          test -s "$stage/Dashboard.html"
+          test -s "$stage/appsscript.json"
+          python3 -m json.tool "$stage/appsscript.json" > /dev/null
+          cp apps-script/artyom/Code.js "$stage/Код.js"
+          cp apps-script/artyom/Dashboard.html "$stage/Dashboard.html"
+          test ! -e "$stage/Code.js"
+          node --check "$stage/Код.js"
+          python3 - "$stage" <<'PY'
+          from pathlib import Path
+          import sys
+          root=Path(sys.argv[1])
+          expected={".clasp.json","Код.js","Dashboard.html","appsscript.json"}
+          if {p.name for p in root.iterdir() if p.is_file()} != expected:
+              sys.exit("Unexpected files in release stage; aborting.")
+          print("Staging validated. Existing deployment will be updated in place.")
+          PY
+          (
+            cd "$stage"
+            clasp push --force
+            clasp deploy --deploymentId "$DEPLOYMENT_ID" --description "Artyom release from GitHub commit $GITHUB_SHA"
+            clasp deployments > "$RUNNER_TEMP/artyom-deployments-after.txt"
+          )
+          grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/artyom-deployments-after.txt"
+          echo "Existing deployment updated; web app URL remains tied to deployment ID."
