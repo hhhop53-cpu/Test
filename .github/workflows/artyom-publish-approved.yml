@@ -58,7 +58,8 @@ jobs:
           # Abort if Google HEAD changed since the GitHub baseline.
           # Allow only one trailing whitespace byte (the observed Google serialization difference).
           # Historical source requires full checkout history; verify it before staging.
-          BASELINE_COMMIT=f1281456bbfb52a585a68182555cb79b83f4151d
+          # Baseline advanced after the successful 16-question barely release.
+          BASELINE_COMMIT=bd05a024b2bb1b162d8a653a885d63aa35f5d5ff
           git cat-file -e "$BASELINE_COMMIT:apps-script/artyom/Code.js"
           git cat-file -e "$BASELINE_COMMIT:apps-script/artyom/Dashboard.html"
           git show "$BASELINE_COMMIT:apps-script/artyom/Code.js" > "$RUNNER_TEMP/artyom-baseline-code.js"
