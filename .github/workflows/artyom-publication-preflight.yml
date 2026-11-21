@@ -66,6 +66,12 @@ jobs:
                   failed = True
                   first = next((i for i,(x,y) in enumerate(zip(a,b)) if x != y), min(len(a),len(b)))
                   print(f"DIFFERENT: {label}; first differing byte offset={first}")
+                  print(f"GitHub final byte (hex): {a[-1:].hex() or 'empty'}")
+                  print(f"Google final byte (hex): {b[-1:].hex() or 'empty'}")
+                  if len(b) == len(a) + 1 and b.startswith(a):
+                      print(f"Google extra byte (hex): {b[-1]:02x}")
+                      print(f"Extra byte is LF newline: {b[-1] == 10}")
+                      print(f"Extra byte is CR carriage return: {b[-1] == 13}")
                   print(f"SHA256 GitHub={hashlib.sha256(a).hexdigest()}")
                   print(f"SHA256 Google={hashlib.sha256(b).hexdigest()}")
           if failed:
