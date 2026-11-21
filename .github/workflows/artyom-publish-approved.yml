@@ -54,6 +54,24 @@ jobs:
           test -s "$stage/Dashboard.html"
           test -s "$stage/appsscript.json"
           python3 -m json.tool "$stage/appsscript.json" > /dev/null
+          # Abort if Google HEAD changed since the GitHub baseline.
+          # Allow only one trailing whitespace byte (the observed Google serialization difference).
+          python3 - "$stage" <<'PY'
+          from pathlib import Path
+          import sys
+          root=Path(sys.argv[1])
+          expected=Path("apps-script/artyom/Code.js").read_bytes()
+          actual=(root/"Код.js").read_bytes()
+          code_ok=(actual==expected or
+                   (len(actual)==len(expected)+1 and actual.startswith(expected)
+                    and actual[-1] in (9,10,13,32)))
+          html_ok=((root/"Dashboard.html").read_bytes() ==
+                   Path("apps-script/artyom/Dashboard.html").read_bytes())
+          if not code_ok or not html_ok:
+              print("::error::Google HEAD has diverged from GitHub baseline. Manual reconciliation required; no push.")
+              sys.exit(1)
+          print("Live source baseline verified before any write.")
+          PY
           cp apps-script/artyom/Code.js "$stage/Код.js"
           cp apps-script/artyom/Dashboard.html "$stage/Dashboard.html"
           test ! -e "$stage/Code.js"
