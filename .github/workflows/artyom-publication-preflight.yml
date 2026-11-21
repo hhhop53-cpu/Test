@@ -23,7 +23,7 @@ jobs:
           set -euo pipefail
           node --check apps-script/artyom/Code.js
           test -s apps-script/artyom/Dashboard.html
-          test -s apps-script/artyom/appsscript.json
+          echo "Manifest will be backed up from Google; GitHub manifest not yet committed."
       - name: Install clasp
         run: npm install --global @google/clasp
       - name: Pull current project and verify exact match
@@ -45,14 +45,16 @@ jobs:
             clasp deployments > "$RUNNER_TEMP/deployments.txt"
           )
           grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/deployments.txt"
-          for file in Code.js Dashboard.html appsscript.json; do
+          for file in Code.js Dashboard.html; do
             cmp "apps-script/artyom/$file" "$RUNNER_TEMP/artyom-google-backup/$file" || {
               echo "::error::Source mismatch: $file. Publication must be blocked."
               exit 1
             }
             echo "MATCH: $file"
           done
-          echo "Preflight passed. No push, version creation, or deployment performed."
+          test -s "$RUNNER_TEMP/artyom-google-backup/appsscript.json" || { echo "::error::Google manifest missing"; exit 1; }
+          echo "::notice::Google manifest backed up; GitHub manifest still needs to be added before publishing."
+          echo "Preflight passed for Code.js and Dashboard.html. No push, version creation, or deployment performed."
       - name: Save preflight backup
         uses: actions/upload-artifact@v4
         with:
