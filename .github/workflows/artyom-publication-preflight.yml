@@ -1,0 +1,64 @@
+name: Artyom Apps Script - publication preflight (NO DEPLOY)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: artyom-apps-script-publication
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Validate GitHub source
+        run: |
+          set -euo pipefail
+          node --check apps-script/artyom/Code.js
+          test -s apps-script/artyom/Dashboard.html
+          test -s apps-script/artyom/appsscript.json
+      - name: Install clasp
+        run: npm install --global @google/clasp
+      - name: Pull current project and verify exact match
+        env:
+          CLASP_CREDENTIALS_JSON: ${{ secrets.CLASP_CREDENTIALS_JSON }}
+          SCRIPT_ID: 1RM7ynJPf5CTAHGLjV9Ciud7wFswr8V7B77udf2O0grgwvk070fq9UtRH
+          DEPLOYMENT_ID: AKfycby7h-mc--QERnZ_N62qBu2FbjmvOHRYYzFAMH0ziH3w1w3uVgPUM2_EVX2EEw4zzc7VPw
+        run: |
+          set -euo pipefail
+          test -n "$CLASP_CREDENTIALS_JSON"
+          printf '%s' "$CLASP_CREDENTIALS_JSON" > "$HOME/.clasprc.json"
+          chmod 600 "$HOME/.clasprc.json"
+          trap 'rm -f "$HOME/.clasprc.json"' EXIT
+          mkdir -p "$RUNNER_TEMP/artyom-google-backup"
+          printf '{"scriptId":"%s"}\n' "$SCRIPT_ID" > "$RUNNER_TEMP/artyom-google-backup/.clasp.json"
+          (
+            cd "$RUNNER_TEMP/artyom-google-backup"
+            clasp pull
+            clasp deployments > "$RUNNER_TEMP/deployments.txt"
+          )
+          grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/deployments.txt"
+          for file in Code.js Dashboard.html appsscript.json; do
+            cmp "apps-script/artyom/$file" "$RUNNER_TEMP/artyom-google-backup/$file" || {
+              echo "::error::Source mismatch: $file. Publication must be blocked."
+              exit 1
+            }
+            echo "MATCH: $file"
+          done
+          echo "Preflight passed. No push, version creation, or deployment performed."
+      - name: Save preflight backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: artyom-apps-script-preflight-backup
+          path: |
+            ${{ runner.temp }}/artyom-google-backup/Code.js
+            ${{ runner.temp }}/artyom-google-backup/Dashboard.html
+            ${{ runner.temp }}/artyom-google-backup/appsscript.json
+          retention-days: 7
