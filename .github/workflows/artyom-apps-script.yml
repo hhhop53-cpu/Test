@@ -64,3 +64,42 @@ jobs:
             echo "::error::Configured deployment was not found for this Apps Script project."
             exit 1
           fi
+
+      - name: Compare GitHub source with live Apps Script source (read-only)
+        env:
+          CLASP_CREDENTIALS_JSON: ${{ secrets.CLASP_CREDENTIALS_JSON }}
+          SCRIPT_ID: 1RM7ynJPf5CTAHGLjV9Ciud7wFswr8V7B77udf2O0grgwvk070fq9UtRH
+        run: |
+          set -euo pipefail
+          printf '%s' "$CLASP_CREDENTIALS_JSON" > "$HOME/.clasprc.json"
+          chmod 600 "$HOME/.clasprc.json"
+          tmpdir="$(mktemp -d)"
+          trap 'rm -f "$HOME/.clasprc.json"; rm -rf "$tmpdir"' EXIT
+          printf '{"scriptId":"%s"}\n' "$SCRIPT_ID" > "$tmpdir/.clasp.json"
+          (
+            cd "$tmpdir"
+            clasp pull
+          )
+          mismatch=0
+          for file in Code.js Dashboard.html appsscript.json; do
+            github_file="apps-script/artyom/$file"
+            google_file="$tmpdir/$file"
+            if [ ! -f "$google_file" ]; then
+              echo "::warning::Google Apps Script file missing: $file"
+              mismatch=1
+            elif [ ! -f "$github_file" ]; then
+              echo "::warning::GitHub file missing: $github_file"
+              mismatch=1
+            elif cmp -s "$github_file" "$google_file"; then
+              echo "MATCH: $file"
+            else
+              echo "::warning::DIFFERENT: $file (content not displayed)"
+              mismatch=1
+            fi
+          done
+          if [ "$mismatch" -eq 1 ]; then
+            echo "::warning::Source files are not identical. Do not publish until reviewed."
+          else
+            echo "All three source files match exactly."
+          fi
+          echo "Comparison finished. No push or deploy occurred."
