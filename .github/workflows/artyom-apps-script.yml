@@ -1,0 +1,29 @@
+name: Artyom Apps Script - validate source
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Verify expected project and deployment identifiers
+        env:
+          SCRIPT_ID: 1RM7ynJPf5CTAHGLjV9Ciud7wFswr8V7B77udf2O0grgwvk070fq9UtRH
+          DEPLOYMENT_ID: AKfycby7h-mc--QERnZ_N62qBu2FbjmvOHRYYzFAMH0ziH3w1w3uVgPUM2_EVX2EEw4zzc7VPw
+        run: |
+          test -n "$SCRIPT_ID"
+          test -n "$DEPLOYMENT_ID"
+          echo "Target IDs configured; no deployment will occur."
+      - name: Check JavaScript syntax
+        run: node --check apps-script/artyom/Code.js
+      - name: Check dashboard file
+        run: |
+          test -s apps-script/artyom/Dashboard.html
+          grep -q 'google.script.run' apps-script/artyom/Dashboard.html
+          echo "Source files validated. This workflow does not push or deploy."
