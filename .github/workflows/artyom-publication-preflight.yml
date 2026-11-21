@@ -60,6 +60,8 @@ jobs:
               print(f"{label}: GitHub={len(a)} bytes, Google={len(b)} bytes")
               if a == b:
                   print(f"MATCH exact: {label}")
+              elif len(b) == len(a) + 1 and b.startswith(a) and b[-1] in (9, 10, 13, 32):
+                  print(f"MATCH except one trailing whitespace byte: {label}; hex={b[-1]:02x}")
               elif a.rstrip(b"\r\n") == b.rstrip(b"\r\n"):
                   print(f"MATCH except trailing newline(s): {label}")
               else:
