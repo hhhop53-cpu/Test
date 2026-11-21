@@ -1,4 +1,4 @@
-name: Artyom Apps Script - validate source
+name: Artyom Apps Script - validate source and auth
 
 on:
   workflow_dispatch:
@@ -26,4 +26,20 @@ jobs:
         run: |
           test -s apps-script/artyom/Dashboard.html
           grep -q 'google.script.run' apps-script/artyom/Dashboard.html
-          echo "Source files validated. This workflow does not push or deploy."
+          echo "Source files validated."
+      - name: Install clasp
+        run: npm install --global @google/clasp
+      - name: Verify clasp authentication (read-only)
+        env:
+          CLASP_CREDENTIALS_JSON: ${{ secrets.CLASP_CREDENTIALS_JSON }}
+        run: |
+          set -euo pipefail
+          if [ -z "$CLASP_CREDENTIALS_JSON" ]; then
+            echo "::error::Missing CLASP_CREDENTIALS_JSON repository secret"
+            exit 1
+          fi
+          printf '%s' "$CLASP_CREDENTIALS_JSON" > "$HOME/.clasprc.json"
+          chmod 600 "$HOME/.clasprc.json"
+          trap 'rm -f "$HOME/.clasprc.json"' EXIT
+          clasp list > /dev/null
+          echo "Clasp authentication succeeded. No files were pushed or deployed."
