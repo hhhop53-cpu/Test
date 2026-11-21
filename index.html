@@ -78,7 +78,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
     <div class="progressLine"><div id="progressFill"></div></div>
     <div class="panel instructions">
       <strong>Инструкция:</strong> В каждом вопросе выбери один правильный вариант. Тренируем наречия recently, rarely, seldom, lately, certainly, maybe, perhaps, therefore, hardly и hardly ever. Задания: вставь пропущенное, найди ошибку, переведи с русского на английский и с английского на русский.
-      <br><br><strong>Баллы:</strong> 15/15 — +60 за впервые пройденный набор; менее 15/15 — штраф −10 за каждую новую попытку в блоке наречий.
+      <br><br><strong>Баллы:</strong> Идеальный результат (15/15 или 16/16) — +60 за впервые пройденный набор; иначе — штраф −10 за каждую новую попытку в блоке наречий.
     </div>
     <form id="quiz">
       <div id="questions"></div>
@@ -256,7 +256,9 @@ async function loadCurrentTest() {
 
 function renderQuiz() {
   questionRoot.innerHTML = '';
-  displayedQuestions = [currentTest.questions[0]].concat(shuffle(currentTest.questions.slice(1))).map(question => ({
+  displayedQuestions = (currentTest.questions.length === 16
+    ? [currentTest.questions[0]].concat(shuffle(currentTest.questions.slice(1)))
+    : shuffle(currentTest.questions)).map(question => ({
     question,
     options: shuffle(question.options.map((text, originalIndex) => ({text, originalIndex})))
   }));
@@ -305,7 +307,7 @@ function updateProgress() {
     return count + (form.querySelector('input[name="q_' + question.id + '"]:checked') ? 1 : 0);
   }, 0);
   el('progressFill').style.width = (answered / currentTest.questions.length * 100) + '%';
-  el('checkBtn').textContent = 'Проверить ответы (' + answered + '/15)';
+  el('checkBtn').textContent = 'Проверить ответы (' + answered + '/' + currentTest.questions.length + ')';
 }
 
 function startTest() {
