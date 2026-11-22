@@ -1,0 +1,55 @@
+name: Artyom English - live smoke check
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'release-requests/artyom-smoke.json'
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify live Apps Script test API
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, urllib.parse
+          url = 'https://script.google.com/macros/s/AKfycby7h-mc--QERnZ_N62qBu2FbjmvOHRYYzFAMH0ziH3w1w3uVgPUM2_EVX2EEw4zzc7VPw/exec'
+          params = urllib.parse.urlencode({'action': 'getTest', 'callback': 'verifyTest'})
+          req = urllib.request.Request(url + '?' + params, headers={'User-Agent': 'ArtyomSmokeCheck/1.0'})
+          with urllib.request.urlopen(req, timeout=45) as response:
+              body = response.read(500000).decode('utf-8')
+          prefix = 'verifyTest('
+          if not (body.startswith(prefix) and body.rstrip().endswith(');')):
+              raise RuntimeError('Live endpoint did not return a valid JSONP test payload.')
+          payload = json.loads(body[len(prefix):body.rfind(');')])
+          if not payload.get('ok'):
+              raise RuntimeError('Live test API returned an error: ' + str(payload.get('error', 'unknown')))
+          questions = payload.get('questions', [])
+          if len(questions) not in (15, 16):
+              raise RuntimeError('Unexpected live test question count.')
+          prompts = [str(q.get('prompt', '')) for q in questions]
+          ids = [q.get('id') for q in questions]
+          if not all(prompts) or len(set(prompts)) != len(prompts) or len(set(ids)) != len(ids):
+              raise RuntimeError('Live test has duplicate or empty questions.')
+          if any('correctIndex' in q or 'explanation' in q for q in questions):
+              raise RuntimeError('Live test is exposing answer keys.')
+          print('PASS live server: set %s/%s, %s unique questions, no answer keys.' %
+                (payload.get('setNumber'),payload.get('totalSets'),len(questions)))
+          PY
+      - name: Verify GitHub Pages test loads
+        run: |
+          python3 - <<'PY'
+          from urllib.request import urlopen, Request
+          req = Request('https://hhhop53-cpu.github.io/Test/',headers={'User-Agent':'ArtyomSmokeCheck/1.0'})
+          with urlopen(req, timeout=45) as r:
+              page = r.read(200000).decode('utf-8')
+          if "loadCurrentTest()" not in page or "![15, 16].includes(response.questions.length)" not in page:
+              raise RuntimeError('Published quiz page is missing the updated test loader.')
+          print('PASS published GitHub Pages quiz HTML.')
+          PY
