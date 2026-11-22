@@ -1,0 +1,8 @@
+{
+  "action": "publish_dasha_next_10",
+  "next_bank_sha": "8da27da0800c549c0c83797be6cbb0c61ef65563",
+  "previous_bank_sha": "f94c030b01ef87e243b6859fe724cc764acb8b2e",
+  "patcher_sha": "07550e97274ade87d265091725187aaf4eef2402",
+  "release_id": "dasha-sets-11-20-possessive-translation-2026-11-22",
+  "reason": "Preserve first 10 sets and rewards; add new 10 sets, verify 10/10 for auto unlock, deploy same URL"
+}
