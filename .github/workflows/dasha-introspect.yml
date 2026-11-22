@@ -48,7 +48,7 @@ jobs:
                   return v
               lines=s.splitlines()
               print('Code total lines:',len(lines))
-              for ix in [143,144,145,149,153,160,168,171,175,180,181,182,183,184,185,186,187,188,189,190,191,192,193]:
+              for ix in list(range(22, 31)) + list(range(36, 74)):
                   if ix < len(lines):
                       line=lines[ix]
                       if 'TELEGRAM_BOT_TOKEN' in line or 'TELEGRAM_CHAT_ID' in line:
