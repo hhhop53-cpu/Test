@@ -58,8 +58,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
     <div class="meta">
       <span class="pill" id="setPill">Set — / 15</span>
       <span class="pill" id="pointsPill">⭐ Баллы: —</span>
-      <span class="pill" id="questionCountPill">15 questions</span>
-      <span class="pill" id="passingScorePill">15/15 to unlock the next set</span>
+      <span class="pill" id="questionCountPill">Загрузка вопросов…</span>
+      <span class="pill" id="passingScorePill">Для перехода нужно 100%</span>
     </div>
   </section>
 
@@ -403,14 +403,14 @@ function showVerifiedResult(response, payload) {
     el('nextBtn').classList.remove('hidden');
     el('retrySetBtn').classList.add('hidden');
   } else if (response.passed && response.setNumber === TOTAL_SETS) {
-    el('message').textContent = 'Идеально! Все 15 наборов пройдены. Блок наречий завершён.';
+    el('message').textContent = 'Идеально! Все ' + TOTAL_SETS + ' наборов пройдены. Новый блок наречий завершён.';
     el('nextBtn').classList.add('hidden');
-    el('retrySetBtn').textContent = 'Повторить набор 15';
+    el('retrySetBtn').textContent = 'Повторить набор ' + TOTAL_SETS;
     el('retrySetBtn').classList.remove('hidden');
   } else {
-    el('message').textContent = 'Пока не ' + response.total + ' из ' + response.total + '. Изучи разбор ошибок и повтори этот же набор. Следующий набор пока закрыт.';
+    el('message').textContent = 'Пока не ' + response.total + ' из ' + response.total + '. Изучи разбор ошибок. ' + (response.setNumber >= 16 ? 'Для следующей попытки уже подготовлены ДРУГИЕ вопросы этого же набора.' : 'Повтори набор для открытия следующего.') + ' Следующий набор пока закрыт.';
     el('nextBtn').classList.add('hidden');
-    el('retrySetBtn').textContent = 'Повторить этот набор';
+    el('retrySetBtn').textContent = response.setNumber >= 16 ? 'Новый вариант того же набора' : 'Повторить этот набор';
     el('retrySetBtn').classList.remove('hidden');
   }
 
