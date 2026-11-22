@@ -1,0 +1,7 @@
+{
+  "action": "publish_artyom",
+  "code_blob_sha": "218bde02e5ba3398a9a08f7410cfc2dd96333222",
+  "dashboard_blob_sha": "74ce21a3c57f2c06c3083c7b470b5afb51b6ae7e",
+  "release_id": "artyom-set-14-15-deduplicate-2026-11-22",
+  "reason": "Fix repeated prompt in quiz sets 14 and 15 without changing answers or rewards"
+}
