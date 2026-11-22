@@ -11,9 +11,11 @@ if (begin < 0 || finish < 0) {
 }
 
 const bank = source.slice(begin, finish);
-const sets = vm.runInNewContext(bank + '\nTEST_SETS;', {}, { timeout: 3000 });
-if (!Array.isArray(sets) || sets.length !== 15) {
-  throw new Error('Expected exactly 15 sets.');
+const testCode = bank + '\n({sets: TEST_SETS, makeFresh: buildNewAdverbQuestions_});';
+const testData = vm.runInNewContext(testCode, {}, { timeout: 5000 });
+const sets = testData.sets;
+if (!Array.isArray(sets) || sets.length !== 20) {
+  throw new Error('Expected exactly 20 sets.');
 }
 
 for (let index = 0; index < sets.length; index++) {
@@ -48,4 +50,35 @@ for (let index = 0; index < sets.length; index++) {
 if (!source.includes("q_('Vocabulary · barely'")) {
   throw new Error('The extra barely question is missing.');
 }
-console.log('PASS: all 15 test sets contain exactly 15 distinct valid questions.');
+for (let setNumber = 16; setNumber <= 20; setNumber++) {
+  let prior = null;
+  const seenFullVariants = new Set();
+  for (let round = 0; round < 16; round++) {
+    const questions = testData.makeFresh(setNumber, round);
+    if (questions.length !== 15 || new Set(questions.map(q => q.prompt)).size !== 15) {
+      throw new Error('Set ' + setNumber + ', round ' + round + ': malformed or duplicate questions.');
+    }
+    questions.forEach((q, index) => {
+      if (!q.prompt || !q.type || !q.explanation || q.options.length !== 4 ||
+          !Number.isInteger(q.correctIndex) ||
+          q.correctIndex < 0 || q.correctIndex > 3 ||
+          q.options.some(x => typeof x !== 'string' || !x.trim()) ||
+          new Set(q.options).size !== 4) {
+        throw new Error('Set ' + setNumber + ', round ' + round +
+                        ': invalid question at position ' + (index + 1));
+      }
+    });
+    const prompts = questions.map(q => q.prompt);
+    if (prior && prompts.some((p, i) => p === prior[i])) {
+      throw new Error('Set ' + setNumber + ', round ' + round +
+                      ': the next retry repeated an identical question at the same slot.');
+    }
+    const signature = prompts.join(' :: ');
+    if (seenFullVariants.has(signature)) {
+      throw new Error('Set ' + setNumber + ', round ' + round + ': full test variant repeated.');
+    }
+    seenFullVariants.add(signature);
+    prior = prompts;
+  }
+}
+console.log('PASS: 20 sets and 16 successive retry variants for each new adverb set.');
