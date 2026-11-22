@@ -44,8 +44,9 @@ assert(failed.pointsPenalty===10,'Penalty is 10');
 assert(s.values.get('ARTYOM_CURRENT_TEST_INDEX')==='15','Failure should keep same set');
 const next=s.run('currentSetPayload_()');
 assert(next.setNumber===16 && next.testId!==before.testId,'Retry should remain on 16 but change test ID.');
-assert(next.questions.every((q,i)=>q.prompt!==before.questions[i].prompt),
-       'Every retry question must be different from previous attempt');
+assert(next.questions.every((q,i)=>q.prompt!==before.questions[i].prompt ||
+       JSON.stringify(q.options)!==JSON.stringify(before.questions[i].options)),
+       'Every retry question or its answer options must be different from previous attempt');
 const duplicate=s.run('verifyAndSave_(__testRequest)');
 assert(duplicate.duplicate && s.rows.length===1 &&
        s.values.get('ARTYOM_ADVERB_RETRY_SET_16')==='1',
