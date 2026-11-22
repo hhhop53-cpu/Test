@@ -48,6 +48,12 @@ jobs:
                   return v
               lines=s.splitlines()
               print('Code total lines:',len(lines))
+              for ix in [143,144,145,149,153,160,168,171,175,180,181,182,183,184,185,186,187,188,189,190,191,192,193]:
+                  if ix < len(lines):
+                      line=lines[ix]
+                      if 'TELEGRAM_BOT_TOKEN' in line or 'TELEGRAM_CHAT_ID' in line:
+                          continue
+                      print('DA_CONTENT_LINE',ix+1,scrub(line)[:2200])
               # Show source structure and quiz/check functions without constants that might be sensitive
               for ix,line in enumerate(lines):
                   if re.search(r'(getTest|verify|submit|question|QUESTION|TEST_SETS|LEVELS|build|currentLevel|LEVEL_KEY|TOTAL_LEVELS)',line,re.I):
