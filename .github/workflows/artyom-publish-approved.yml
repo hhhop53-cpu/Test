@@ -33,6 +33,7 @@ jobs:
           set -euo pipefail
           node --check apps-script/artyom/Code.js
           node .github/scripts/validate-artyom-banks.cjs
+          node .github/scripts/test-artyom-retries.cjs
           test -s apps-script/artyom/Dashboard.html
           if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
             python3 - <<'PY'
