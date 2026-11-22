@@ -110,7 +110,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
 'use strict';
 
 const RESULTS_ENDPOINT = 'https://script.google.com/macros/s/AKfycby7h-mc--QERnZ_N62qBu2FbjmvOHRYYzFAMH0ziH3w1w3uVgPUM2_EVX2EEw4zzc7VPw/exec';
-const TOTAL_SETS = 15;
+const TOTAL_SETS = 20;
 const letters = ['A', 'B', 'C', 'D'];
 
 let currentTest = null;
@@ -397,15 +397,15 @@ function showVerifiedResult(response, payload) {
   el('elapsedResult').textContent = 'Время: ' + formatDuration(payload.durationSeconds);
   el('sendStatus').textContent = 'Проверено сервером. Попытка сохранена в журнале результатов.';
 
-  if (response.passed && response.setNumber < TOTAL_SETS) {
+  if (response.passed && response.setNumber < response.totalSets) {
     el('message').textContent = 'Отлично! ' + response.total + ' из ' + response.total + '. Следующий набор открыт.';
     el('nextBtn').textContent = 'Открыть набор ' + (response.setNumber + 1);
     el('nextBtn').classList.remove('hidden');
     el('retrySetBtn').classList.add('hidden');
-  } else if (response.passed && response.setNumber === TOTAL_SETS) {
-    el('message').textContent = 'Идеально! Все ' + TOTAL_SETS + ' наборов пройдены. Новый блок наречий завершён.';
+  } else if (response.passed && response.setNumber === response.totalSets) {
+    el('message').textContent = 'Идеально! Все ' + response.totalSets + ' наборов пройдены. Новый блок наречий завершён.';
     el('nextBtn').classList.add('hidden');
-    el('retrySetBtn').textContent = 'Повторить набор ' + TOTAL_SETS;
+    el('retrySetBtn').textContent = 'Повторить набор ' + response.totalSets;
     el('retrySetBtn').classList.remove('hidden');
   } else {
     el('message').textContent = 'Пока не ' + response.total + ' из ' + response.total + '. Изучи разбор ошибок. ' + (response.setNumber >= 16 ? 'Для следующей попытки уже подготовлены ДРУГИЕ вопросы этого же набора.' : 'Повтори набор для открытия следующего.') + ' Следующий набор пока закрыт.';
