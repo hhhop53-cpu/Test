@@ -1,0 +1,7 @@
+{
+  "action": "publish_dasha_beginner_bank",
+  "bank_blob_sha": "f94c030b01ef87e243b6859fe724cc764acb8b2e",
+  "patch_blob_sha": "aabe083371d38eea166064ddcb14b1515abd2a3e",
+  "release_id": "dasha-easy-to-be-possessives-2026-11-22",
+  "reason": "Replace live Dasha English questions with 10 levels of to be and possessives, preserve existing deployment, grades, rewards and history"
+}
