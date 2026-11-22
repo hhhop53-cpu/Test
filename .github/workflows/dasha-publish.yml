@@ -1,0 +1,119 @@
+name: Dasha English - publish beginner to be and possessives
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'release-requests/dasha-publish.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dasha-google-apps-script-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check approved Dasha bank content and Python patcher
+        run: |
+          set -euo pipefail
+          python3 -m py_compile apps-script/dasha/patch-bank.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, subprocess
+          request=json.loads(Path('release-requests/dasha-publish.json').read_text())
+          assert request.get('action') == 'publish_dasha_beginner_bank'
+          for field,filename in (
+              ('bank_blob_sha','apps-script/dasha/beginner-bank.json'),
+              ('patch_blob_sha','apps-script/dasha/patch-bank.py')):
+              actual=subprocess.check_output(['git','hash-object',filename],text=True).strip()
+              assert request.get(field)==actual,(field,'blob_sha mismatch')
+          data=json.loads(Path('apps-script/dasha/beginner-bank.json').read_text())
+          assert data.get('student')=='Даша' and len(data.get('levels',[]))==10
+          assert all(len(level)==10 for level in data['levels'])
+          print('Dasha approved bank validated: 10 levels, 10 questions each.')
+          PY
+      - name: Install clasp
+        run: npm install --global @google/clasp
+      - name: Patch Dasha source and redeploy the existing web app
+        env:
+          CLASP_CREDENTIALS_JSON: ${{ secrets.CLASP_CREDENTIALS_JSON }}
+          SCRIPT_ID: 18qsGmeecVOv6LzvPfLBjZfYGAJdiKgUksYJGyjdFVsrLWBu2cNN16Fpq
+          DEPLOYMENT_ID: AKfycbzjiijPpMKBoR4FAU4rny_niASspsCXHqIN4bygEcLHNDopmyyr_aH6QPZkLEPWpHTmDw
+        run: |
+          set -euo pipefail
+          test -n "$CLASP_CREDENTIALS_JSON"
+          printf '%s' "$CLASP_CREDENTIALS_JSON" > "$HOME/.clasprc.json"
+          chmod 600 "$HOME/.clasprc.json"
+          trap 'rm -f "$HOME/.clasprc.json"' EXIT
+          stage="$RUNNER_TEMP/dasha-stage"
+          mkdir -p "$stage"
+          printf '{"scriptId":"%s"}\n' "$SCRIPT_ID" > "$stage/.clasp.json"
+          (
+            cd "$stage"
+            clasp pull
+            clasp list-deployments > "$RUNNER_TEMP/dasha-deployments-before.txt"
+          )
+          grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/dasha-deployments-before.txt"
+          test -s "$stage/Код.js"
+          test -s "$stage/appsscript.json"
+          python3 -m json.tool "$stage/appsscript.json" >/dev/null
+          python3 apps-script/dasha/patch-bank.py "$stage/Код.js" apps-script/dasha/beginner-bank.json
+          node --check "$stage/Код.js"
+          python3 - "$stage" <<'PY'
+          from pathlib import Path
+          import sys
+          root=Path(sys.argv[1])
+          expected={'.clasp.json','Код.js','appsscript.json'}
+          found={p.name for p in root.iterdir() if p.is_file()}
+          assert found==expected,(found,expected)
+          print('Only original Dasha project source and manifest are staged.')
+          PY
+          if ! clasp create-deployment --help >/dev/null 2>&1; then
+            echo "::error::Unsupported clasp deployment command; refusing to push."
+            exit 1
+          fi
+          (
+            cd "$stage"
+            clasp push --force
+            clasp create-deployment --deploymentId "$DEPLOYMENT_ID" --description "Dasha beginner to be and possessives (existing link)"
+            clasp list-deployments > "$RUNNER_TEMP/dasha-deployments-after.txt"
+          )
+          grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/dasha-deployments-after.txt"
+          echo "Updated Dasha existing deployment in place, preserving its URL."
+      - name: Verify Dasha live server matches approved bank
+        run: |
+          python3 - <<'PY'
+          import json,urllib.request,urllib.parse
+          from pathlib import Path
+          url='https://script.google.com/macros/s/AKfycbzjiijPpMKBoR4FAU4rny_niASspsCXHqIN4bygEcLHNDopmyyr_aH6QPZkLEPWpHTmDw/exec'
+          def get(action):
+              params=urllib.parse.urlencode({'action':action,'callback':'dashaVerify'})
+              req=urllib.request.Request(url+'?'+params,headers={'User-Agent':'DashaReleaseVerify/1.0'})
+              with urllib.request.urlopen(req,timeout=45) as r: body=r.read(300000).decode()
+              if not(body.startswith('dashaVerify(') and body.rstrip().endswith(');')):
+                  raise RuntimeError('Dasha live API not returning valid JSONP.')
+              data=json.loads(body[len('dashaVerify('):body.rfind(');')])
+              if not data.get('ok'): raise RuntimeError('Dasha live API error: '+str(data.get('error')))
+              return data
+          bank=json.loads(Path('apps-script/dasha/beginner-bank.json').read_text())['levels']
+          data=get('getTest')
+          level=int(data['level'])
+          questions=data['questions']
+          assert int(data['totalLevels'])==10
+          assert 1<=level<=10 and len(questions)==10
+          for i,(actual,expected) in enumerate(zip(questions,bank[level-1]),1):
+              assert actual['id']=='q'+str(i)
+              assert actual['prompt']==expected[0],(i,'mismatched prompt')
+              assert actual['options']==expected[1],(i,'mismatched options')
+              assert 'correctIndex' not in actual and 'explanation' not in actual
+          reward=get('getRewards')
+          assert isinstance(reward.get('pointsBalance'),(int,float))
+          print('PASS: Dasha LIVE level '+str(level)+'/10; 10 correct beginner-topic questions; reward endpoint works.')
+          PY
