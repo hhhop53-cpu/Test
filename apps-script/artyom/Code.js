@@ -1,7 +1,7 @@
 const SHEET_NAME = 'Результаты Артёма';
 const TEST_ID = 'active-passive-formula-a2plus-v1'; // legacy ID; old attempts remain intact
 const PROGRESS_KEY = 'ARTYOM_CURRENT_TEST_INDEX';
-const TOTAL_SETS = 15;
+const TOTAL_SETS = 20;
 const PENALTY_POINTS = 10;
 const PENALTY_START_SET = 11;
 const REWARD_POINTS = 60;
@@ -704,6 +704,251 @@ const TEST_SETS = [
   }
 ];
 
+// Continuation: five new A2–B1 adverb sets (16–20), with fresh questions on each failed attempt.
+// All items and keys are generated server-side. A retry changes example sentences, not the set number.
+const ADV_WORD_BANK_ = [
+  {word:'recently', ru:'недавно', wrong:['редко','давно','постоянно'], distractors:['seldom','certainly','hardly'],
+   examples:[
+    ['I § bought a new notebook only yesterday.','Я § купил новую тетрадь, только вчера.'],
+    ['Our class § started a science project last week.','Наш класс § начал научный проект, на прошлой неделе.'],
+    ['She § joined our tennis team, just a few days ago.','Она § присоединилась к нашей теннисной команде, всего несколько дней назад.'],
+    ['We § visited the new sports centre, on Saturday.','Мы § посетили новый спортивный центр, в субботу.'],
+    ['My brother § learned to ride a skateboard, this month.','Мой брат § научился кататься на скейтборде, в этом месяце.'],
+    ['I § downloaded a language app, only two days ago.','Я § скачал приложение для изучения языка, всего два дня назад.'],
+    ['Dad § repaired my old bicycle, just this weekend.','Папа § починил мой старый велосипед, только в эти выходные.'],
+    ['They § moved into a new house, last Friday.','Они § переехали в новый дом, в прошлую пятницу.']
+   ]},
+  {word:'lately',ru:'в последнее время',wrong:['когда-то давно','редко','вчера'],distractors:['seldom','therefore','certainly'],
+   examples:[
+    ['I have been sleeping much better §.','Я § сплю гораздо лучше.'],
+    ['My sister has been practicing the piano every evening §.','Моя сестра § каждый вечер занимается на пианино.'],
+    ['We have been studying new English words §.','Мы § изучаем новые английские слова.'],
+    ['Our dog has been very playful §.','Наша собака § очень игривая.'],
+    ['He has been spending more time outside §.','Он § проводит больше времени на улице.'],
+    ['The weather has been unusually warm §.','Погода § необычно тёплая.'],
+    ['I have been drinking more water §.','Я § пью больше воды.'],
+    ['My friends have been playing basketball after school §.','Мои друзья § играют в баскетбол после школы.']
+   ]},
+  {word:'rarely',ru:'редко',wrong:['часто','каждый день','недавно'],distractors:['recently','certainly','therefore'],
+   examples:[
+    ['We § order pizza, perhaps once or twice a year.','Мы § заказываем пиццу, возможно один-два раза в год.'],
+    ['My cousin § watches television, only on special occasions.','Мой двоюродный брат § смотрит телевизор, только по особым случаям.'],
+    ['It § snows in our town, perhaps once in several years.','В нашем городе § идёт снег, может быть раз в несколько лет.'],
+    ['He § forgets his lunch, perhaps once a school year.','Он § забывает обед, может быть раз за учебный год.'],
+    ['I § eat fast food, maybe once every few months.','Я § ем фастфуд, может быть раз в несколько месяцев.'],
+    ['They § visit this museum, perhaps once a decade.','Они § посещают этот музей, может быть раз в десять лет.'],
+    ['Our teacher § cancels lessons, perhaps once a year.','Наш учитель § отменяет уроки, возможно раз в год.'],
+    ['She § misses practice, maybe twice a year.','Она § пропускает тренировки, может быть дважды в год.']
+   ]},
+  {word:'seldom',ru:'редко',wrong:['часто','ежедневно','постоянно'],distractors:['recently','certainly','therefore'],
+   examples:[
+    ['Grandpa § uses a computer, maybe once a month.','Дедушка § пользуется компьютером, может быть раз в месяц.'],
+    ['My uncle § travels by plane, perhaps once in five years.','Мой дядя § летает на самолёте, возможно раз в пять лет.'],
+    ['We § miss the school bus, only once this year.','Мы § пропускаем школьный автобус, лишь один раз в этом году.'],
+    ['She § eats chocolate, only on her birthday.','Она § ест шоколад, только в день рождения.'],
+    ['I § wear a suit, perhaps once every two years.','Я § ношу костюм, возможно раз в два года.'],
+    ['My brother § wakes up late, only on holidays.','Мой брат § просыпается поздно, только на каникулах.'],
+    ['The cat § goes outside, maybe twice a month.','Кот § выходит на улицу, может быть дважды в месяц.'],
+    ['Our family § eats in restaurants, perhaps once a year.','Наша семья § ест в ресторанах, возможно раз в год.']
+   ]},
+  {word:'hardly',ru:'едва',wrong:['легко','отлично','уверенно'],distractors:['recently','seldom','therefore'],
+   examples:[
+    ['I can § hear you because the music is so loud.','Я § тебя слышу, потому что музыка очень громкая.'],
+    ['He could § walk after the exhausting race.','Он § мог идти после изнурительной гонки.'],
+    ['She could § keep her eyes open because she was so tired.','Она § могла держать глаза открытыми, потому что сильно устала.'],
+    ['We could § see the path in the thick fog.','Мы § могли разглядеть тропинку в густом тумане.'],
+    ['I can § remember his name after so many years.','Я § могу вспомнить его имя спустя столько лет.'],
+    ['They could § move the heavy table together.','Они § смогли сдвинуть тяжёлый стол вдвоём.'],
+    ['I could § understand his whisper from across the room.','Я § мог разобрать его шёпот с другого конца комнаты.'],
+    ['He could § breathe after running up ten flights of stairs.','Он § мог дышать после подъёма на десять лестничных пролётов.']
+   ]},
+  {word:'hardly ever',ru:'почти никогда',wrong:['каждый день','очень часто','постоянно'],distractors:['recently','certainly','therefore'],
+   examples:[
+    ['He § arrives late; I remember just one occasion.','Он § опаздывает; я помню лишь один случай.'],
+    ['We § miss practice; perhaps once in two years.','Мы § пропускаем тренировку; может быть раз в два года.'],
+    ['She § loses her keys; it happened only once.','Она § теряет ключи; такое случилось только однажды.'],
+    ['My friends § argue; I heard them quarrel just once.','Мои друзья § спорят; я слышал их ссору всего однажды.'],
+    ['Dad § forgets our birthdays; it happened only one time.','Папа § забывает наши дни рождения; такое было только раз.'],
+    ['I § take a taxi; I did it only once last year.','Я § езжу на такси; в прошлом году это было только раз.'],
+    ['My sister § eats sweets; maybe once at Christmas.','Моя сестра § ест сладости; может быть раз на Рождество.'],
+    ['Our teacher § gives homework on Friday; once this term.','Наш учитель § задаёт домашнюю работу в пятницу; лишь раз за четверть.']
+   ]},
+  {word:'barely',ru:'едва',wrong:['с лёгкостью','прекрасно','без труда'],distractors:['recently','seldom','therefore'],
+   examples:[
+    ['I could § lift the box because it was so heavy.','Я § смог поднять коробку, потому что она была очень тяжёлая.'],
+    ['She could § read the tiny letters without glasses.','Она § могла прочитать крошечные буквы без очков.'],
+    ['We could § hear the announcement over the crowd.','Мы § могли услышать объявление из-за шума толпы.'],
+    ['He § caught the last train, just seconds before departure.','Он § успел на последний поезд, за секунды до отправления.'],
+    ['I could § stay awake after the long journey.','Я § мог не заснуть после долгой дороги.'],
+    ['They could § see the lighthouse through the storm.','Они § могли разглядеть маяк сквозь бурю.'],
+    ['My phone battery § lasted until I reached home.','Заряда телефона § хватило до моего возвращения домой.'],
+    ['She § passed the exam, scoring just enough points.','Она § сдала экзамен, набрав ровно столько баллов, сколько нужно.']
+   ]},
+  {word:'perhaps',ru:'возможно',wrong:['точно','без сомнения','обязательно'],distractors:['certainly','rarely','therefore'],
+   examples:[
+    ['§ we will go hiking, but the plan is not certain yet.','§, мы пойдём в поход, но план пока не определён.'],
+    ['§ the train will be late; nobody knows yet.','§, поезд опоздает; пока никто не знает.'],
+    ['§ my cousins will visit us this weekend; they have not decided.','§, двоюродные братья навестят нас в выходные; они ещё не решили.'],
+    ['§ she will join the club, but she is still thinking.','§, она вступит в клуб, но пока размышляет.'],
+    ['§ there is a better route, although I am not sure.','§, есть маршрут получше, хотя я не уверен.'],
+    ['§ our team will win, but it is impossible to know.','§, наша команда победит, но знать это невозможно.'],
+    ['§ the shop is open today; I have not checked.','§, магазин сегодня открыт; я не проверял.'],
+    ['§ we should leave earlier, but I need to ask Dad.','§, нам стоит выйти раньше, но нужно спросить папу.']
+   ]},
+  {word:'maybe',ru:'может быть',wrong:['точно','безусловно','непременно'],distractors:['certainly','seldom','therefore'],
+   examples:[
+    ['§ I will take my bike, but I have not decided.','§, я возьму велосипед, но ещё не решил.'],
+    ['§ she is at the library; I am not sure.','§, она в библиотеке; я не уверен.'],
+    ['§ the lesson will finish early, but nobody knows.','§, урок закончится раньше, но никто не знает.'],
+    ['§ they will come tomorrow; they have not confirmed it.','§, они придут завтра; они ещё не подтвердили.'],
+    ['§ we can play tennis after lunch, if it stops raining.','§, мы сыграем в теннис после обеда, если дождь прекратится.'],
+    ['§ my friend forgot the meeting; I do not know.','§, мой друг забыл о встрече; я не знаю.'],
+    ['§ there will be a test next week; the teacher has not said.','§, на следующей неделе будет тест; учитель ещё не сказал.'],
+    ['§ we will travel in July, but our plans could change.','§, мы поедем путешествовать в июле, но планы могут измениться.']
+   ]},
+  {word:'certainly',ru:'определённо',wrong:['вряд ли','может быть','едва ли'],distractors:['perhaps','rarely','hardly'],
+   examples:[
+    ['I will § remember this holiday; it was unforgettable.','Я § запомню этот праздник; он был незабываемым.'],
+    ['She will § recognize her own handwriting; I am sure.','Она § узнает свой почерк; я уверен.'],
+    ['He will § help us; he has already promised.','Он § поможет нам; он уже обещал.'],
+    ['We will § arrive on time; we are already at the station.','Мы § прибудем вовремя; мы уже на вокзале.'],
+    ['Our teacher will § explain it again; she has agreed.','Наш учитель § объяснит это снова; она согласилась.'],
+    ['They will § remember the concert; it was amazing.','Они § запомнят концерт; он был потрясающим.'],
+    ['My sister will § enjoy this book; it is her favourite kind.','Моей сестре § понравится эта книга; это её любимый жанр.'],
+    ['I can § finish the task; I have everything I need.','Я § могу закончить задание; у меня есть всё необходимое.']
+   ]},
+  {word:'therefore',ru:'поэтому',wrong:['однако','случайно','вместо этого'],distractors:['perhaps','hardly','seldom'],
+   examples:[
+    ['The road was icy; §, we drove slowly for safety.','Дорога была скользкой; § мы ехали медленно ради безопасности.'],
+    ['He had a fever; §, he stayed home from school.','У него была температура; § он остался дома и не пошёл в школу.'],
+    ['It was getting dark; §, we turned on the lights.','Темнело; § мы включили свет.'],
+    ['The tickets were sold out; §, we could not enter.','Билеты закончились; § мы не смогли войти.'],
+    ['Her phone was broken; §, she could not call us.','Её телефон сломался; § она не могла нам позвонить.'],
+    ['There was no milk left; §, we went to the shop.','Молоко закончилось; § мы пошли в магазин.'],
+    ['I forgot my umbrella; §, I got wet in the rain.','Я забыл зонтик; § промок под дождём.'],
+    ['Our team practiced a lot; §, we played much better.','Наша команда много тренировалась; § мы сыграли гораздо лучше.']
+   ]}
+];
+
+const ADV_ERROR_BANK_ = [
+  ['She rarely go to the cinema.', 'После she нужно goes, не go.'],
+  ['I have recently buy a skateboard.', 'После have нужна третья форма bought.'],
+  ['He can hardly to hear us.', 'После can используется глагол без to.'],
+  ['We have seldom saw that bird.', 'После have нужна третья форма seen.'],
+  ['Maybe she will comes tomorrow.', 'После will используется форма come без -s.'],
+  ['They rarely plays tennis after school.', 'После they используется play без -s.'],
+  ['Perhaps he does not knows the answer.', 'После does not употребляется know без -s.'],
+  ['I will certainly to call you.', 'После will не нужно to перед call.'],
+  ['She has hardly ever visit London.', 'После has употребляется V3: visited.'],
+  ['We have recently went to the zoo.', 'После have нужна третья форма gone.'],
+  ['Maybe they is at home.', 'С they нужна форма are.'],
+  ['He has certainly writes the email.', 'После has требуется V3: written.'],
+  ['She seldom go there alone.', 'С she в Present Simple нужна форма goes.'],
+  ['I can barely opens this door.', 'После can нужна начальная форма open.'],
+  ['My friends rarely drinks tea.', 'С my friends используется drink без -s.'],
+  ['He could hardly to stand after the race.', 'После could используется stand без to.'],
+  ['They has barely finished their dinner.', 'С they используется have, не has.'],
+  ['Perhaps she will visits us later.', 'После will нужно visit без -s.'],
+  ['We has been working a lot lately.', 'С we используется have been, не has been.'],
+  ['My sister hardly ever forget her keys.', 'С my sister в Present Simple нужно forgets.'],
+  ['I have recently brokened my old phone.', 'Правильная третья форма глагола break — broken.'],
+  ['Maybe the boys was in the garden.', 'С boys во множественном числе требуется were.'],
+  ['I will certainly helps you tomorrow.', 'После will нужна форма help без -s.'],
+  ['Our teacher seldom give us extra homework.', 'В Present Simple с teacher нужна форма gives.']
+];
+
+const ADV_CORRECT_SENTENCES_ = [
+  'We have been learning new words lately.',
+  'He rarely forgets his homework.',
+  'Perhaps the museum is closed today.',
+  'I recently saw an interesting film.',
+  'They can barely hear the music.',
+  'She seldom drinks fizzy drinks.',
+  'Maybe our team will win tomorrow.',
+  'Dad will certainly pick us up.',
+  'It was late; therefore, we left.',
+  'I can hardly believe the news.',
+  'We hardly ever miss tennis practice.',
+  'They have been very busy lately.'
+];
+
+function retryKeyForSet_(setNumber) {
+  return 'ARTYOM_ADVERB_RETRY_SET_' + setNumber;
+}
+function retryRoundForSet_(setNumber) {
+  if (setNumber < 16) return 0;
+  const raw = Number(PropertiesService.getScriptProperties().getProperty(retryKeyForSet_(setNumber)));
+  return Number.isSafeInteger(raw) && raw >= 0 ? raw : 0;
+}
+
+function buildNewAdverbQuestions_(setNumber, round) {
+  if (!Number.isInteger(setNumber) || setNumber < 16 || setNumber > 20 ||
+      !Number.isSafeInteger(round) || round < 0) {
+    throw new Error('Некорректный новый набор наречий.');
+  }
+  const questions = [];
+  const setOffset = setNumber - 16;
+  for (let slot = 0; slot < 13; slot++) {
+    const wordIndex = (setOffset * 3 + slot * 7) % ADV_WORD_BANK_.length;
+    const item = ADV_WORD_BANK_[wordIndex];
+    const contextIndex = (setOffset * 2 + round + Math.floor(slot / ADV_WORD_BANK_.length) * 4) % item.examples.length;
+    const pair = item.examples[contextIndex];
+    const correctIndex = (slot + round + setOffset) % 4;
+    let prompt;
+    let options;
+    let type;
+    let explanation;
+    const en = pair[0].replace('§', item.word);
+    const ru = pair[1].replace('§', item.ru);
+    if (slot < 5) {
+      type = 'Вставь наречие';
+      prompt = 'Выбери подходящее слово по смыслу: ' + pair[0].replace('§', '____');
+      options = [item.word].concat(item.distractors);
+      explanation = 'Здесь подходит ' + item.word + ' — «' + item.ru + '». ' + en;
+    } else if (slot < 9) {
+      type = 'RU → EN';
+      prompt = 'Выбери правильный перевод: «' + ru + '»';
+      options = [en].concat(item.distractors.map(function(w) {
+        return pair[0].replace('§', w);
+      }));
+      explanation = 'Правильный перевод: ' + en;
+    } else {
+      type = 'EN → RU';
+      prompt = 'Выбери перевод на русский: ' + en;
+      options = [ru].concat(item.wrong.map(function(w) {
+        return pair[1].replace('§', w);
+      }));
+      explanation = 'Правильный перевод: ' + ru;
+    }
+    const correct = options[0];
+    const wrong = options.slice(1);
+    const ordered = wrong.slice();
+    ordered.splice(correctIndex, 0, correct);
+    questions.push(q_(type, prompt, ordered[0], ordered[1], ordered[2], ordered[3],
+      correctIndex, explanation));
+  }
+  for (let errorSlot = 0; errorSlot < 2; errorSlot++) {
+    const bankIndex = (setOffset * 5 + round * 2 + errorSlot) % ADV_ERROR_BANK_.length;
+    const issue = ADV_ERROR_BANK_[bankIndex];
+    const correctIndex = (round + setOffset + errorSlot + 2) % 4;
+    const correctChoices = [0, 1, 2].map(function(i) {
+      return ADV_CORRECT_SENTENCES_[(bankIndex * 3 + i) % ADV_CORRECT_SENTENCES_.length];
+    });
+    const ordered = correctChoices.slice();
+    ordered.splice(correctIndex, 0, issue[0]);
+    questions.push(q_('Найди ошибку',
+      'В каком предложении допущена грамматическая ошибка? Пример ' + (errorSlot + 1) + '.',
+      ordered[0], ordered[1], ordered[2], ordered[3], correctIndex, issue[1]));
+  }
+  return questions;
+}
+[16,17,18,19,20].forEach(function(setNumber) {
+  TEST_SETS.push({
+    title: 'Наречия A2–B1 · Новый блок · Набор ' + (setNumber - 15) + ' из 5',
+    questions: buildNewAdverbQuestions_(setNumber, 0)
+  });
+});
+
 // Pin the extra vocabulary question to the set active on first request after release.
 // Other sets keep their original 15 questions.
 const BARELY_EXTRA_SET_KEY = 'ARTYOM_BARELY_EXTRA_SET_NUMBER';
@@ -718,7 +963,7 @@ function barelyExtraSetNumber_() {
 
 function buildSetQuestions_(setNumber) {
   const set = TEST_SETS[setNumber - 1];
-  const source = set && set.questions;
+  const source = setNumber >= 16 ? buildNewAdverbQuestions_(setNumber, retryRoundForSet_(setNumber)) : (set && set.questions);
   if (!source || source.length !== 15) {
     throw new Error('Некорректный банк вопросов набора ' + setNumber);
   }
@@ -742,7 +987,7 @@ function buildSetQuestions_(setNumber) {
     throw new Error('В каждом наборе должно быть 8 Active и 7 Passive вопросов. Набор ' + setNumber);
   }
 
-  const questions = setNumber === barelyExtraSetNumber_()
+  const questions = setNumber <= 15 && setNumber === barelyExtraSetNumber_()
     ? [q_('Vocabulary · barely', 'Как перевести предложение: I could barely hear the teacher?',
         'Я прекрасно слышал учителя.',
         'Я едва мог слышать учителя.',
@@ -770,7 +1015,7 @@ function currentSetIndex_() {
   return Math.min(TOTAL_SETS - 1, parsed);
 }
 
-// Teacher control: set the active test set manually (1..15).
+// Teacher control: set the active test set manually (1..20).
 // This does not delete history or modify previous attempts.
 function setArtyomCurrentSet(setNumber) {
   const value = Number(setNumber);
@@ -930,13 +1175,35 @@ function startArtyomAdverbsBlock() {
 }
 
 function testIdForSet_(setNumber) {
-  return setNumber <= 5
+  return setNumber >= 16
+    ? 'adverbs-retry-a2b1-v2-set-' + setNumber + '-round-' + retryRoundForSet_(setNumber)
+    : setNumber <= 5
     ? 'active-passive-formula-a2plus-v2-set-' + setNumber
     : setNumber <= 10 ? 'foundation-mixed-a1a2-v1-set-' + setNumber
     : 'adverbs-a2b1-v1-set-' + (setNumber - 10);
 }
 
+
+function unlockNextAdverbsAfterVerifiedSet15_() {
+  const props = PropertiesService.getScriptProperties();
+  // The original app stored set 15 as index 14 and did not advance after 15/15.
+  if (props.getProperty(PROGRESS_KEY) !== '14') return;
+  const sheet = getOrCreateSheet_();
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return;
+  const data = sheet.getRange(2, 9, lastRow - 1, 1).getValues();
+  const completed15 = data.some(function(row) {
+    try {
+      const attempt = JSON.parse(String(row[0] || '{}'));
+      return attempt.student === 'Артём' && Number(attempt.setNumber) === 15 &&
+        attempt.verified === true && attempt.passed === true;
+    } catch (ignore) { return false; }
+  });
+  if (completed15) props.setProperty(PROGRESS_KEY, '15');
+}
+
 function currentSetPayload_() {
+  unlockNextAdverbsAfterVerifiedSet15_();
   const reward = rewardStatusFromSheet_(getOrCreateSheet_(), rewardEpoch_());
   const setNumber = currentSetIndex_() + 1;
   const questions = buildSetQuestions_(setNumber).map(function(item) {
@@ -1051,6 +1318,15 @@ function verifyAndSave_(data) {
           const savedPassed = Number(savedRow[0]) === Number(savedRow[1]) && Number(savedRow[1]) >= 15;
 
           // Recover the rare case where the row was appended but progress write failed.
+          // Recover a missing retry update if appendRow succeeded but property write failed.
+          if (!savedPassed && savedSetNumber >= 16 &&
+              currentSetIndex_() + 1 === savedSetNumber &&
+              Number.isSafeInteger(Number(savedData.retryRound)) &&
+              retryRoundForSet_(savedSetNumber) === Number(savedData.retryRound)) {
+            PropertiesService.getScriptProperties().setProperty(
+              retryKeyForSet_(savedSetNumber), String(Number(savedData.retryRound) + 1));
+          }
+
           if (savedPassed && savedSetNumber >= 1 && savedSetNumber <= TOTAL_SETS) {
             const current = currentSetIndex_();
             if (current === savedSetNumber - 1 && savedSetNumber < TOTAL_SETS) {
@@ -1169,6 +1445,7 @@ function verifyAndSave_(data) {
       pointsAwarded: pointsAwarded,
       penaltyApplied: penaltyApplied,
       pointsPenalty: pointsPenalty,
+      retryRound: currentSetNumber >= 16 ? retryRoundForSet_(currentSetNumber) : null,
       answers: checked
     };
 
@@ -1192,6 +1469,11 @@ function verifyAndSave_(data) {
     if (passed && currentSetNumber < TOTAL_SETS) {
       PropertiesService.getScriptProperties().setProperty(
         PROGRESS_KEY, String(Math.min(TOTAL_SETS - 1, currentIndex + 1))
+      );
+    }
+    if (!passed && currentSetNumber >= 16) {
+      PropertiesService.getScriptProperties().setProperty(
+        retryKeyForSet_(currentSetNumber), String(retryRoundForSet_(currentSetNumber) + 1)
       );
     }
 
