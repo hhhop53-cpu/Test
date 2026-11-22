@@ -1,0 +1,30 @@
+name: Artyom English - validate test banks and retries
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps-script/artyom/Code.js'
+      - '.github/scripts/validate-artyom-banks.cjs'
+      - '.github/scripts/test-artyom-retries.cjs'
+      - '.github/workflows/artyom-quiz-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check syntax and all new test variants
+        run: |
+          set -euo pipefail
+          node --check apps-script/artyom/Code.js
+          node .github/scripts/validate-artyom-banks.cjs
+      - name: Simulate wrong answers, retry, correct answers and migration
+        run: |
+          set -euo pipefail
+          node .github/scripts/test-artyom-retries.cjs
