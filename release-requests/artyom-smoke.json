@@ -1,0 +1,6 @@
+{
+  "action": "verify_live_artyom",
+  "release_id": "artyom-v20-2026-11-22",
+  "check": "getTest + public GitHub Pages",
+  "requested": "2026-11-22"
+}
