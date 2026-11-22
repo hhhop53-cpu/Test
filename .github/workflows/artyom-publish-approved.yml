@@ -7,6 +7,11 @@ on:
         description: 'Type PUBLISH_ARTYOM to update the existing web app deployment'
         required: true
         type: string
+  push:
+    branches:
+      - main
+    paths:
+      - 'release-requests/artyom-release.json'
 
 permissions:
   contents: read
@@ -17,19 +22,34 @@ concurrency:
 
 jobs:
   publish:
-    if: ${{ inputs.confirmation == 'PUBLISH_ARTYOM' }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.confirmation == 'PUBLISH_ARTYOM') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
           fetch-depth: 0
-      - name: Check GitHub code
+      - name: Check GitHub code and approved release request
         run: |
           set -euo pipefail
           node --check apps-script/artyom/Code.js
           node .github/scripts/validate-artyom-banks.cjs
           test -s apps-script/artyom/Dashboard.html
+          if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            python3 - <<'PY'
+          from pathlib import Path
+          import json, subprocess, sys
+          data = json.loads(Path('release-requests/artyom-release.json').read_text())
+          if data.get('action') != 'publish_artyom':
+              sys.exit('Invalid release request action.')
+          for field, file in [('code_blob_sha', 'apps-script/artyom/Code.js'),
+                              ('dashboard_blob_sha', 'apps-script/artyom/Dashboard.html')]:
+              expected = data.get(field)
+              actual = subprocess.check_output(['git','hash-object',file], text=True).strip()
+              if expected != actual:
+                  sys.exit(f'Unexpected {file} content; refusing to publish.')
+          print('Approved release request matches source blobs.')
+          PY
+          fi
       - name: Install clasp
         run: npm install --global @google/clasp
       - name: Verify deployment, stage, and publish approved code
