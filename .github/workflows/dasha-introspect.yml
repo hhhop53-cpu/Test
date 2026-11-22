@@ -1,0 +1,57 @@
+name: Dasha - safely inspect current quiz logic
+
+on:
+  push:
+    branches: [main]
+    paths: ['release-requests/dasha-introspect.json']
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install clasp
+        run: npm install --global @google/clasp
+      - name: Read-only inspect Dasha Apps Script structure
+        env:
+          CLASP_CREDENTIALS_JSON: ${{ secrets.CLASP_CREDENTIALS_JSON }}
+          SCRIPT_ID: 18qsGmeecVOv6LzvPfLBjZfYGAJdiKgUksYJGyjdFVsrLWBu2cNN16Fpq
+          DEPLOYMENT_ID: AKfycbzjiijPpMKBoR4FAU4rny_niASspsCXHqIN4bygEcLHNDopmyyr_aH6QPZkLEPWpHTmDw
+        run: |
+          set -euo pipefail
+          printf '%s' "$CLASP_CREDENTIALS_JSON" > "$HOME/.clasprc.json"
+          chmod 600 "$HOME/.clasprc.json"
+          trap 'rm -f "$HOME/.clasprc.json"' EXIT
+          stage="$RUNNER_TEMP/dasha-readonly"
+          mkdir -p "$stage"
+          printf '{"scriptId":"%s"}\n' "$SCRIPT_ID" > "$stage/.clasp.json"
+          cd "$stage"
+          clasp pull
+          clasp list-deployments > "$RUNNER_TEMP/deployments.txt"
+          grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/deployments.txt"
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, json
+          files=[p for p in Path('.').iterdir() if p.suffix in ('.js','.html','.json','.gs')]
+          print('Source files:', [(p.name,len(p.read_text())) for p in files])
+          for p in files:
+              if p.suffix not in ('.js','.gs'): continue
+              s=p.read_text()
+              names=re.findall(r'^(?:function\s+\w+|const\s+\w+|let\s+\w+|var\s+\w+).*$',s,re.M)
+              print('Declaration labels in',p.name,':', [re.split(r'\s|\(',name,2)[:2] for name in names][:110])
+              def scrub(v):
+                  v=re.sub(r'https?://[^\s\\\\\x27\x22]+','[URL]',v)
+                  v=re.sub(r'[A-Za-z0-9_-]{32,}','[redacted-long-id]',v)
+                  v=re.sub(r'(?i)(secret|token|apikey|api_key|password|chat_id|spreadsheet_id)(\\s*[:=]\\s*)([^;,\\n]+)',r'\\1\\2[redacted]',v)
+                  return v
+              lines=s.splitlines()
+              print('Code total lines:',len(lines))
+              # Show source structure and quiz/check functions without constants that might be sensitive
+              for ix,line in enumerate(lines):
+                  if re.search(r'(getTest|verify|submit|question|QUESTION|TEST_SETS|LEVELS|build|currentLevel|LEVEL_KEY|TOTAL_LEVELS)',line,re.I):
+                      if line.strip().startswith(('function ','const ','let ','if (','return ','//')) or line.lstrip().startswith('questions:'):
+                          a=max(0,ix-1);b=min(len(lines),ix+5)
+                          print('CODE_LINE',ix+1,' '.join(scrub(z) for z in lines[a:b])[:900])
+          PY
