@@ -68,10 +68,10 @@ for (let setNumber = 16; setNumber <= 20; setNumber++) {
                         ': invalid question at position ' + (index + 1));
       }
     });
-    const prompts = questions.map(q => q.prompt);
+    const prompts = questions.map(q => q.prompt + ' :: ' + JSON.stringify(q.options));
     if (prior && prompts.some((p, i) => p === prior[i])) {
       throw new Error('Set ' + setNumber + ', round ' + round +
-                      ': the next retry repeated an identical question at the same slot.');
+                      ': the next retry repeated an identical prompt and option set at the same slot.');
     }
     const signature = prompts.join(' :: ');
     if (seenFullVariants.has(signature)) {
