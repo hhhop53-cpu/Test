@@ -1,0 +1,158 @@
+name: Dasha English - publish sets 11 to 20
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'release-requests/dasha-next-publish.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dasha-google-apps-script-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate approved release files
+        run: |
+          set -euo pipefail
+          python3 -m py_compile apps-script/dasha/extend-bank.py
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          req=json.loads(Path('release-requests/dasha-next-publish.json').read_text())
+          assert req.get('action')=='publish_dasha_next_10'
+          for key,path in (
+              ('next_bank_sha','apps-script/dasha/next-bank.json'),
+              ('previous_bank_sha','apps-script/dasha/beginner-bank.json'),
+              ('patcher_sha','apps-script/dasha/extend-bank.py')):
+              actual=subprocess.check_output(['git','hash-object',path],text=True).strip()
+              assert req.get(key)==actual,(key,'source fingerprint mismatch')
+          old=json.loads(Path('apps-script/dasha/beginner-bank.json').read_text())
+          new=json.loads(Path('apps-script/dasha/next-bank.json').read_text())
+          assert old['student']==new['student']=='Даша'
+          assert len(old['levels'])==len(new['levels'])==10
+          assert all(len(l)==10 for l in old['levels']+new['levels'])
+          assert len({q[0] for l in old['levels']+new['levels'] for q in l})==200
+          print('PASS: 20 distinct levels with 10 questions each; all answer keys well formed.')
+          PY
+      - name: Install clasp
+        run: npm install --global @google/clasp
+      - name: Verify, patch, test and deploy existing Dasha Google script
+        env:
+          CLASP_CREDENTIALS_JSON: ${{ secrets.CLASP_CREDENTIALS_JSON }}
+          SCRIPT_ID: 18qsGmeecVOv6LzvPfLBjZfYGAJdiKgUksYJGyjdFVsrLWBu2cNN16Fpq
+          DEPLOYMENT_ID: AKfycbzjiijPpMKBoR4FAU4rny_niASspsCXHqIN4bygEcLHNDopmyyr_aH6QPZkLEPWpHTmDw
+        run: |
+          set -euo pipefail
+          test -n "$CLASP_CREDENTIALS_JSON"
+          printf '%s' "$CLASP_CREDENTIALS_JSON" > "$HOME/.clasprc.json"
+          chmod 600 "$HOME/.clasprc.json"
+          trap 'rm -f "$HOME/.clasprc.json"' EXIT
+          stage="$RUNNER_TEMP/dasha-next-stage"
+          mkdir -p "$stage"
+          printf '{"scriptId":"%s"}\n' "$SCRIPT_ID" > "$stage/.clasp.json"
+          (
+            cd "$stage"
+            clasp pull
+            clasp list-deployments > "$RUNNER_TEMP/dasha-deployments-before.txt"
+          )
+          grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/dasha-deployments-before.txt"
+          test -s "$stage/Код.js"
+          test -s "$stage/appsscript.json"
+          python3 -m json.tool "$stage/appsscript.json" > /dev/null
+          python3 apps-script/dasha/extend-bank.py "$stage/Код.js" \
+              apps-script/dasha/beginner-bank.json apps-script/dasha/next-bank.json
+          node --check "$stage/Код.js"
+          DASHA_CODE_PATH="$stage/Код.js" node - <<'JS'
+          'use strict';
+          const fs=require('node:fs'),vm=require('node:vm');
+          const src=fs.readFileSync(process.env.DASHA_CODE_PATH,'utf8');
+          function prepare(progress,passed10) {
+            const m=new Map([['DASHA_CURRENT_LEVEL',String(progress)]]);
+            const p={getProperty:key=>m.has(key)?m.get(key):null,
+                     setProperty:(key,val)=>m.set(key,String(val))};
+            const sandbox={PropertiesService:{getScriptProperties:()=>p}};
+            vm.createContext(sandbox);
+            vm.runInContext(src,sandbox,{timeout:3000});
+            sandbox.dashaSheet_=()=>({
+              getLastRow:()=>2,
+              getRange:()=>({getValues:()=>[[10,'Уровень 10',passed10?10:9]]})
+            });
+            const output=vm.runInContext('({total:DASHA_LEVELS,bank:DASHA_BANK,active:dashaLevel_()})',sandbox,{timeout:3000});
+            return {output,m};
+          }
+          for(const lev of [10,11,20]){
+            const data=prepare(lev,lev!==10);
+            if(data.output.total!==20||data.output.bank.length!==20||data.output.bank.some(s=>s.length!==10)){
+              throw Error('Wrong 20-level Dasha bank');
+            }
+          }
+          const completed=prepare(10,true);
+          if(completed.output.active!==11||completed.m.get('DASHA_CURRENT_LEVEL')!=='11')
+            throw Error('Historical 10/10 did not unlock level 11');
+          const incomplete=prepare(10,false);
+          if(incomplete.output.active!==10)throw Error('Incomplete 10/10 should remain on 10');
+          if(prepare(11,true).output.active!==11)throw Error('New set 11 progress changed');
+          console.log('PASS: history-based unlock 10->11 and 20 levels, 10 questions each.');
+          JS
+          python3 - "$stage" <<'PY'
+          from pathlib import Path
+          import sys
+          files={p.name for p in Path(sys.argv[1]).iterdir() if p.is_file()}
+          assert files=={'.clasp.json','Код.js','appsscript.json'}, files
+          print('PASS: only original Google project files are staged.')
+          PY
+          if ! clasp create-deployment --help > /dev/null 2>&1; then
+            echo "::error::Cannot safely update current deployment."
+            exit 1
+          fi
+          (
+            cd "$stage"
+            clasp push --force
+            clasp create-deployment --deploymentId "$DEPLOYMENT_ID" --description "Dasha sets 11-20: to be and possessive translation"
+            clasp list-deployments > "$RUNNER_TEMP/dasha-deployments-after.txt"
+          )
+          grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/dasha-deployments-after.txt"
+          echo "Published in place. Dasha existing URL, reward journal and grading history preserved."
+      - name: Verify published Dasha test and rewards
+        run: |
+          python3 - <<'PY'
+          import json,urllib.request,urllib.parse
+          from pathlib import Path
+          url='https://script.google.com/macros/s/AKfycbzjiijPpMKBoR4FAU4rny_niASspsCXHqIN4bygEcLHNDopmyyr_aH6QPZkLEPWpHTmDw/exec'
+          def get(action):
+              p=urllib.parse.urlencode({'action':action,'callback':'verifyDasha'})
+              request=urllib.request.Request(url+'?'+p,headers={'User-Agent':'DashaNextBlockSmoke/1.0'})
+              with urllib.request.urlopen(request,timeout=45) as response:
+                  response_text=response.read(300000).decode()
+              if not(response_text.startswith('verifyDasha(') and response_text.rstrip().endswith(');')):
+                  raise RuntimeError('Live Dasha backend returned invalid JSONP.')
+              obj=json.loads(response_text[len('verifyDasha('):response_text.rfind(');')])
+              if not obj.get('ok'):raise RuntimeError('Dasha backend error: '+str(obj.get('error')))
+              return obj
+          payload=get('getTest')
+          level=int(payload['level'])
+          assert int(payload['totalLevels'])==20,('totalLevels',payload['totalLevels'])
+          assert 11<=level<=20,('expected auto unlocked new block',level)
+          bank=json.loads(Path('apps-script/dasha/next-bank.json').read_text())['levels']
+          expected=bank[level-11]
+          questions=payload['questions']
+          assert len(questions)==10
+          for i,(actual,source) in enumerate(zip(questions,expected),1):
+              assert actual['id']=='q'+str(i)
+              assert actual['prompt']==source[0],('prompt',i)
+              assert actual['options']==source[1],('options',i)
+              assert 'correctIndex' not in actual and 'explanation' not in actual
+          rewards=get('getRewards')
+          assert isinstance(rewards.get('pointsBalance'),(int,float))
+          assert isinstance(rewards.get('history'),list)
+          print('PASS: live Dasha set '+str(level)+'/20 includes 10 new questions; rewards/history endpoint works.')
+          PY
