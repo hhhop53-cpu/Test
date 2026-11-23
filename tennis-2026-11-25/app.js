@@ -12,6 +12,7 @@ function readKey(){
 }
 readKey();
 let scores={},loaded=false,refreshTask;
+const directLinks=new Set();
 const drafts=new Map(), controls=new Map(), busy=new Set();
 const escId=id=>prefix+'start2-draft-'+id;
 function remember(id,value){
@@ -53,6 +54,12 @@ function paintRow(id){
   button.disabled=busy.has(id)||!key;
   a.disabled=b.disabled=busy.has(id)||!key;
   msg.textContent=busy.has(id)?'Отправка…':conflict?'На сервере '+s?.a+' : '+s?.b+'. Проверьте правку.':d?'Черновик':s?'Сохранено':'';
+  if(d && directLinks.has(id)){
+    const link=document.createElement('a');
+    link.href='https://court-score-nov25-ms.timelessbream4.chatgpt.site/#'+encodeURIComponent(key);
+    link.textContent='Открыть прямую форму';
+    msg.append(' · ',link);
+  }
 }
 function paint(){
   document.querySelector('#count').textContent=Object.keys(scores).length+' из 21';
@@ -65,7 +72,7 @@ function paint(){
 }
 async function requestScores(options){
   const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),12000);
+  const timer=setTimeout(()=>controller.abort(),30000);
   try{return await fetch(api,{...options,signal:controller.signal});}
   finally{clearTimeout(timer);}
 }
@@ -97,9 +104,9 @@ async function save(id){
     if(!res.ok)throw Error(res.status===403?'Нужна действующая ссылка для ввода.':'Ошибка отправки. Черновик сохранён.');
     const saved=await res.json();
     if(refreshTask)await refreshTask;
-    scores[id]=saved;remember(id,null);paint();await refresh();
-  }catch(error){message=error.name==='AbortError'||error instanceof TypeError?'Сервер не подтвердил запись. Проверьте связь и повторите.':error.message;}
-  finally{busy.delete(id);paintRow(id);if(message)msg.textContent=message;}
+    directLinks.delete(id);scores[id]=saved;remember(id,null);paint();await refresh();
+  }catch(error){directLinks.add(id);message=error.name==='AbortError'||error instanceof TypeError?'Сервер не подтвердил запись. Проверьте связь и повторите.':error.message;}
+  finally{busy.delete(id);paintRow(id);if(message)msg.prepend(message+' ');}
 }
 if(edit)init();
 if(edit)for(const id of controls.keys())paintRow(id);
