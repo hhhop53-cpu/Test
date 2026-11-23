@@ -7,7 +7,7 @@ let key=location.hash.slice(1)||sessionStorage.getItem(prefix+'key')||'';
 if(edit && location.hash){sessionStorage.setItem(prefix+'key',key);}
 let scores={},loaded=false,refreshTask;
 const drafts=new Map(), controls=new Map(), busy=new Set();
-const escId=id=>prefix+'draft-'+id;
+const escId=id=>prefix+'start2-draft-'+id;
 function remember(id,value){
   if(value){drafts.set(id,value);localStorage.setItem(escId(id),JSON.stringify(value));}
   else {drafts.delete(id);localStorage.removeItem(escId(id));}
