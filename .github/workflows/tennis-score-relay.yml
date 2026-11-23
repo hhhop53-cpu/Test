@@ -1,0 +1,57 @@
+name: Tennis score relay
+on:
+  issues:
+    types: [opened]
+permissions:
+  issues: write
+jobs:
+  score:
+    if: startsWith(github.event.issue.title, 'Теннис 25.11 · матч ')
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Проверить, сохранить и подтвердить счёт
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: python
+        run: |
+          import json, os, time
+          from urllib.request import Request, urlopen
+          from urllib.error import HTTPError
+          from pathlib import Path
+
+          issue = json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text())["issue"]
+          api = "https://api.github.com/repos/hhhop53-cpu/Test/issues"
+          scores_url = "https://court-score-nov25-ms.timelessbream4.chatgpt.site/scores"
+          def request(url, method="GET", data=None, github=False):
+              headers = {"User-Agent":"tennis-score-relay","Content-Type":"application/json"}
+              if github:
+                  headers["Authorization"] = "Bearer " + os.environ["GH_TOKEN"]
+              body = None if data is None else json.dumps(data).encode()
+              with urlopen(Request(url, data=body, headers=headers, method=method), timeout=25) as response:
+                  return json.load(response)
+          status = "Запрос не распознан. Откройте новую отправку из протокола."
+          try:
+              obj = json.loads(issue["body"])
+              payload = {k:obj[k] for k in ("id","a","b","rev","sig")}
+              try:
+                  request(scores_url,"POST",payload)
+                  accepted = True
+              except HTTPError as err:
+                  if err.code != 409:
+                      raise
+                  accepted = False
+              scores = request(scores_url)
+              row = scores.get(str(payload["id"]),{})
+              matches = row.get("a")==payload["a"] and row.get("b")==payload["b"]
+              status = ("Сохранено." if accepted or matches else "Конфликт. Другой счёт уже сохранён. Обновите протокол и проверьте правку.")
+              # Read current scores again immediately before updating the public copy.
+              snapshot = {"updated":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime()),"scores":request(scores_url)}
+              request(api+"/1","PATCH",{"body":json.dumps(snapshot)},True)
+          except (ValueError,KeyError,TypeError):
+              pass
+          except HTTPError as err:
+              status = "Сервер отклонил запись ("+str(err.code)+"). Проверьте доступ и счёт."
+          url = api+"/"+str(issue["number"])
+          request(url+"/comments","POST",{"body":status},True)
+          request(url,"PATCH",{"state":"closed"},True)
