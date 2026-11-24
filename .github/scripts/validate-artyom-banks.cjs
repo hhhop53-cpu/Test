@@ -14,8 +14,8 @@ const bank = source.slice(begin, finish);
 const testCode = bank + '\n({sets: TEST_SETS, makeFresh: buildNewAdverbQuestions_});';
 const testData = vm.runInNewContext(testCode, {}, { timeout: 5000 });
 const sets = testData.sets;
-if (!Array.isArray(sets) || sets.length !== 20) {
-  throw new Error('Expected exactly 20 sets.');
+if (!Array.isArray(sets) || sets.length !== 25) {
+  throw new Error('Expected exactly 25 sets.');
 }
 
 for (let index = 0; index < sets.length; index++) {
@@ -50,7 +50,7 @@ for (let index = 0; index < sets.length; index++) {
 if (!source.includes("q_('Vocabulary · barely'")) {
   throw new Error('The extra barely question is missing.');
 }
-for (let setNumber = 16; setNumber <= 20; setNumber++) {
+for (let setNumber = 16; setNumber <= 25; setNumber++) {
   let prior = null;
   const seenFullVariants = new Set();
   for (let round = 0; round < 16; round++) {
@@ -81,4 +81,4 @@ for (let setNumber = 16; setNumber <= 20; setNumber++) {
     prior = prompts;
   }
 }
-console.log('PASS: 20 sets and 16 successive retry variants for each new adverb set.');
+console.log('PASS: 25 sets, with 16 successive distinct retry variants for every adverb set 16–25.');
