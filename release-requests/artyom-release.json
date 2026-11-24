@@ -1,7 +1,7 @@
 {
   "action": "publish_artyom",
-  "code_blob_sha": "5a06445bf209a2171b3558ce75341088dd7a8fc1",
+  "code_blob_sha": "38afb833c81209520c6c3a4391759cf5fd02d484",
   "dashboard_blob_sha": "74ce21a3c57f2c06c3083c7b470b5afb51b6ae7e",
-  "release_id": "artyom-adverbs-new-sets-16-20-retry-2026-11-22",
-  "reason": "Add new A2-B1 adverb sets 16-20 with fresh questions after each failed attempt and 100-percent progression"
+  "release_id": "artyom-adverbs-final-sets-21-25-retry-2026-11-24",
+  "reason": "Add five final adverb sets 21-25; carry forward verified 20/20 completion, retain repeat -10 and first 15/15 +60, preserve original link"
 }
