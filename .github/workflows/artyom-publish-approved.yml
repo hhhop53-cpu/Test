@@ -77,15 +77,16 @@ jobs:
           test -s "$stage/Dashboard.html"
           test -s "$stage/appsscript.json"
           python3 -m json.tool "$stage/appsscript.json" > /dev/null
-          # Abort if Google HEAD changed since the GitHub baseline.
-          # Allow only one trailing whitespace byte (the observed Google serialization difference).
-          # Historical source requires full checkout history; verify it before staging.
-          # Expected live source after successful deployment version 20 (sets 14 and 15 fix).
-          BASELINE_COMMIT=2ae1968ea981908aba1f104d9fcd58548f2cd72d
-          git cat-file -e "$BASELINE_COMMIT:apps-script/artyom/Code.js"
-          git cat-file -e "$BASELINE_COMMIT:apps-script/artyom/Dashboard.html"
-          git show "$BASELINE_COMMIT:apps-script/artyom/Code.js" > "$RUNNER_TEMP/artyom-baseline-code.js"
-          git show "$BASELINE_COMMIT:apps-script/artyom/Dashboard.html" > "$RUNNER_TEMP/artyom-baseline-dashboard.html"
+          # Abort if Google HEAD differs from the last approved live release (v21).
+          # These immutable blobs were pinned in the previous approved release request,
+          # and verified when version 21 was deployed successfully.
+          # Allow one Google serialization whitespace byte, no other differences.
+          BASELINE_CODE_BLOB=5a06445bf209a2171b3558ce75341088dd7a8fc1
+          BASELINE_DASHBOARD_BLOB=74ce21a3c57f2c06c3083c7b470b5afb51b6ae7e
+          git cat-file -e "$BASELINE_CODE_BLOB"
+          git cat-file -e "$BASELINE_DASHBOARD_BLOB"
+          git cat-file blob "$BASELINE_CODE_BLOB" > "$RUNNER_TEMP/artyom-baseline-code.js"
+          git cat-file blob "$BASELINE_DASHBOARD_BLOB" > "$RUNNER_TEMP/artyom-baseline-dashboard.html"
           python3 - "$stage" <<'PY'
           from pathlib import Path
           import sys
