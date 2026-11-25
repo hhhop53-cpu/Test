@@ -1,0 +1,9 @@
+{
+  "action": "publish_dasha_review_21_30",
+  "first_bank_sha": "f94c030b01ef87e243b6859fe724cc764acb8b2e",
+  "second_bank_sha": "8da27da0800c549c0c83797be6cbb0c61ef65563",
+  "third_bank_sha": "634ecab16e8cd0e5091b2610778b5b89bb69c80e",
+  "patcher_sha": "2defad11cab65bf0e7673936aad1cf4123a289d1",
+  "release_id": "dasha-review-sets-21-30-2026-11-25",
+  "reason": "Publish 10 new 10-question review levels to existing Dasha link, preserve 1-20 and points, verified 20/20 automatically opens 21"
+}
