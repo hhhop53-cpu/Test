@@ -144,7 +144,7 @@ jobs:
           if not data.get('ok'):
               raise RuntimeError('Live API reported: ' + str(data.get('error','unknown')))
           qs = data.get('questions',[])
-          if len(qs) not in (15,16) or len({q.get('prompt') for q in qs}) != len(qs) or len({q.get('id') for q in qs}) != len(qs):
+          if len(qs) != 20 or len({q.get('prompt') for q in qs}) != len(qs) or len({q.get('id') for q in qs}) != len(qs):
               raise RuntimeError('Invalid/duplicate questions in live server.')
           if any('correctIndex' in q or 'explanation' in q for q in qs):
               raise RuntimeError('Answer key exposed in live API.')
