@@ -82,3 +82,68 @@ for (let setNumber = 16; setNumber <= 25; setNumber++) {
   }
 }
 console.log('PASS: 25 sets, with 16 successive distinct retry variants for every adverb set 16–25.');
+
+
+// Complete published tests now contain 16 retained adverb/foundation items
+// (including a barely review) plus exactly four phrasal-verb items.
+const phrasalContext = {
+  PropertiesService: {
+    getScriptProperties: () => ({
+      getProperty: k => k==='ARTYOM_BARELY_EXTRA_SET_NUMBER'?'14':
+        k==='ARTYOM_CURRENT_TEST_INDEX'?'20':
+        /^ARTYOM_ADVERB_RETRY_SET_/.test(k) ? '0' : null,
+      setProperty: ()=>{}
+    })
+  }
+};
+vm.createContext(phrasalContext);
+vm.runInContext(source,phrasalContext,{timeout:5000});
+const phraseCoverage = new Set();
+const expectedWords = [
+  'wake up','get up','turn on','look for','put on',
+  'pick up','run into','come over','find out','look up',
+  'turn down','figure out','give up','carry on','turn off'
+];
+const actualWords=vm.runInContext('PHRASAL_CHALLENGE_BANK_.map(x=>x[0])',phrasalContext);
+if (JSON.stringify(actualWords)!==JSON.stringify(expectedWords))
+  throw new Error('Phrasal verbs must exactly match the 15 bold phrases in the image.');
+for (let setNumber=1;setNumber<=25;setNumber++){
+  const rounds=setNumber>=16?16:1;
+  let previous=null;
+  for (let round=0;round<rounds;round++){
+    phrasalContext.PropertiesService.getScriptProperties=()=>({
+      getProperty: k => k==='ARTYOM_BARELY_EXTRA_SET_NUMBER'?'14':
+        k==='ARTYOM_CURRENT_TEST_INDEX'?'20':
+        k==='ARTYOM_ADVERB_RETRY_SET_'+setNumber ? String(round):null,
+      setProperty:()=>{}
+    });
+    const questions=vm.runInContext('buildSetQuestions_('+setNumber+')',phrasalContext,{timeout:3000});
+    if (questions.length!==20||new Set(questions.map(q=>q.id)).size!==20 ||
+        new Set(questions.map(q=>q.prompt)).size!==20)
+      throw new Error('Set '+setNumber+', round '+round+': should have exactly 20 distinct questions.');
+    if (!questions.some(q=>q.type==='Vocabulary · barely'))
+      throw new Error('Set '+setNumber+': missing the retained barely review question.');
+    const extras=questions.slice(16);
+    if (extras.length!==4||extras.some(q=>!q.type.startsWith('Phrasal verbs')))
+      throw new Error('Set '+setNumber+': missing four phrasal-verb questions at the end.');
+    questions.forEach((q,i)=>{
+      if(q.options.length!==4||new Set(q.options).size!==4||
+         !Number.isInteger(q.correctIndex)||q.correctIndex<0||q.correctIndex>3||
+         !q.explanation||!q.prompt)
+        throw new Error('Set '+setNumber+', round '+round+': invalid answer at '+i);
+    });
+    if (setNumber>=21&&setNumber<=25){
+      extras.forEach((q,i)=>{
+        const index=((setNumber-1)*4+i)%15;
+        phraseCoverage.add(expectedWords[index]);
+      });
+    }
+    if (previous&&extras.some((q,i)=>
+        q.prompt===previous[i].prompt&&JSON.stringify(q.options)===JSON.stringify(previous[i].options)))
+      throw new Error('Identical phrasal question repeated in the next retry, set '+setNumber);
+    previous=extras;
+  }
+}
+if (phraseCoverage.size!==15)
+  throw new Error('The final five tests do not cover all 15 phrasal verbs.');
+console.log('PASS: each of 25 sets has 20 questions; all 15 source phrasal verbs in final block; retries change.');
