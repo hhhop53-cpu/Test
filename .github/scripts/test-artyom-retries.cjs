@@ -33,13 +33,13 @@ function assert(c,message){if(!c)throw new Error(message);}
 
 const s=makeSandbox({ARTYOM_CURRENT_TEST_INDEX:'15',ARTYOM_BARELY_EXTRA_SET_NUMBER:'14'});
 const before=s.run('currentSetPayload_()');
-assert(before.setNumber===16 && before.totalSets===25 && before.questions.length===15,
+assert(before.setNumber===16 && before.totalSets===25 && before.questions.length===20,
        'Initial new adverb set should be 16/25 with 15 questions.');
 const original=s.run('buildSetQuestions_(16)');
 const bad=original.map(q=>({questionId:q.id,selectedIndex:(q.correctIndex+1)%4}));
 s.context.__testRequest={attemptId:'attempt1001',testId:before.testId,setNumber:16,answers:bad,durationSeconds:130};
 const failed=s.run('verifyAndSave_(__testRequest)');
-assert(failed.ok && failed.score===0 && failed.total===15 && !failed.passed,'Failed attempt grading');
+assert(failed.ok && failed.score===0 && failed.total===20 && !failed.passed,'Failed attempt grading');
 assert(failed.pointsPenalty===10,'Penalty is 10');
 assert(s.values.get('ARTYOM_CURRENT_TEST_INDEX')==='15','Failure should keep same set');
 const next=s.run('currentSetPayload_()');
@@ -55,7 +55,7 @@ assert(duplicate.duplicate && s.rows.length===1 &&
 const correct=s.run('buildSetQuestions_(16)').map(q=>({questionId:q.id,selectedIndex:q.correctIndex}));
 s.context.__testRequest={attemptId:'attempt1002',testId:next.testId,setNumber:16,answers:correct,durationSeconds:99};
 const passed=s.run('verifyAndSave_(__testRequest)');
-assert(passed.passed && passed.score===15 && passed.pointsAwarded===60,'Perfect new variant should award 60.');
+assert(passed.passed && passed.score===20 && passed.pointsAwarded===60,'Perfect new variant should award 60.');
 assert(s.values.get('ARTYOM_CURRENT_TEST_INDEX')==='16','Passing should advance to set17.');
 assert(s.run('currentSetPayload_()').setNumber===17,'After passing set16, new set17 must open.');
 assert(s.rows.length===2,'Exactly two attempts should be saved.');
@@ -68,7 +68,7 @@ const migratedPayload=migrated.run('currentSetPayload_()');
 assert(migratedPayload.setNumber===16, 'Verified legacy set15 should unlock set16 automatically.');
 assert(migrated.values.get('ARTYOM_CURRENT_TEST_INDEX')==='15','Legacy progress should be persisted.');
 
-console.log('PASS: 0/15 stays on 16 with new questions; duplicates safe; 15/15 advances to 17; verified old 15 unlocks 16.');
+console.log('PASS: 0/20 stays on 16 with new questions; duplicates safe; 20/20 advances to 17; verified old 15 unlocks 16.');
 
 // Passing the previously final set 20 was recorded without advancing the
 // saved index. The old 15/15 must now reveal the new level 21 automatically.
@@ -80,7 +80,7 @@ previousCompletion[8]=JSON.stringify({
 prior20.rows.push(previousCompletion);
 const unlocked=prior20.run('currentSetPayload_()');
 assert(unlocked.setNumber===21 && unlocked.totalSets===25 &&
-       unlocked.questions.length===15,'Verified former final set20 should unlock 21/25.');
+       unlocked.questions.length===20,'Verified former final set20 should unlock 21/25.');
 assert(prior20.values.get('ARTYOM_CURRENT_TEST_INDEX')==='20',
        'Verified 20/20 migration must persist level 21.');
 
@@ -95,8 +95,8 @@ assert(notYetFinished.run('currentSetPayload_()').setNumber===20,
 
 const newBlock=makeSandbox({ARTYOM_CURRENT_TEST_INDEX:'20'});
 const fresh=newBlock.run('currentSetPayload_()');
-assert(fresh.setNumber===21&&fresh.totalSets===25&&fresh.questions.length===15,
-       'The new block must begin at 21/25 with 15 questions.');
+assert(fresh.setNumber===21&&fresh.totalSets===25&&fresh.questions.length===20,
+       'The new block must begin at 21/25 with 20 questions.');
 const wrongAnswers=newBlock.run('buildSetQuestions_(21)')
   .map(q=>({questionId:q.id,selectedIndex:(q.correctIndex+1)%4}));
 newBlock.context.__testRequest={
@@ -125,7 +125,7 @@ newBlock.context.__testRequest={
  answers:rightAnswers,durationSeconds:68
 };
 const succeeded=newBlock.run('verifyAndSave_(__testRequest)');
-assert(succeeded.score===15&&succeeded.passed&&succeeded.pointsAwarded===60,
+assert(succeeded.score===20&&succeeded.passed&&succeeded.pointsAwarded===60,
        'Passing on the second attempt must award the standard 60 points.');
 assert(newBlock.values.get('ARTYOM_CURRENT_TEST_INDEX')==='21'&&
        newBlock.run('currentSetPayload_()').setNumber===22,
@@ -146,3 +146,28 @@ assert(finaleResult.passed&&finaleResult.topicCompleted&&finaleResult.pointsAwar
 assert(finale.run('currentSetPayload_()').totalSets===25,'Completion retains the correct overall count.');
 
 console.log('PASS: old set20 unlocks21 only with verified 15/15; set21 penalty/retry/+60/advance; last set25 completes.');
+
+
+// A perfect 20/20 is required; 19/20 must cost 10 points and rotate the
+// same set. Previously completed attempts (including old 15/15) must remain
+// safe from duplicate credits or penalties after the release.
+const partial=makeSandbox({ARTYOM_CURRENT_TEST_INDEX:'22',ARTYOM_BARELY_EXTRA_SET_NUMBER:'14'});
+const base=partial.run('currentSetPayload_()');
+assert(base.setNumber===23&&base.questions.length===20,'Set23 should contain 20 questions.');
+const partialAnswers=partial.run('buildSetQuestions_(23)').map((q,i)=>({
+ questionId:q.id,selectedIndex:i===19?(q.correctIndex+1)%4:q.correctIndex
+}));
+partial.context.__testRequest={
+ attemptId:'attempt2301',testId:base.testId,setNumber:23,answers:partialAnswers,durationSeconds:75
+};
+const almost=partial.run('verifyAndSave_(__testRequest)');
+assert(almost.score===19&&almost.total===20&&!almost.passed&&almost.pointsPenalty===10,
+       '19/20 must stay on the level and cost exactly ten points.');
+assert(partial.values.get('ARTYOM_CURRENT_TEST_INDEX')==='22',
+       '19/20 must not advance to 24.');
+const newAttempt=partial.run('currentSetPayload_()');
+assert(newAttempt.testId!==base.testId&&newAttempt.setNumber===23,
+       'On 19/20, a fresh test variant must be supplied for the same level.');
+const dup=partial.run('verifyAndSave_(__testRequest)');
+assert(dup.duplicate&&partial.rows.length===1,'Duplicate 19/20 must not cost another ten points.');
+console.log('PASS: new phrasal tests require 20/20; 19/20 => -10, fresh retry; idempotent duplicate.');
