@@ -951,6 +951,109 @@ function buildNewAdverbQuestions_(setNumber, round) {
   });
 });
 
+
+/* Four phrasal-verb questions per test, taken exclusively from the 15 bold
+ * phrases in the user's "The Secret Coin" printout. Every five recent sets
+ * cover all fifteen phrases; successive retries rotate examples and answers.
+ * The original 15 questions and their server-side answer keys are unchanged.
+ */
+const PHRASAL_CHALLENGE_BANK_ = [["wake up","woke up","проснуться",[["I ___ when my alarm started ringing.","Я проснулся, когда зазвонил будильник."],["My sister ___ early because she heard a bird.","Моя сестра проснулась рано, потому что услышала птицу."],["We ___ before sunrise on Saturday.","Мы проснулись до восхода солнца в субботу."],["My brother ___ at seven and checked the time.","Мой брат проснулся в семь и посмотрел на часы."]]],["get up","got up","встать с кровати",[["I ___ from bed and opened the curtains.","Я встал с кровати и открыл шторы."],["She ___ and walked into the kitchen.","Она встала с кровати и пошла на кухню."],["We ___ from our beds and got dressed.","Мы встали с кроватей и оделись."],["He ___ immediately after waking up.","Он встал с кровати сразу после пробуждения."]]],["turn on","turned on","включить",[["I ___ the computer to start my game.","Я включил компьютер, чтобы начать играть."],["He ___ the lamp because the room was dark.","Он включил лампу, потому что в комнате было темно."],["We ___ the TV to watch the match.","Мы включили телевизор, чтобы посмотреть матч."],["She ___ the light to read her book.","Она включила свет, чтобы почитать книгу."]]],["look for","looked for","искать",[["I ___ my keys because I could not find them.","Я искал ключи, потому что не мог их найти."],["We ___ the missing cat around the garden.","Мы искали пропавшего кота в саду."],["He ___ his schoolbag under the table.","Он искал рюкзак под столом."],["She ___ her pencil in every drawer.","Она искала карандаш в каждом ящике."]]],["put on","put on","надеть",[["I ___ my jacket before I went outside.","Я надел куртку перед выходом."],["She ___ her helmet before riding her bike.","Она надела шлем перед поездкой на велосипеде."],["We ___ our coats because it was cold.","Мы надели пальто, потому что было холодно."],["He ___ his glasses to read the small words.","Он надел очки, чтобы прочитать мелкие слова."]]],["pick up","picked up","поднять с пола",[["I ___ the pencil that fell on the floor.","Я поднял карандаш, который упал на пол."],["She ___ her dropped phone from the carpet.","Она подняла телефон, упавший на ковёр."],["We ___ the papers that fell off the desk.","Мы подняли листы, упавшие со стола."],["He ___ the coins from the ground.","Он поднял монеты с земли."]]],["run into","ran into","случайно встретить",[["I ___ my teacher by chance at the supermarket.","Я случайно встретил учителя в супермаркете."],["She ___ an old friend while walking in the park.","Она случайно встретила старого друга в парке."],["We ___ our neighbour unexpectedly at the station.","Мы случайно встретили соседа на станции."],["He ___ his cousin by chance on the bus.","Он случайно встретил двоюродного брата в автобусе."]]],["come over","came over","зайти в гости",[["My friend ___ to my house after school.","Мой друг зашёл ко мне в гости после школы."],["Our cousins ___ to visit us on Sunday.","Наши двоюродные братья зашли к нам в гости в воскресенье."],["Max ___ to play Geometry Dash with me.","Макс зашёл ко мне в гости поиграть в Geometry Dash."],["The neighbours ___ to have tea with us.","Соседи зашли к нам в гости попить чаю."]]],["find out","found out","выяснить, узнать",[["I ___ why the secret door would not open.","Я выяснил, почему секретная дверь не открывалась."],["She ___ the answer by asking the teacher.","Она узнала ответ, спросив учителя."],["We ___ when the new game would be released.","Мы выяснили, когда выйдет новая игра."],["He ___ where his missing notebook was.","Он узнал, где лежала потерянная тетрадь."]]],["look up","looked up","найти информацию в справочнике или интернете",[["I ___ the word in an online dictionary.","Я нашёл слово в онлайн-словаре."],["She ___ the train times on the internet.","Она нашла расписание поездов в интернете."],["We ___ the meaning of the phrase in a dictionary.","Мы посмотрели значение фразы в словаре."],["He ___ the answer on a learning website.","Он нашёл ответ на учебном сайте."]]],["turn down","turned down","сделать тише",[["I ___ the music because the baby was sleeping.","Я убавил музыку, потому что малыш спал."],["She ___ the TV because her dad was working.","Она сделала телевизор тише, потому что папа работал."],["We ___ the sound so we could hear the teacher.","Мы убавили звук, чтобы услышать учителя."],["He ___ the radio because it was too loud.","Он убавил радио, потому что оно играло слишком громко."]]],["figure out","figured out","разобраться, разгадать",[["We ___ how to open the hidden door.","Мы разобрались, как открыть скрытую дверь."],["I ___ the puzzle after three attempts.","Я разгадал головоломку после трёх попыток."],["She ___ how the new app worked.","Она разобралась, как работало новое приложение."],["He ___ the secret pattern in the level.","Он разгадал секретный рисунок в уровне."]]],["give up","gave up","сдаться, перестать пытаться",[["I almost ___ after ten failed attempts.","Я чуть не сдался после десяти неудачных попыток."],["He ___ because the puzzle seemed impossible.","Он сдался, потому что головоломка казалась невозможной."],["She ___ trying after several unsuccessful days.","Она перестала пытаться после нескольких неудачных дней."],["We nearly ___ when the final level got too hard.","Мы почти сдались, когда последний уровень стал слишком сложным."]]],["carry on","carried on","продолжить",[["I ___ playing although the level was difficult.","Я продолжил играть, хотя уровень был сложным."],["She ___ reading even when it became late.","Она продолжила читать, даже когда стало поздно."],["We ___ practising until we got it right.","Мы продолжили тренироваться, пока не получилось."],["He ___ studying after a short break.","Он продолжил учиться после небольшого перерыва."]]],["turn off","turned off","выключить",[["I ___ the computer before going to bed.","Я выключил компьютер перед сном."],["She ___ the lights before leaving the room.","Она выключила свет перед выходом из комнаты."],["We ___ the television after the film ended.","Мы выключили телевизор после окончания фильма."],["He ___ the radio before starting his homework.","Он выключил радио перед домашним заданием."]]]];
+function buildPhrasalReviewQuestions_(setNumber, retryRound) {
+  if (!Number.isInteger(setNumber) || setNumber < 1 || setNumber > TOTAL_SETS ||
+      !Number.isSafeInteger(retryRound) || retryRound < 0) {
+    throw new Error('Неверный набор фразовых глаголов.');
+  }
+  const out = [];
+  for (let slot = 0; slot < 4; slot++) {
+    const index = ((setNumber - 1) * 4 + slot) % PHRASAL_CHALLENGE_BANK_.length;
+    const phrase = PHRASAL_CHALLENGE_BANK_[index];
+    const scenario = phrase[3][(retryRound + slot + setNumber) % 4];
+    const correctIndex = (retryRound + setNumber + slot) % 4;
+    const other = [4,8,12].map(function(delta){
+      return PHRASAL_CHALLENGE_BANK_[(index + delta) % PHRASAL_CHALLENGE_BANK_.length];
+    });
+    let prompt, correct, distractors, explanation, type;
+    if (slot === 0) {
+      type = 'Phrasal verbs · Вставь';
+      prompt = 'Вставь подходящий фразовый глагол: ' + scenario[0].replace('___','□□□□');
+      correct = phrase[1];
+      distractors = other.map(function(p){return p[1];});
+      explanation = phrase[0] + ' (' + phrase[1] + ') — ' + phrase[2] + '. ' +
+                    scenario[0].replace('___',phrase[1]);
+    } else if (slot === 1) {
+      type = 'Phrasal verbs · RU → EN';
+      prompt = 'Какой фразовый глагол нужен для перевода: «' + scenario[1] + '»?';
+      correct = phrase[1];
+      distractors = other.map(function(p){return p[1];});
+      explanation = phrase[0] + ' в прошедшем времени — ' + phrase[1] +
+                    '. ' + scenario[0].replace('___',phrase[1]);
+    } else if (slot === 2) {
+      type = 'Phrasal verbs · EN → RU';
+      prompt = 'Что означает фразовый глагол в предложении: ' +
+               scenario[0].replace('___',phrase[1]);
+      correct = phrase[2];
+      distractors = other.map(function(p){return p[2];});
+      explanation = phrase[0] + ' означает «' + phrase[2] +
+                    '». Перевод: «' + scenario[1] + '»';
+    } else {
+      type = 'Phrasal verbs · Значение';
+      prompt = 'Какой английский фразовый глагол соответствует ситуации: «' +
+               scenario[1] + '»?';
+      correct = phrase[0];
+      distractors = other.map(function(p){return p[0];});
+      explanation = phrase[0] + ' — «' + phrase[2] +
+                    '». В Past Simple: ' + phrase[1] + '.';
+    }
+    const options = distractors.slice();
+    options.splice(correctIndex,0,correct);
+    if (new Set(options).size !== 4) throw new Error('Дубли в ответах на фразовый глагол.');
+    out.push(q_(type,prompt,options[0],options[1],options[2],options[3],
+      correctIndex,explanation));
+  }
+  return out;
+}
+
+const BARELY_REVIEW_EXAMPLES_ = [
+  ['I could barely hear my friend over the noise.',
+   'Я едва мог слышать друга из-за шума.',
+   'Я отчётливо слышал друга из-за шума.',
+   'Я часто слышал друга из-за шума.',
+   'Я недавно слышал друга из-за шума.'],
+  ['She barely had time to finish her homework.',
+   'У неё едва хватило времени закончить домашнее задание.',
+   'У неё было очень много времени закончить домашнее задание.',
+   'Она никогда не делала домашнее задание.',
+   'Она недавно начала делать домашнее задание.'],
+  ['We could barely see the road in the fog.',
+   'Мы едва различали дорогу в тумане.',
+   'Мы прекрасно видели дорогу в тумане.',
+   'Мы часто ходили по этой дороге.',
+   'Мы недавно построили эту дорогу.'],
+  ['The player barely reached the last platform.',
+   'Игрок едва добрался до последней платформы.',
+   'Игрок легко добрался до последней платформы.',
+   'Игрок часто добирался до последней платформы.',
+   'Игрок недавно построил последнюю платформу.']
+];
+function extraBarelyQuestion_(setNumber, round) {
+  // Keep the original pinned 16th item exactly unchanged in its former set.
+  if (setNumber <= 15 && setNumber === barelyExtraSetNumber_()) {
+    return q_('Vocabulary · barely', 'Как перевести предложение: I could barely hear the teacher?',
+      'Я прекрасно слышал учителя.',
+      'Я едва мог слышать учителя.',
+      'Я часто слышал учителя.',
+      'Я специально не слушал учителя.',
+      1, 'Barely означает «едва», «еле», «почти не».');
+  }
+  const e = BARELY_REVIEW_EXAMPLES_[(round + setNumber) % BARELY_REVIEW_EXAMPLES_.length];
+  const correctIndex = (setNumber + round) % 4;
+  const answers = e.slice(2);
+  answers.splice(correctIndex,0,e[1]);
+  return q_('Vocabulary · barely', 'Переведи на русский: ' + e[0],
+    answers[0],answers[1],answers[2],answers[3],correctIndex,
+    'Barely — «едва, еле». Правильный перевод: ' + e[1]);
+}
+
 // Pin the extra vocabulary question to the set active on first request after release.
 // Other sets keep their original 15 questions.
 const BARELY_EXTRA_SET_KEY = 'ARTYOM_BARELY_EXTRA_SET_NUMBER';
@@ -989,14 +1092,18 @@ function buildSetQuestions_(setNumber) {
     throw new Error('В каждом наборе должно быть 8 Active и 7 Passive вопросов. Набор ' + setNumber);
   }
 
-  const questions = setNumber <= 15 && setNumber === barelyExtraSetNumber_()
-    ? [q_('Vocabulary · barely', 'Как перевести предложение: I could barely hear the teacher?',
-        'Я прекрасно слышал учителя.',
-        'Я едва мог слышать учителя.',
-        'Я часто слышал учителя.',
-        'Я специально не слушал учителя.',
-        1, 'Barely означает «едва», «еле», «почти не».')].concat(source)
-    : source;
+  const retryRound = setNumber >= 16 ? retryRoundForSet_(setNumber) : 0;
+  const additionalBarely = extraBarelyQuestion_(setNumber, retryRound);
+  // Retain all 15 existing questions verbatim; add the known barely review
+  // as question 16 (or keep the original pinned review at question 1).
+  const baseQuestions = setNumber <= 15 && setNumber === barelyExtraSetNumber_()
+    ? [additionalBarely].concat(source)
+    : source.concat([additionalBarely]);
+  // Four questions use the 15 source phrasal verbs, yielding 20 total.
+  const questions = baseQuestions.concat(buildPhrasalReviewQuestions_(setNumber,retryRound));
+  if (questions.length !== 20) {
+    throw new Error('Ожидалось ровно 20 вопросов в каждом наборе.');
+  }
 
   return questions.map(function(item, index) {
     return {
@@ -1085,14 +1192,14 @@ function rewardStatusFromSheet_(sheet, epoch) {
         penaltyTotal += PENALTY_POINTS;
         penaltyHistory.push({type:'penalty',amount:PENALTY_POINTS,
           date:row[0] instanceof Date ? row[0].toISOString() : String(row[0]),
-          reason:'Тест '+d.setNumber+' — результат '+d.score+'/15'});
+          reason:'Тест '+d.setNumber+' — результат '+d.score+'/'+(d.total||15)});
       }
       if (d && d.rewardEpoch === epoch && d.rewardGranted === true &&
           d.student === 'Артём' && Number.isInteger(Number(d.setNumber))) {
         if (!earnedSets[String(d.setNumber)]) {
           earnedHistory.push({type:'earn',amount:REWARD_POINTS,
             date:row[0] instanceof Date ? row[0].toISOString() : String(row[0]),
-            reason:'Тест '+d.setNumber+' — 15/15'});
+            reason:'Тест '+d.setNumber+' — '+(d.total||15)+'/'+(d.total||15)});
         }
         earnedSets[String(d.setNumber)] = true;
       }
@@ -1177,12 +1284,14 @@ function startArtyomAdverbsBlock() {
 }
 
 function testIdForSet_(setNumber) {
-  return setNumber >= 16
+  // New bank version rejects stale cached 15- or 16-question submissions
+  // without corrupting already saved attempts or the reward history.
+  return 'phrasal-20-v1-' + (setNumber >= 16
     ? 'adverbs-retry-a2b1-v2-set-' + setNumber + '-round-' + retryRoundForSet_(setNumber)
     : setNumber <= 5
     ? 'active-passive-formula-a2plus-v2-set-' + setNumber
     : setNumber <= 10 ? 'foundation-mixed-a1a2-v1-set-' + setNumber
-    : 'adverbs-a2b1-v1-set-' + (setNumber - 10);
+    : 'adverbs-a2b1-v1-set-' + (setNumber - 10));
 }
 
 
@@ -1318,7 +1427,7 @@ function verifyAndSave_(data) {
   }
 
   const answers = Array.isArray(data.answers) ? data.answers : [];
-  if (answers.length !== buildSetQuestions_(currentSetIndex_() + 1).length) throw new Error('Неверное количество ответов в тесте.');
+  // Validate the current 20-answer payload after the idempotency lookup below.
 
   const lock = LockService.getScriptLock();
   lock.waitLock(15000);
@@ -1392,6 +1501,9 @@ function verifyAndSave_(data) {
     }
 
     const bank = buildSetQuestions_(currentSetNumber);
+    if (answers.length !== bank.length) {
+      throw new Error('Нужно ответить на все ' + bank.length + ' вопросов. Обнови тест.');
+    }
     const keyById = {};
     bank.forEach(function(question) { keyById[question.id] = question; });
 
