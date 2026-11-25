@@ -1,0 +1,1033 @@
+{
+  "schemaVersion": 1,
+  "student": "Даша",
+  "block": "21–30",
+  "topics": [
+    "am/is/are",
+    "my/mine, your/yours, our/ours, their/theirs, his, her/hers",
+    "English to Russian translations",
+    "Russian to English translations"
+  ],
+  "levels": [
+    [
+      [
+        "I ___ excited about my birthday.",
+        [
+          "am",
+          "is",
+          "are"
+        ],
+        0,
+        "С I используется am."
+      ],
+      [
+        "My sister ___ in the library now.",
+        [
+          "am",
+          "is",
+          "are"
+        ],
+        1,
+        "Sister = she, поэтому is."
+      ],
+      [
+        "We ___ ready to play.",
+        [
+          "am",
+          "is",
+          "are"
+        ],
+        2,
+        "We are — мы готовы."
+      ],
+      [
+        "Is this ___ new notebook? (Это моя новая тетрадь?)",
+        [
+          "mine",
+          "my",
+          "me"
+        ],
+        1,
+        "Перед notebook нужно my."
+      ],
+      [
+        "The purple notebook is ___. (Фиолетовая тетрадь моя.)",
+        [
+          "mine",
+          "my",
+          "me"
+        ],
+        0,
+        "Без существительного после is нужно mine."
+      ],
+      [
+        "Where are ___ glasses? (Где твои очки?)",
+        [
+          "yours",
+          "you",
+          "your"
+        ],
+        2,
+        "Перед glasses нужно your."
+      ],
+      [
+        "В фразе «our dog is friendly» что значит слово our?",
+        [
+          "мы",
+          "наше (без существительного)",
+          "наш"
+        ],
+        2,
+        "Our dog — наш пёс."
+      ],
+      [
+        "В «The ball is mine» что означает mine?",
+        [
+          "мой (мяч принадлежит мне)",
+          "я",
+          "мой перед существительным"
+        ],
+        0,
+        "Mine — принадлежит мне, без следующего существительного."
+      ],
+      [
+        "Как сказать «наша команда»? Выбери слово перед team.",
+        [
+          "our",
+          "ours",
+          "we"
+        ],
+        0,
+        "Our team — наша команда."
+      ],
+      [
+        "Как сказать «Этот мяч наш»? Выбери слово после is.",
+        [
+          "our",
+          "us",
+          "ours"
+        ],
+        2,
+        "This ball is ours."
+      ]
+    ],
+    [
+      [
+        "My two friends ___ from the same school.",
+        [
+          "am",
+          "are",
+          "is"
+        ],
+        1,
+        "Friends — множественное число, поэтому are."
+      ],
+      [
+        "___ your uncle at home?",
+        [
+          "Am",
+          "Are",
+          "Is"
+        ],
+        2,
+        "Uncle = he, вопрос начинается с Is."
+      ],
+      [
+        "My pencil case ___ under my desk.",
+        [
+          "is",
+          "am",
+          "are"
+        ],
+        0,
+        "Pencil case — один предмет, поэтому is."
+      ],
+      [
+        "The green glasses are ___. (Зелёные очки твои.)",
+        [
+          "your",
+          "you",
+          "yours"
+        ],
+        2,
+        "Без существительного после are нужно yours."
+      ],
+      [
+        "We love ___ little garden. (Мы любим наш маленький сад.)",
+        [
+          "ours",
+          "our",
+          "us"
+        ],
+        1,
+        "Перед garden нужно our."
+      ],
+      [
+        "This little garden is ___. (Этот сад наш.)",
+        [
+          "ours",
+          "our",
+          "us"
+        ],
+        0,
+        "Без существительного после is нужно ours."
+      ],
+      [
+        "Как перевести your в «your teacher»?",
+        [
+          "твой/ваш",
+          "ты/вы",
+          "тебя"
+        ],
+        0,
+        "Your teacher — твой/ваш учитель."
+      ],
+      [
+        "В «The room is ours» что означает ours?",
+        [
+          "мы",
+          "наша (комната принадлежит нам)",
+          "наш перед существительным"
+        ],
+        1,
+        "Ours употребляется самостоятельно."
+      ],
+      [
+        "Как сказать «её книга»? Выбери слово перед book.",
+        [
+          "hers",
+          "her",
+          "she"
+        ],
+        1,
+        "Her book — её книга."
+      ],
+      [
+        "Как сказать «Книга её»? Выбери слово после is.",
+        [
+          "hers",
+          "her",
+          "she"
+        ],
+        0,
+        "The book is hers."
+      ]
+    ],
+    [
+      [
+        "___ you tired after swimming?",
+        [
+          "Am",
+          "Is",
+          "Are"
+        ],
+        2,
+        "Вопрос с you начинается с Are."
+      ],
+      [
+        "He ___ not my classmate.",
+        [
+          "is",
+          "am",
+          "are"
+        ],
+        0,
+        "He is not — он не."
+      ],
+      [
+        "The birds ___ in the tree.",
+        [
+          "am",
+          "are",
+          "is"
+        ],
+        1,
+        "Birds — множественное число, поэтому are."
+      ],
+      [
+        "The children are playing with ___ toys. (Дети играют со своими игрушками.)",
+        [
+          "their",
+          "theirs",
+          "they"
+        ],
+        0,
+        "Перед toys нужно their."
+      ],
+      [
+        "Those colourful toys are ___. (Те цветные игрушки их.)",
+        [
+          "their",
+          "they",
+          "theirs"
+        ],
+        2,
+        "После are без существительного нужно theirs."
+      ],
+      [
+        "He is looking for ___ cap. (Он ищет свою кепку.)",
+        [
+          "him",
+          "his",
+          "he"
+        ],
+        1,
+        "Перед cap — his."
+      ],
+      [
+        "Что значит their в «their cat»?",
+        [
+          "они",
+          "их",
+          "им"
+        ],
+        1,
+        "Their cat — их кот."
+      ],
+      [
+        "Что значит theirs в «The books are theirs»?",
+        [
+          "они",
+          "их перед существительным",
+          "их (книги принадлежат им)"
+        ],
+        2,
+        "Theirs — их, без существительного."
+      ],
+      [
+        "Как сказать «его шапка»? Выбери слово перед hat.",
+        [
+          "he",
+          "him",
+          "his"
+        ],
+        2,
+        "His hat — его шапка."
+      ],
+      [
+        "Как сказать «Шапка его»? Выбери слово после is.",
+        [
+          "he",
+          "his",
+          "him"
+        ],
+        1,
+        "The hat is his."
+      ]
+    ],
+    [
+      [
+        "___ I late for the lesson?",
+        [
+          "Am",
+          "Is",
+          "Are"
+        ],
+        0,
+        "Вопрос с I начинается с Am."
+      ],
+      [
+        "Your shoes ___ clean.",
+        [
+          "am",
+          "are",
+          "is"
+        ],
+        1,
+        "Shoes — множественное число: are."
+      ],
+      [
+        "This cake ___ very sweet.",
+        [
+          "am",
+          "are",
+          "is"
+        ],
+        2,
+        "Cake — один предмет: is."
+      ],
+      [
+        "The blue cap is ___. (Синяя кепка его.)",
+        [
+          "he",
+          "his",
+          "him"
+        ],
+        1,
+        "His работает без существительного."
+      ],
+      [
+        "I cannot find ___ keys. (Я не могу найти свои ключи.)",
+        [
+          "my",
+          "mine",
+          "me"
+        ],
+        0,
+        "Перед keys нужно my."
+      ],
+      [
+        "The keys on the shelf are ___. (Ключи на полке мои.)",
+        [
+          "my",
+          "me",
+          "mine"
+        ],
+        2,
+        "После are без существительного — mine."
+      ],
+      [
+        "Что означает his в «his sister»?",
+        [
+          "он",
+          "её",
+          "его"
+        ],
+        2,
+        "His sister — его сестра."
+      ],
+      [
+        "Что означает hers в «The pencil is hers»?",
+        [
+          "её (карандаш принадлежит ей)",
+          "она",
+          "ей"
+        ],
+        0,
+        "Hers употребляется самостоятельно."
+      ],
+      [
+        "Как сказать «их друзья»? Выбери слово перед friends.",
+        [
+          "their",
+          "theirs",
+          "they"
+        ],
+        0,
+        "Their friends — их друзья."
+      ],
+      [
+        "Как сказать «Друзья их»? Выбери слово после are.",
+        [
+          "their",
+          "they",
+          "theirs"
+        ],
+        2,
+        "The friends are theirs."
+      ]
+    ],
+    [
+      [
+        "My cousins ___ very funny.",
+        [
+          "am",
+          "are",
+          "is"
+        ],
+        1,
+        "Cousins = they: are."
+      ],
+      [
+        "Our teacher ___ kind.",
+        [
+          "am",
+          "are",
+          "is"
+        ],
+        2,
+        "Teacher = he/she: is."
+      ],
+      [
+        "I ___ not afraid of dogs.",
+        [
+          "am",
+          "is",
+          "are"
+        ],
+        0,
+        "I am not — я не боюсь."
+      ],
+      [
+        "Please take ___ water bottle. (Пожалуйста, возьми свою бутылку воды.)",
+        [
+          "yours",
+          "you",
+          "your"
+        ],
+        2,
+        "Перед bottle нужно your."
+      ],
+      [
+        "The bottle next to the chair is ___. (Бутылка у стула твоя.)",
+        [
+          "your",
+          "yours",
+          "you"
+        ],
+        1,
+        "Без существительного нужно yours."
+      ],
+      [
+        "Our family loves ___ new home. (Наша семья любит наш новый дом.)",
+        [
+          "our",
+          "ours",
+          "us"
+        ],
+        0,
+        "Перед home — our."
+      ],
+      [
+        "Что значит my в «my birthday»?",
+        [
+          "мой",
+          "я",
+          "меня"
+        ],
+        0,
+        "My birthday — мой день рождения."
+      ],
+      [
+        "Что означает yours в «This seat is yours»?",
+        [
+          "ты",
+          "твоё (место принадлежит тебе)",
+          "твой перед существительным"
+        ],
+        1,
+        "Yours — твоё, без следующего существительного."
+      ],
+      [
+        "Как сказать «мой цветок»? Выбери слово перед flower.",
+        [
+          "mine",
+          "my",
+          "me"
+        ],
+        1,
+        "My flower — мой цветок."
+      ],
+      [
+        "Как сказать «Этот цветок мой»? Выбери слово после is.",
+        [
+          "mine",
+          "my",
+          "me"
+        ],
+        0,
+        "This flower is mine."
+      ]
+    ],
+    [
+      [
+        "___ your parents at work?",
+        [
+          "Am",
+          "Is",
+          "Are"
+        ],
+        2,
+        "Parents — множественное число: Are."
+      ],
+      [
+        "The toy train ___ on the floor.",
+        [
+          "is",
+          "am",
+          "are"
+        ],
+        0,
+        "Train — один предмет: is."
+      ],
+      [
+        "You ___ my favourite teammate.",
+        [
+          "am",
+          "are",
+          "is"
+        ],
+        1,
+        "You are — ты."
+      ],
+      [
+        "The red tent is ___. (Красная палатка наша.)",
+        [
+          "ours",
+          "our",
+          "us"
+        ],
+        0,
+        "После is без существительного — ours."
+      ],
+      [
+        "The boys are washing ___ bicycles. (Мальчики моют свои велосипеды.)",
+        [
+          "theirs",
+          "they",
+          "their"
+        ],
+        2,
+        "Перед bicycles — their."
+      ],
+      [
+        "The bicycles by the fence are ___. (Велосипеды у забора их.)",
+        [
+          "their",
+          "theirs",
+          "they"
+        ],
+        1,
+        "Без существительного после are — theirs."
+      ],
+      [
+        "В «Our school is big» как переводится our?",
+        [
+          "мы",
+          "наша",
+          "нам"
+        ],
+        1,
+        "Our school — наша школа."
+      ],
+      [
+        "В «That bike is mine» что означает mine?",
+        [
+          "мне",
+          "мой перед существительным",
+          "мой (велосипед принадлежит мне)"
+        ],
+        2,
+        "Mine — мой, без следующего существительного."
+      ],
+      [
+        "Как сказать «твоя тарелка»? Выбери слово перед plate.",
+        [
+          "yours",
+          "you",
+          "your"
+        ],
+        2,
+        "Your plate — твоя тарелка."
+      ],
+      [
+        "Как сказать «Эта тарелка твоя»? Выбери слово после is.",
+        [
+          "your",
+          "yours",
+          "you"
+        ],
+        1,
+        "This plate is yours."
+      ]
+    ],
+    [
+      [
+        "My new gloves ___ too big.",
+        [
+          "are",
+          "am",
+          "is"
+        ],
+        0,
+        "Gloves — множественное число: are."
+      ],
+      [
+        "___ he your English teacher?",
+        [
+          "Am",
+          "Is",
+          "Are"
+        ],
+        1,
+        "He — Is he ...?"
+      ],
+      [
+        "She ___ not hungry now.",
+        [
+          "am",
+          "are",
+          "is"
+        ],
+        2,
+        "She is not — она не голодна."
+      ],
+      [
+        "She is reading ___ comic book. (Она читает свой комикс.)",
+        [
+          "hers",
+          "her",
+          "she"
+        ],
+        1,
+        "Перед comic book — her."
+      ],
+      [
+        "The comic book on the bed is ___. (Комикс на кровати её.)",
+        [
+          "hers",
+          "her",
+          "she"
+        ],
+        0,
+        "Без существительного — hers."
+      ],
+      [
+        "My brother has lost ___ headphones. (Мой брат потерял свои наушники.)",
+        [
+          "he",
+          "him",
+          "his"
+        ],
+        2,
+        "Перед headphones — his."
+      ],
+      [
+        "В «Your friends are nice» что означает your?",
+        [
+          "вы",
+          "тебе",
+          "твои"
+        ],
+        2,
+        "Your friends — твои друзья."
+      ],
+      [
+        "В «These cupcakes are ours» что значит ours?",
+        [
+          "наши (кексы принадлежат нам)",
+          "мы",
+          "наши перед существительным"
+        ],
+        0,
+        "Ours — наши, стоит самостоятельно."
+      ],
+      [
+        "Как сказать «наши рисунки»? Выбери слово перед pictures.",
+        [
+          "our",
+          "ours",
+          "we"
+        ],
+        0,
+        "Our pictures — наши рисунки."
+      ],
+      [
+        "Как сказать «Эти рисунки наши»? Выбери слово после are.",
+        [
+          "our",
+          "us",
+          "ours"
+        ],
+        2,
+        "These pictures are ours."
+      ]
+    ],
+    [
+      [
+        "My grandparents ___ very happy.",
+        [
+          "am",
+          "are",
+          "is"
+        ],
+        1,
+        "Grandparents — множественное число: are."
+      ],
+      [
+        "___ this your favourite song?",
+        [
+          "Am",
+          "Are",
+          "Is"
+        ],
+        2,
+        "This — одно, поэтому Is."
+      ],
+      [
+        "I ___ in the kitchen with Mum.",
+        [
+          "am",
+          "is",
+          "are"
+        ],
+        0,
+        "I am — я нахожусь."
+      ],
+      [
+        "The black headphones are ___. (Чёрные наушники его.)",
+        [
+          "he",
+          "him",
+          "his"
+        ],
+        2,
+        "После are без существительного подходит his."
+      ],
+      [
+        "The girls are wearing ___ school uniforms. (Девочки носят свою школьную форму.)",
+        [
+          "theirs",
+          "their",
+          "they"
+        ],
+        1,
+        "Перед uniforms — their."
+      ],
+      [
+        "The school uniforms are ___. (Школьная форма их.)",
+        [
+          "theirs",
+          "their",
+          "they"
+        ],
+        0,
+        "После are без существительного — theirs."
+      ],
+      [
+        "В «Their backpacks are new» что значит their?",
+        [
+          "их",
+          "они",
+          "им"
+        ],
+        0,
+        "Their backpacks — их рюкзаки."
+      ],
+      [
+        "В «The game is theirs» что значит theirs?",
+        [
+          "они",
+          "их (игра принадлежит им)",
+          "их перед существительным"
+        ],
+        1,
+        "Theirs — их, без существительного."
+      ],
+      [
+        "Как сказать «их парты»? Выбери слово перед desks.",
+        [
+          "theirs",
+          "their",
+          "they"
+        ],
+        1,
+        "Their desks — их парты."
+      ],
+      [
+        "Как сказать «Парты их»? Выбери слово после are.",
+        [
+          "theirs",
+          "their",
+          "they"
+        ],
+        0,
+        "The desks are theirs."
+      ]
+    ],
+    [
+      [
+        "The windows ___ open.",
+        [
+          "am",
+          "is",
+          "are"
+        ],
+        2,
+        "Windows — множественное число: are."
+      ],
+      [
+        "___ we on the right bus?",
+        [
+          "Are",
+          "Am",
+          "Is"
+        ],
+        0,
+        "We — Are we ...?"
+      ],
+      [
+        "His new backpack ___ heavy.",
+        [
+          "am",
+          "is",
+          "are"
+        ],
+        1,
+        "Backpack — один предмет: is."
+      ],
+      [
+        "I like ___ new desk. (Мне нравится мой новый стол.)",
+        [
+          "my",
+          "mine",
+          "me"
+        ],
+        0,
+        "Перед desk — my."
+      ],
+      [
+        "The desk by the window is ___. (Стол у окна мой.)",
+        [
+          "my",
+          "me",
+          "mine"
+        ],
+        2,
+        "Без существительного — mine."
+      ],
+      [
+        "Can you show me ___ drawing? (Можешь показать мне свой рисунок?)",
+        [
+          "yours",
+          "your",
+          "you"
+        ],
+        1,
+        "Перед drawing — your."
+      ],
+      [
+        "В «Her gloves are purple» что значит her?",
+        [
+          "она",
+          "её",
+          "ей"
+        ],
+        1,
+        "Her gloves — её перчатки."
+      ],
+      [
+        "В «The toy is hers» что значит hers?",
+        [
+          "она",
+          "её перед существительным",
+          "её (игрушка принадлежит ей)"
+        ],
+        2,
+        "Hers — её, без существительного."
+      ],
+      [
+        "Как сказать «мой билет»? Выбери слово перед ticket.",
+        [
+          "mine",
+          "me",
+          "my"
+        ],
+        2,
+        "My ticket — мой билет."
+      ],
+      [
+        "Как сказать «Этот билет мой»? Выбери слово после is.",
+        [
+          "my",
+          "mine",
+          "me"
+        ],
+        1,
+        "This ticket is mine."
+      ]
+    ],
+    [
+      [
+        "My two rabbits ___ white.",
+        [
+          "are",
+          "am",
+          "is"
+        ],
+        0,
+        "Rabbits — множественное число: are."
+      ],
+      [
+        "___ she happy with her present?",
+        [
+          "Am",
+          "Is",
+          "Are"
+        ],
+        1,
+        "She — Is she ...?"
+      ],
+      [
+        "The weather ___ lovely today.",
+        [
+          "am",
+          "are",
+          "is"
+        ],
+        2,
+        "Weather — с is."
+      ],
+      [
+        "The drawing with a rainbow is ___. (Рисунок с радугой твой.)",
+        [
+          "your",
+          "yours",
+          "you"
+        ],
+        1,
+        "После is — yours."
+      ],
+      [
+        "She is holding ___ umbrella. (Она держит свой зонт.)",
+        [
+          "her",
+          "hers",
+          "she"
+        ],
+        0,
+        "Перед umbrella — her."
+      ],
+      [
+        "The umbrella near the door is ___. (Зонт у двери её.)",
+        [
+          "her",
+          "she",
+          "hers"
+        ],
+        2,
+        "После is без существительного — hers."
+      ],
+      [
+        "В «His favourite colour is green» что значит his?",
+        [
+          "он",
+          "ему",
+          "его"
+        ],
+        2,
+        "His favourite colour — его любимый цвет."
+      ],
+      [
+        "В «This is yours» что значит yours?",
+        [
+          "твоё (принадлежит тебе)",
+          "ты",
+          "твой перед существительным"
+        ],
+        0,
+        "Yours — твоё, без существительного."
+      ],
+      [
+        "Как сказать «её пальто»? Выбери слово перед coat.",
+        [
+          "her",
+          "hers",
+          "she"
+        ],
+        0,
+        "Her coat — её пальто."
+      ],
+      [
+        "Как сказать «Пальто её»? Выбери слово после is.",
+        [
+          "her",
+          "she",
+          "hers"
+        ],
+        2,
+        "The coat is hers."
+      ]
+    ]
+  ]
+}
