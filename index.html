@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#172b59">
-<title>Artyom's English Challenge — English Adverbs</title>
+<title>Artyom's English Challenge — Adverbs & Phrasal Verbs</title>
 <style>
 :root{color-scheme:light;--ink:#172033;--muted:#64748b;--line:#dbe3ee;--blue:#2457d6;--navy:#172b59;--pale:#eef4ff;--good:#e9f8ef;--bad:#fff0f0;--amber:#fff6df}
 *{box-sizing:border-box}
@@ -54,7 +54,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
 <main>
   <section class="hero">
     <h1>Artyom's English Challenge</h1>
-    <p>English Adverbs · Recently, Rarely, Hardly & More · A2–B1</p>
+    <p>English Adverbs & Phrasal Verbs · A2–B1</p>
     <div class="meta">
       <span class="pill" id="setPill">Set — / 25</span>
       <span class="pill" id="pointsPill">⭐ Баллы: —</span>
@@ -77,8 +77,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
     </div>
     <div class="progressLine"><div id="progressFill"></div></div>
     <div class="panel instructions">
-      <strong>Инструкция:</strong> В каждом вопросе выбери один правильный вариант. Тренируем наречия recently, rarely, seldom, lately, certainly, maybe, perhaps, therefore, hardly и hardly ever. Задания: вставь пропущенное, найди ошибку, переведи с русского на английский и с английского на русский.
-      <br><br><strong>Баллы:</strong> Идеальный результат (15/15 или 16/16) — +60 за впервые пройденный набор; иначе — штраф −10 за каждую новую попытку в блоке наречий.
+      <strong>Инструкция:</strong> В каждом вопросе выбери один правильный вариант. Тренируем наречия recently, rarely, seldom, lately, certainly, maybe, perhaps, therefore, hardly, hardly ever и barely, а также 15 фразовых глаголов из текста The Secret Coin. В каждом тесте — 16 заданий на прежние темы и 4 на фразовые глаголы. Задания: вставь пропущенное, найди ошибку, переведи с русского на английский и с английского на русский.
+      <br><br><strong>Баллы:</strong> Идеальный результат 20/20 — +60 за впервые пройденный набор; иначе — штраф −10 за каждую новую попытку в блоке наречий.
     </div>
     <form id="quiz">
       <div id="questions"></div>
@@ -219,7 +219,7 @@ async function loadCurrentTest() {
   try {
     const response = await jsonpRequest({action: 'getTest'});
     if (!response || !response.ok || !Array.isArray(response.questions) ||
-        ![15, 16].includes(response.questions.length) || !response.testId ||
+        response.questions.length !== 20 || !response.testId ||
         !Number.isInteger(Number(response.setNumber))) {
       throw new Error(response && response.error ? response.error : 'Сервер вернул некорректный набор.');
     }
