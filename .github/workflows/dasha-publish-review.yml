@@ -1,0 +1,174 @@
+name: Dasha English - publish review sets 21 to 30
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'release-requests/dasha-review-publish.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dasha-google-apps-script-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate approved source fingerprints and all 300 questions
+        run: |
+          set -euo pipefail
+          python3 -m py_compile apps-script/dasha/extend-review-bank.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,subprocess
+          req=json.loads(Path('release-requests/dasha-review-publish.json').read_text())
+          assert req.get('action')=='publish_dasha_review_21_30'
+          for field,path in (
+            ('first_bank_sha','apps-script/dasha/beginner-bank.json'),
+            ('second_bank_sha','apps-script/dasha/next-bank.json'),
+            ('third_bank_sha','apps-script/dasha/review-bank.json'),
+            ('patcher_sha','apps-script/dasha/extend-review-bank.py')):
+              actual=subprocess.check_output(['git','hash-object',path],text=True).strip()
+              assert req.get(field)==actual,(field,'unapproved source changed')
+          data=[json.loads(Path(s).read_text()) for s in (
+            'apps-script/dasha/beginner-bank.json',
+            'apps-script/dasha/next-bank.json',
+            'apps-script/dasha/review-bank.json')]
+          assert all(d['student']=='Даша' and len(d['levels'])==10 for d in data)
+          all_levels=sum((d['levels'] for d in data),[])
+          assert len(all_levels)==30
+          assert all(len(level)==10 for level in all_levels)
+          assert len({q[0] for level in all_levels for q in level})==300
+          for level in all_levels:
+            for prompt,opts,correct,explanation in level:
+              assert len(opts)==3 and len(set(opts))==3
+              assert type(correct)==int and correct in (0,1,2) and explanation
+          print('PASS: 30 sets of 10 questions; 100 new prompts; original 200 unchanged.')
+          PY
+      - name: Install clasp
+        run: npm install --global @google/clasp
+      - name: Verify previous live bank, patch, test, publish existing Dasha deployment
+        env:
+          CLASP_CREDENTIALS_JSON: ${{ secrets.CLASP_CREDENTIALS_JSON }}
+          SCRIPT_ID: 18qsGmeecVOv6LzvPfLBjZfYGAJdiKgUksYJGyjdFVsrLWBu2cNN16Fpq
+          DEPLOYMENT_ID: AKfycbzjiijPpMKBoR4FAU4rny_niASspsCXHqIN4bygEcLHNDopmyyr_aH6QPZkLEPWpHTmDw
+        run: |
+          set -euo pipefail
+          test -n "$CLASP_CREDENTIALS_JSON"
+          printf '%s' "$CLASP_CREDENTIALS_JSON" > "$HOME/.clasprc.json"
+          chmod 600 "$HOME/.clasprc.json"
+          trap 'rm -f "$HOME/.clasprc.json"' EXIT
+          stage="$RUNNER_TEMP/dasha-review-stage"
+          mkdir -p "$stage"
+          printf '{"scriptId":"%s"}\n' "$SCRIPT_ID" > "$stage/.clasp.json"
+          (
+            cd "$stage"
+            clasp pull
+            clasp list-deployments > "$RUNNER_TEMP/dasha-deployments-before.txt"
+          )
+          grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/dasha-deployments-before.txt"
+          test -s "$stage/Код.js"
+          test -s "$stage/appsscript.json"
+          python3 -m json.tool "$stage/appsscript.json" >/dev/null
+          python3 apps-script/dasha/extend-review-bank.py "$stage/Код.js" \
+            apps-script/dasha/beginner-bank.json \
+            apps-script/dasha/next-bank.json \
+            apps-script/dasha/review-bank.json
+          node --check "$stage/Код.js"
+          DASHA_CODE_PATH="$stage/Код.js" node - <<'JS'
+          'use strict';
+          const fs=require('node:fs'),vm=require('node:vm');
+          const src=fs.readFileSync(process.env.DASHA_CODE_PATH,'utf8');
+          function prepare(progress,passed20) {
+            const m=new Map([['DASHA_CURRENT_LEVEL',String(progress)]]);
+            const p={getProperty:key=>m.has(key)?m.get(key):null,
+                     setProperty:(key,val)=>m.set(key,String(val))};
+            const sandbox={PropertiesService:{getScriptProperties:()=>p}};
+            vm.createContext(sandbox);
+            vm.runInContext(src,sandbox,{timeout:3000});
+            sandbox.dashaSheet_=()=>({
+              getLastRow:()=>2,
+              getRange:(row,col,count,width)=>({
+                getValues:()=>col===3&&width===4
+                  ? [[20,'Уровень 20',passed20?10:9,10]]
+                  : [[10,'Уровень 10',10]]
+              })
+            });
+            const data=vm.runInContext(
+              '({total:DASHA_LEVELS,bank:DASHA_BANK,active:dashaLevel_()})',
+              sandbox,{timeout:3000});
+            return {data,m};
+          }
+          for(const lev of [10,11,20,21,30]){
+            const d=prepare(lev,lev!==20);
+            if(d.data.total!==30||d.data.bank.length!==30||
+               d.data.bank.some(set=>set.length!==10))throw Error('Wrong 30-level bank');
+          }
+          const passed=prepare(20,true);
+          if(passed.data.active!==21||passed.m.get('DASHA_CURRENT_LEVEL')!=='21')
+            throw Error('Verified historical 20/20 must unlock level21');
+          const failed=prepare(20,false);
+          if(failed.data.active!==20||failed.m.get('DASHA_CURRENT_LEVEL')!=='20')
+            throw Error('Incomplete level20 must stay locked');
+          if(prepare(10,true).data.active!==11)
+            throw Error('Original verified level10 auto-unlock changed');
+          if(prepare(21,true).data.active!==21 || prepare(30,true).data.active!==30)
+            throw Error('New level progression is wrong');
+          console.log('PASS: 30 levels; 20->21 verified migration; 10->11 original migration preserved.');
+          JS
+          python3 - "$stage" <<'PY'
+          from pathlib import Path
+          import sys
+          found={p.name for p in Path(sys.argv[1]).iterdir() if p.is_file()}
+          assert found=={'.clasp.json','Код.js','appsscript.json'},found
+          print('PASS: only original Google project files staged.')
+          PY
+          if ! clasp create-deployment --help >/dev/null 2>&1; then
+            echo "::error::Supported safe deployment command missing. Aborting."
+            exit 1
+          fi
+          (
+            cd "$stage"
+            clasp push --force
+            clasp create-deployment --deploymentId "$DEPLOYMENT_ID" --description "Dasha review 21-30 to be and possessives"
+            clasp list-deployments > "$RUNNER_TEMP/dasha-deployments-after.txt"
+          )
+          grep -Fq "$DEPLOYMENT_ID" "$RUNNER_TEMP/dasha-deployments-after.txt"
+          echo "Published Dasha review levels 21–30 at original URL. No history reset."
+      - name: Verify live questions, level 21, and reward history
+        run: |
+          python3 - <<'PY'
+          import json,urllib.parse,urllib.request
+          from pathlib import Path
+          url='https://script.google.com/macros/s/AKfycbzjiijPpMKBoR4FAU4rny_niASspsCXHqIN4bygEcLHNDopmyyr_aH6QPZkLEPWpHTmDw/exec'
+          def get(action):
+            params=urllib.parse.urlencode({'action':action,'callback':'verifyDasha'})
+            req=urllib.request.Request(url+'?'+params,headers={'User-Agent':'DashaReviewReleaseCheck/1.0'})
+            with urllib.request.urlopen(req,timeout=45) as response: text=response.read(300000).decode()
+            assert text.startswith('verifyDasha(') and text.rstrip().endswith(');')
+            data=json.loads(text[len('verifyDasha('):text.rfind(');')])
+            if not data.get('ok'):raise RuntimeError(str(data.get('error')))
+            return data
+          active=get('getTest')
+          level=int(active['level'])
+          assert int(active['totalLevels'])==30,active['totalLevels']
+          assert 21<=level<=30,('Expected passed former final level and new block',level)
+          expected=json.loads(Path('apps-script/dasha/review-bank.json').read_text())['levels'][level-21]
+          actual=active['questions']
+          assert len(actual)==len(expected)==10
+          for i,(question,source) in enumerate(zip(actual,expected),1):
+            assert question['id']=='q'+str(i),('id',i)
+            assert question['prompt']==source[0],('prompt',i)
+            assert question['options']==source[1],('options',i)
+            assert 'correctIndex' not in question and 'explanation' not in question
+          reward=get('getRewards')
+          assert isinstance(reward.get('pointsBalance'),(int,float))
+          assert isinstance(reward.get('history'),list)
+          print('PASS: live Dasha set '+str(level)+'/30; 10 new questions and reward history verified.')
+          PY
