@@ -1,7 +1,7 @@
 const SHEET_NAME = 'Результаты Артёма';
 const TEST_ID = 'active-passive-formula-a2plus-v1'; // legacy ID; old attempts remain intact
 const PROGRESS_KEY = 'ARTYOM_CURRENT_TEST_INDEX';
-const TOTAL_SETS = 25;
+const TOTAL_SETS = 30;
 const PENALTY_POINTS = 10;
 const PENALTY_START_SET = 11;
 const REWARD_POINTS = 60;
@@ -704,7 +704,7 @@ const TEST_SETS = [
   }
 ];
 
-// Final adverb reinforcement: sets 16–25 use fresh server-side question variants after each failed attempt.
+// Adverb reinforcement: sets 16–30 use fresh server-side question variants after each failed attempt.
 // All items and keys are generated server-side. A retry changes example sentences, not the set number.
 const ADV_WORD_BANK_ = [
   {word:'recently', ru:'недавно', wrong:['редко','давно','постоянно'], distractors:['seldom','certainly','hardly'],
@@ -882,7 +882,7 @@ function retryRoundForSet_(setNumber) {
 }
 
 function buildNewAdverbQuestions_(setNumber, round) {
-  if (!Number.isInteger(setNumber) || setNumber < 16 || setNumber > 25 ||
+  if (!Number.isInteger(setNumber) || setNumber < 16 || setNumber > 30 ||
       !Number.isSafeInteger(round) || round < 0) {
     throw new Error('Некорректный новый набор наречий.');
   }
@@ -942,11 +942,13 @@ function buildNewAdverbQuestions_(setNumber, round) {
   }
   return questions;
 }
-[16,17,18,19,20,21,22,23,24,25].forEach(function(setNumber) {
+[16,17,18,19,20,21,22,23,24,25,26,27,28,29,30].forEach(function(setNumber) {
   TEST_SETS.push({
     title: setNumber <= 20
       ? 'Наречия A2–B1 · Новый блок · Набор ' + (setNumber - 15) + ' из 5'
-      : 'Наречия A2–B1 · Финальное закрепление · Набор ' + (setNumber - 20) + ' из 5',
+      : setNumber <= 25
+      ? 'Наречия A2–B1 · Финальное закрепление · Набор ' + (setNumber - 20) + ' из 5'
+      : 'Наречия и фразовые глаголы A2–B1 · Закрепление · Набор ' + (setNumber - 25) + ' из 5',
     questions: buildNewAdverbQuestions_(setNumber, 0)
   });
 });
@@ -1124,7 +1126,7 @@ function currentSetIndex_() {
   return Math.min(TOTAL_SETS - 1, parsed);
 }
 
-// Teacher control: set the active test set manually (1..25).
+// Teacher control: set the active test set manually (1..30).
 // This does not delete history or modify previous attempts.
 function setArtyomCurrentSet(setNumber) {
   const value = Number(setNumber);
@@ -1334,9 +1336,31 @@ function unlockNextAdverbsAfterVerifiedSet20_() {
   if (completed20) props.setProperty(PROGRESS_KEY, '20');
 }
 
+function unlockNextAdverbsAfterVerifiedSet25_() {
+  const props = PropertiesService.getScriptProperties();
+  // In the last release, a perfect final set 25 did not move the progress
+  // index. Recover the completion only when its verified 20/20 is in the
+  // original results sheet. Do not touch points, history, or past grades.
+  if (props.getProperty(PROGRESS_KEY) !== '24') return;
+  const sheet = getOrCreateSheet_();
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return;
+  const attempts = sheet.getRange(2, 9, lastRow - 1, 1).getValues();
+  const completed25 = attempts.some(function(row) {
+    try {
+      const d = JSON.parse(String(row[0] || '{}'));
+      return d.student === 'Артём' && Number(d.setNumber) === 25 &&
+        d.verified === true && d.passed === true &&
+        Number(d.score) === 20 && Number(d.total) === 20;
+    } catch(ignore) {return false;}
+  });
+  if (completed25) props.setProperty(PROGRESS_KEY, '25');
+}
+
 function currentSetPayload_() {
   unlockNextAdverbsAfterVerifiedSet15_();
   unlockNextAdverbsAfterVerifiedSet20_();
+  unlockNextAdverbsAfterVerifiedSet25_();
   const reward = rewardStatusFromSheet_(getOrCreateSheet_(), rewardEpoch_());
   const setNumber = currentSetIndex_() + 1;
   const questions = buildSetQuestions_(setNumber).map(function(item) {
