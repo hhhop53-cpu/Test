@@ -1,7 +1,7 @@
 {
   "action": "publish_artyom",
-  "code_blob_sha": "a5063201c2afa2522524d0279bbf361827221c2f",
+  "code_blob_sha": "5323d1d649c63d9c6e35db2f8e84d663287a9296",
   "dashboard_blob_sha": "74ce21a3c57f2c06c3083c7b470b5afb51b6ae7e",
-  "release_id": "artyom-20-questions-phrasal-verbs-2026-11-25",
-  "reason": "Preserve every original 15 questions and barely review; add four of fifteen photographed phrasal verbs for exactly 20 per set, no change to scoring history, -10 retry, +60 on perfect"
+  "release_id": "artyom-adverbs-phrasal-review-sets-26-to-30-2026-11-26",
+  "reason": "Five new 20-question adverb and phrasal-verb sets; 25/25 verified completion unlocks 26; retain +60 at 20/20, -10 after failed attempts, historical rewards and same URL."
 }
