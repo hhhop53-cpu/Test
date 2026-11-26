@@ -33,7 +33,7 @@ function assert(c,message){if(!c)throw new Error(message);}
 
 const s=makeSandbox({ARTYOM_CURRENT_TEST_INDEX:'15',ARTYOM_BARELY_EXTRA_SET_NUMBER:'14'});
 const before=s.run('currentSetPayload_()');
-assert(before.setNumber===16 && before.totalSets===25 && before.questions.length===20,
+assert(before.setNumber===16 && before.totalSets===30 && before.questions.length===20,
        'Initial new adverb set should be 16/25 with 15 questions.');
 const original=s.run('buildSetQuestions_(16)');
 const bad=original.map(q=>({questionId:q.id,selectedIndex:(q.correctIndex+1)%4}));
@@ -79,7 +79,7 @@ previousCompletion[8]=JSON.stringify({
 });
 prior20.rows.push(previousCompletion);
 const unlocked=prior20.run('currentSetPayload_()');
-assert(unlocked.setNumber===21 && unlocked.totalSets===25 &&
+assert(unlocked.setNumber===21 && unlocked.totalSets===30 &&
        unlocked.questions.length===20,'Verified former final set20 should unlock 21/25.');
 assert(prior20.values.get('ARTYOM_CURRENT_TEST_INDEX')==='20',
        'Verified 20/20 migration must persist level 21.');
@@ -95,7 +95,7 @@ assert(notYetFinished.run('currentSetPayload_()').setNumber===20,
 
 const newBlock=makeSandbox({ARTYOM_CURRENT_TEST_INDEX:'20'});
 const fresh=newBlock.run('currentSetPayload_()');
-assert(fresh.setNumber===21&&fresh.totalSets===25&&fresh.questions.length===20,
+assert(fresh.setNumber===21&&fresh.totalSets===30&&fresh.questions.length===20,
        'The new block must begin at 21/25 with 20 questions.');
 const wrongAnswers=newBlock.run('buildSetQuestions_(21)')
   .map(q=>({questionId:q.id,selectedIndex:(q.correctIndex+1)%4}));
@@ -131,9 +131,10 @@ assert(newBlock.values.get('ARTYOM_CURRENT_TEST_INDEX')==='21'&&
        newBlock.run('currentSetPayload_()').setNumber===22,
        'Passing set21 must unlock set22.');
 
+// A 20/20 on former final set 25 now advances to the newly added set 26.
 const finale=makeSandbox({ARTYOM_CURRENT_TEST_INDEX:'24'});
 const finalTest=finale.run('currentSetPayload_()');
-assert(finalTest.setNumber===25&&finalTest.totalSets===25,'Final set must be 25/25');
+assert(finalTest.setNumber===25&&finalTest.totalSets===30,'Previously final set 25 must still be playable.');
 finale.context.__testRequest={
  attemptId:'attempt2501',testId:finalTest.testId,setNumber:25,
  answers:finale.run('buildSetQuestions_(25)').map(q=>({
@@ -141,9 +142,9 @@ finale.context.__testRequest={
  })),durationSeconds:90
 };
 const finaleResult=finale.run('verifyAndSave_(__testRequest)');
-assert(finaleResult.passed&&finaleResult.topicCompleted&&finaleResult.pointsAwarded===60,
-       'Perfect 25/25 must finish all adverb sets and reward 60 points.');
-assert(finale.run('currentSetPayload_()').totalSets===25,'Completion retains the correct overall count.');
+assert(finaleResult.passed&&!finaleResult.topicCompleted&&finaleResult.pointsAwarded===60,
+       'Perfect 25/30 must award 60 points and continue.');
+assert(finale.run('currentSetPayload_()').setNumber===26,'Set25 must advance to 26.');
 
 console.log('PASS: old set20 unlocks21 only with verified 15/15; set21 penalty/retry/+60/advance; last set25 completes.');
 
@@ -171,3 +172,69 @@ assert(newAttempt.testId!==base.testId&&newAttempt.setNumber===23,
 const dup=partial.run('verifyAndSave_(__testRequest)');
 assert(dup.duplicate&&partial.rows.length===1,'Duplicate 19/20 must not cost another ten points.');
 console.log('PASS: new phrasal tests require 20/20; 19/20 => -10, fresh retry; idempotent duplicate.');
+
+
+// Auto-unlock from the former final level 25 only after a real verified
+// 20/20 row from the old deployment. No scores, earned rewards or penalties
+// should be retroactively changed.
+const migrated25=makeSandbox({ARTYOM_CURRENT_TEST_INDEX:'24'});
+const prior25=Array(13).fill('');
+prior25[8]=JSON.stringify({student:'Артём',setNumber:25,verified:true,passed:true,score:20,total:20});
+migrated25.rows.push(prior25);
+const restored=migrated25.run('currentSetPayload_()');
+assert(restored.setNumber===26&&restored.totalSets===30&&restored.questions.length===20,
+  'Historical verified 25/25 must automatically open set26 of 30.');
+assert(migrated25.values.get('ARTYOM_CURRENT_TEST_INDEX')==='25',
+  'Auto-migration after verified set25 must persist progress.');
+const incomplete25=makeSandbox({ARTYOM_CURRENT_TEST_INDEX:'24'});
+const invalid=Array(13).fill('');
+invalid[8]=JSON.stringify({student:'Артём',setNumber:25,verified:true,passed:false,score:19,total:20});
+incomplete25.rows.push(invalid);
+assert(incomplete25.run('currentSetPayload_()').setNumber===25,
+  'Failed final set25 must not unlock set26.');
+
+const newReview=makeSandbox({ARTYOM_CURRENT_TEST_INDEX:'25'});
+const newTest=newReview.run('currentSetPayload_()');
+assert(newTest.setNumber===26&&newTest.totalSets===30&&newTest.questions.length===20,
+  'New review block starts at 26/30 and 20 questions.');
+newReview.context.__testRequest={
+ attemptId:'attempt2601',testId:newTest.testId,setNumber:26,
+ answers:newReview.run('buildSetQuestions_(26)').map((q,i)=>({
+  questionId:q.id,selectedIndex:i===0?(q.correctIndex+1)%4:q.correctIndex
+ })),durationSeconds:98
+};
+const oneMistake=newReview.run('verifyAndSave_(__testRequest)');
+assert(oneMistake.score===19&&oneMistake.total===20&&oneMistake.pointsPenalty===10&&!oneMistake.passed,
+  '19/20 on the new set26 must cost exactly 10 points and remain locked.');
+const freshRetry=newReview.run('currentSetPayload_()');
+assert(freshRetry.setNumber===26&&freshRetry.testId!==newTest.testId,
+  'Wrong answer keeps set26 but provides a new quiz.');
+const repeated=newReview.run('verifyAndSave_(__testRequest)');
+assert(repeated.duplicate&&newReview.rows.length===1,
+  'Retrying an already submitted payload must not charge another 10 points.');
+newReview.context.__testRequest={
+ attemptId:'attempt2602',testId:freshRetry.testId,setNumber:26,
+ answers:newReview.run('buildSetQuestions_(26)').map(q=>({
+  questionId:q.id,selectedIndex:q.correctIndex
+ })),durationSeconds:91
+};
+const perfect=newReview.run('verifyAndSave_(__testRequest)');
+assert(perfect.passed&&perfect.score===20&&perfect.pointsAwarded===60,
+  '20/20 on set26 awards exactly +60.');
+assert(newReview.run('currentSetPayload_()').setNumber===27,
+  '20/20 on set26 advances to set27.');
+
+const last=makeSandbox({ARTYOM_CURRENT_TEST_INDEX:'29'});
+const final30=last.run('currentSetPayload_()');
+assert(final30.setNumber===30&&final30.totalSets===30&&final30.questions.length===20,
+  'Final set30 contains 20 questions.');
+last.context.__testRequest={
+ attemptId:'attempt3001',testId:final30.testId,setNumber:30,
+ answers:last.run('buildSetQuestions_(30)').map(q=>({
+  questionId:q.id,selectedIndex:q.correctIndex
+ })),durationSeconds:120
+};
+const ending=last.run('verifyAndSave_(__testRequest)');
+assert(ending.score===20&&ending.passed&&ending.topicCompleted&&ending.pointsAwarded===60,
+  '20/20 on set30 is the final reward.');
+console.log('PASS: verified 25 unlocks 26; 19/20=-10 and fresh retry; 20/20=+60; set30 completes.');
