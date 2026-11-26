@@ -77,11 +77,11 @@ jobs:
           test -s "$stage/Dashboard.html"
           test -s "$stage/appsscript.json"
           python3 -m json.tool "$stage/appsscript.json" > /dev/null
-          # Abort if Google HEAD differs from the last approved live release (v22).
+          # Abort if Google HEAD differs from the last approved live release (v23).
           # These immutable blobs were pinned in the previous approved release request,
-          # and verified when version 22 was deployed successfully.
+          # and verified when version 23 was deployed successfully.
           # Allow one Google serialization whitespace byte, no other differences.
-          BASELINE_CODE_BLOB=38afb833c81209520c6c3a4391759cf5fd02d484
+          BASELINE_CODE_BLOB=a5063201c2afa2522524d0279bbf361827221c2f
           BASELINE_DASHBOARD_BLOB=74ce21a3c57f2c06c3083c7b470b5afb51b6ae7e
           git cat-file -e "$BASELINE_CODE_BLOB"
           git cat-file -e "$BASELINE_DASHBOARD_BLOB"
