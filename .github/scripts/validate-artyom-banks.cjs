@@ -14,8 +14,8 @@ const bank = source.slice(begin, finish);
 const testCode = bank + '\n({sets: TEST_SETS, makeFresh: buildNewAdverbQuestions_});';
 const testData = vm.runInNewContext(testCode, {}, { timeout: 5000 });
 const sets = testData.sets;
-if (!Array.isArray(sets) || sets.length !== 25) {
-  throw new Error('Expected exactly 25 sets.');
+if (!Array.isArray(sets) || sets.length !== 30) {
+  throw new Error('Expected exactly 30 sets.');
 }
 
 for (let index = 0; index < sets.length; index++) {
@@ -50,7 +50,7 @@ for (let index = 0; index < sets.length; index++) {
 if (!source.includes("q_('Vocabulary · barely'")) {
   throw new Error('The extra barely question is missing.');
 }
-for (let setNumber = 16; setNumber <= 25; setNumber++) {
+for (let setNumber = 16; setNumber <= 30; setNumber++) {
   let prior = null;
   const seenFullVariants = new Set();
   for (let round = 0; round < 16; round++) {
@@ -81,7 +81,7 @@ for (let setNumber = 16; setNumber <= 25; setNumber++) {
     prior = prompts;
   }
 }
-console.log('PASS: 25 sets, with 16 successive distinct retry variants for every adverb set 16–25.');
+console.log('PASS: 30 sets, with 16 successive distinct retry variants for every adverb set 16–30.');
 
 
 // Complete published tests now contain 16 retained adverb/foundation items
@@ -107,7 +107,7 @@ const expectedWords = [
 const actualWords=vm.runInContext('PHRASAL_CHALLENGE_BANK_.map(x=>x[0])',phrasalContext);
 if (JSON.stringify(actualWords)!==JSON.stringify(expectedWords))
   throw new Error('Phrasal verbs must exactly match the 15 bold phrases in the image.');
-for (let setNumber=1;setNumber<=25;setNumber++){
+for (let setNumber=1;setNumber<=30;setNumber++){
   const rounds=setNumber>=16?16:1;
   let previous=null;
   for (let round=0;round<rounds;round++){
@@ -132,7 +132,7 @@ for (let setNumber=1;setNumber<=25;setNumber++){
          !q.explanation||!q.prompt)
         throw new Error('Set '+setNumber+', round '+round+': invalid answer at '+i);
     });
-    if (setNumber>=21&&setNumber<=25){
+    if (setNumber>=26&&setNumber<=30){
       extras.forEach((q,i)=>{
         const index=((setNumber-1)*4+i)%15;
         phraseCoverage.add(expectedWords[index]);
@@ -145,5 +145,5 @@ for (let setNumber=1;setNumber<=25;setNumber++){
   }
 }
 if (phraseCoverage.size!==15)
-  throw new Error('The final five tests do not cover all 15 phrasal verbs.');
-console.log('PASS: each of 25 sets has 20 questions; all 15 source phrasal verbs in final block; retries change.');
+  throw new Error('The new tests 26–30 do not cover all 15 phrasal verbs.');
+console.log('PASS: each of 30 sets has 20 questions; all 15 source phrasal verbs in sets 26–30; retries change.');
