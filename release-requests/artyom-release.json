@@ -1,7 +1,7 @@
 {
   "action": "publish_artyom",
-  "code_blob_sha": "5323d1d649c63d9c6e35db2f8e84d663287a9296",
+  "code_blob_sha": "4d9b4498b2a8c50a12811d40c0600163707000e3",
   "dashboard_blob_sha": "74ce21a3c57f2c06c3083c7b470b5afb51b6ae7e",
-  "release_id": "artyom-adverbs-phrasal-review-sets-26-to-30-2026-11-26",
-  "reason": "Five new 20-question adverb and phrasal-verb sets; 25/25 verified completion unlocks 26; retain +60 at 20/20, -10 after failed attempts, historical rewards and same URL."
+  "release_id": "artyom-word-formation-five-extra-25-questions-80-points-2026-11-28",
+  "reason": "Add five test questions about ten photo affixes to every set, 25/25 earns 80 points for new rewards, -10 for failures, preserve existing 60-point historical awards and all past results; existing URLs."
 }
