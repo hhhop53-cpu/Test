@@ -118,14 +118,24 @@ for (let setNumber=1;setNumber<=30;setNumber++){
       setProperty:()=>{}
     });
     const questions=vm.runInContext('buildSetQuestions_('+setNumber+')',phrasalContext,{timeout:3000});
-    if (questions.length!==20||new Set(questions.map(q=>q.id)).size!==20 ||
-        new Set(questions.map(q=>q.prompt)).size!==20)
-      throw new Error('Set '+setNumber+', round '+round+': should have exactly 20 distinct questions.');
+    if (questions.length!==25||new Set(questions.map(q=>q.id)).size!==25 ||
+        new Set(questions.map(q=>q.prompt)).size!==25)
+      throw new Error('Set '+setNumber+', round '+round+': should have exactly 25 distinct questions.');
     if (!questions.some(q=>q.type==='Vocabulary · barely'))
       throw new Error('Set '+setNumber+': missing the retained barely review question.');
-    const extras=questions.slice(16);
+    const extras=questions.slice(16,20);
     if (extras.length!==4||extras.some(q=>!q.type.startsWith('Phrasal verbs')))
       throw new Error('Set '+setNumber+': missing four phrasal-verb questions at the end.');
+    const morphemes=questions.slice(20);
+    if(morphemes.length!==5||morphemes.some(q=>!q.type.startsWith('Word formation · ')))
+      throw new Error('Set '+setNumber+': missing five word-formation questions.');
+    const testedMorphemes=morphemes.map(q=>q.type.slice('Word formation · '.length));
+    if(new Set(testedMorphemes).size!==5)
+      throw new Error('Set '+setNumber+': repeated word formation affix');
+    const expectedMorphemes=['-ful','-less','-ly','-ness','-er','-able','re-','un-','mis-','over-'];
+    const correctSet=new Set(expectedMorphemes);
+    if(testedMorphemes.some(x=>!correctSet.has(x)))
+      throw new Error('Set '+setNumber+': unknown word formation affix');
     questions.forEach((q,i)=>{
       if(q.options.length!==4||new Set(q.options).size!==4||
          !Number.isInteger(q.correctIndex)||q.correctIndex<0||q.correctIndex>3||
@@ -146,4 +156,38 @@ for (let setNumber=1;setNumber<=30;setNumber++){
 }
 if (phraseCoverage.size!==15)
   throw new Error('The new tests 26–30 do not cover all 15 phrasal verbs.');
-console.log('PASS: each of 30 sets has 20 questions; all 15 source phrasal verbs in sets 26–30; retries change.');
+console.log('PASS: each of 30 sets has 25 questions (20 old + 5 word-formation); all 15 source phrasal verbs in 26–30; retries change.');
+
+
+// Verify all ten photo-derived affixes are covered over every two sets.
+// All sixteen retry variants must differ from the immediately preceding one.
+const morphologicalBank=vm.runInContext('WORD_FORMATION_BANK_',phrasalContext);
+const wanted=['-ful','-less','-ly','-ness','-er','-able','re-','un-','mis-','over-'];
+if(morphologicalBank.length!==10 ||
+   JSON.stringify(Array.from(morphologicalBank, x=>x[0]))!==JSON.stringify(wanted) ||
+   morphologicalBank.some(item=>item[2].length!==4))
+  throw new Error('Word-formation bank must match all ten pictured affixes and have four variants.');
+for(let setNumber=1;setNumber<=30;setNumber+=2){
+  const observed=new Set();
+  for(const n of [setNumber,setNumber+1]){
+    const qs=vm.runInContext('buildWordFormationQuestions_('+n+',0)',phrasalContext);
+    qs.forEach(q=>observed.add(q.type.slice('Word formation · '.length)));
+  }
+  if(observed.size!==10)throw new Error('Sets '+setNumber+'-'+(setNumber+1)+' did not cover all ten affixes.');
+}
+for (let setNumber=16;setNumber<=30;setNumber++){
+  let previous=null;
+  const seen=new Set();
+  for(let round=0;round<16;round++){
+    const qs=vm.runInContext('buildWordFormationQuestions_('+setNumber+','+round+')',phrasalContext);
+    if(qs.length!==5 || new Set(qs.map(q=>q.prompt)).size!==5 ||
+       qs.some(q=>q.options.length!==4||new Set(q.options).size!==4))
+      throw new Error('Invalid morphology questions in '+setNumber+' round '+round);
+    const signature=qs.map(q=>q.prompt+'::'+q.options.join('/')).join(' // ');
+    if(seen.has(signature)||signature===previous)
+      throw new Error('Morphology full-variant repetition in '+setNumber+' round '+round);
+    seen.add(signature);
+    previous=signature;
+  }
+}
+console.log('PASS: all ten prefixes/suffixes covered per two sets; sixteen distinct retry variants each.');
