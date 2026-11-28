@@ -1,0 +1,10 @@
+{
+  "action": "publish_dasha_vocabulary_31_40",
+  "first_bank_sha": "f94c030b01ef87e243b6859fe724cc764acb8b2e",
+  "second_bank_sha": "8da27da0800c549c0c83797be6cbb0c61ef65563",
+  "third_bank_sha": "634ecab16e8cd0e5091b2610778b5b89bb69c80e",
+  "vocabulary_sha": "197a66549a05677513248d7f9bcad812e94faa40",
+  "patcher_sha": "15bb7a951f882db84d55bc53f7989f9d6a38f8ae",
+  "release_id": "dasha-50-two-word-bilingual-15q-level31-40-2026-11-28",
+  "reason": "Publish 10 new 15-question tests from 50 everyday nouns, phonetics Russian in brackets, verified 30/30 migration and preserved +60/−30 scoring, same deployment."
+}
