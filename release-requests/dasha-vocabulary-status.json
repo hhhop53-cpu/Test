@@ -1,5 +1,6 @@
 {
   "action": "inspect_live_vocabulary_milestone",
   "requested_on": "2026-11-28",
-  "reason": "Diagnose previous final level 30/30 before claiming new block is unlocked"
+  "reason": "Read-only compare the active Dasha 31/40 questions with the approved 15-question vocabulary bank",
+  "request_id": "verify-dasha-vocabulary-live-20261128-v2"
 }
