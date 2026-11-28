@@ -1,7 +1,7 @@
 {
   "action": "read_live_dasha_structure",
   "status": "read_only",
-  "timestamp": "2026-11-22",
-  "reason": "inspect_progression_before_sets_11_20",
-  "request_id": "inspect-compact-dasha-v2"
+  "timestamp": "2026-11-28",
+  "reason": "read_only_verify_scoring_reward_ledger_before_minus_30_penalty",
+  "request_id": "inspect-dasha-penalty-20261128"
 }
