@@ -1,0 +1,42 @@
+name: Dasha vocabulary - read-only post-release milestone
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'release-requests/dasha-vocabulary-status.json'
+permissions:
+  contents: read
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect public Dasha quiz progress and milestone without changing it
+        run: |
+          python3 - <<'PY'
+          import json,urllib.request,urllib.parse
+          base='https://script.google.com/macros/s/AKfycbzjiijPpMKBoR4FAU4rny_niASspsCXHqIN4bygEcLHNDopmyyr_aH6QPZkLEPWpHTmDw/exec'
+          def get(action):
+              query=urllib.parse.urlencode({'action':action,'callback':'dashaInspect'})
+              request=urllib.request.Request(base+'?'+query,headers={'User-Agent':'DashaMilestoneInspect/1.0'})
+              with urllib.request.urlopen(request,timeout=45) as response:
+                  body=response.read(350000).decode()
+              assert body.startswith('dashaInspect(') and body.rstrip().endswith(');')
+              data=json.loads(body[len('dashaInspect('):body.rfind(');')])
+              assert data['ok'],data.get('error')
+              return data
+          quiz=get('getTest')
+          rewards=get('getRewards')
+          earned30=any(h.get('type')=='earn' and
+                       str(h.get('reason','')).startswith('Тест 30 —')
+                       for h in rewards.get('history',[]))
+          earned29=any(h.get('type')=='earn' and
+                       str(h.get('reason','')).startswith('Тест 29 —')
+                       for h in rewards.get('history',[]))
+          print('LIVE_LEVEL',quiz['level'])
+          print('TOTAL_LEVELS',quiz['totalLevels'])
+          print('QUESTIONS_COUNT',len(quiz['questions']))
+          print('SAVED_EARNED_29',earned29)
+          print('SAVED_EARNED_30',earned30)
+          print('HISTORY_VISIBLE_COUNT',len(rewards.get('history',[])))
+          print('PASS: read-only public status inspected.')
+          PY
