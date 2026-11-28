@@ -10,6 +10,7 @@ jobs:
   status:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Inspect public Dasha quiz progress and milestone without changing it
         run: |
           python3 - <<'PY'
@@ -26,6 +27,19 @@ jobs:
               return data
           quiz=get('getTest')
           rewards=get('getRewards')
+          from pathlib import Path
+          bank=json.loads(Path('apps-script/dasha/vocabulary-31-40.json').read_text())['levels']
+          level=int(quiz['level'])
+          assert quiz['totalLevels']==40
+          assert 31<=level<=40
+          expected=bank[level-31]
+          assert len(quiz['questions'])==len(expected)==15
+          for index,(q,ref) in enumerate(zip(quiz['questions'],expected),1):
+              assert q['id']=='q'+str(index)
+              assert q['prompt']==ref[0]
+              assert q['options']==ref[1]
+              assert 'correctIndex' not in q and 'explanation' not in q
+          assert quiz['rewardPerLevel']==60
           earned30=any(h.get('type')=='earn' and
                        str(h.get('reason','')).startswith('Тест 30 —')
                        for h in rewards.get('history',[]))
@@ -38,5 +52,5 @@ jobs:
           print('SAVED_EARNED_29',earned29)
           print('SAVED_EARNED_30',earned30)
           print('HISTORY_VISIBLE_COUNT',len(rewards.get('history',[])))
-          print('PASS: read-only public status inspected.')
+          print('PASS: live 15 question set exactly equals bank, does not leak answers; 10/10 milestone preserved.')
           PY
