@@ -3,7 +3,7 @@
   "first_bank_sha": "f94c030b01ef87e243b6859fe724cc764acb8b2e",
   "second_bank_sha": "8da27da0800c549c0c83797be6cbb0c61ef65563",
   "third_bank_sha": "634ecab16e8cd0e5091b2610778b5b89bb69c80e",
-  "patcher_sha": "fd415c22bca15fdcabd6bdb29b7bbb44cdac5ffe",
-  "release_id": "dasha-incorrect-attempt-minus-30-2026-11-28",
+  "patcher_sha": "5b1c95f1c2e350eeb32a7f180326388f36c71345",
+  "release_id": "dasha-incorrect-attempt-minus-30-2026-11-28-r2",
   "reason": "Charge -30 for each newly submitted, unique failed 10-question Dasha attempt, retain +60 for perfect, keep existing 30 sets and historical balances, use existing deployment"
 }
