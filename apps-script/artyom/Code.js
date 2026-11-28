@@ -4,7 +4,7 @@ const PROGRESS_KEY = 'ARTYOM_CURRENT_TEST_INDEX';
 const TOTAL_SETS = 30;
 const PENALTY_POINTS = 10;
 const PENALTY_START_SET = 11;
-const REWARD_POINTS = 60;
+const REWARD_POINTS = 80;
 const REWARD_EPOCH_KEY = 'ARTYOM_REWARD_EPOCH';
 const SPENT_POINTS_KEY = 'ARTYOM_SPENT_POINTS';
 const REWARD_JOURNAL_URL = 'https://raw.githubusercontent.com/hhhop53-cpu/Test/main/rewards/artyom-transactions.json';
@@ -1068,6 +1068,34 @@ function barelyExtraSetNumber_() {
   return active;
 }
 
+
+/* Word formation exactly from the user's 10-part chart:
+   -ful, -less, -ly, -ness, -er, -able, re-, un-, mis-, over-.
+   Five questions in each set; every two consecutive sets cover all 10.
+   Four context variants x four answer placements = 16 distinct retries.
+ */
+const WORD_FORMATION_BANK_ = [["-ful","наличие качества",[["Какое слово означает «полезный»?","useful",["useless","usable","reuse"],"use + -ful = useful — полезный."],["Какое прилагательное означает «полный надежды»?","hopeful",["hopeless","hopelessness","careful"],"hope + -ful = hopeful — полный надежды."],["Какое слово означает «готовый помочь, полезный»?","helpful",["helpless","helper","unhelpful"],"help + -ful = helpful — готовый помочь."],["В слове careful какая часть добавляет значение качества «осторожный»?","-ful",["-less","-ly","-ness"],"care + -ful = careful — осторожный."]]],["-less","отсутствие качества",[["Какое слово означает «бесполезный»?","useless",["useful","usable","reuse"],"use + -less = useless — бесполезный."],["Какое слово означает «безнадёжный»?","hopeless",["hopeful","hopelessness","rethink"],"hope + -less = hopeless — безнадёжный."],["Как перевести careless?","неосторожный",["осторожный","осторожно","неосторожность"],"care + -less = careless — неосторожный."],["Какой суффикс добавили к help для слова «беспомощный» (helpless)?","-less",["-ful","-er","-ly"],"help + -less = helpless — беспомощный."]]],["-ly","как выполняется действие",[["Как перевести carefully?","осторожно",["осторожный","неосторожный","неосторожность"],"careful + -ly = carefully — осторожно."],["Какое слово означает «активно»?","actively",["active","carefully","successful"],"active + -ly = actively — активно."],["Какое слово означает «успешно»?","successfully",["unsuccessful","actively","hopeful"],"successful + -ly = successfully — успешно."],["Какой суффикс указывает, КАК выполняется действие, в слове carefully?","-ly",["-ness","-less","-able"],"careful + -ly = carefully — наречие способа действия."]]],["-ness","название качества или состояния",[["Какое слово означает «безнадёжность»?","hopelessness",["hopeless","hopeful","helplessness"],"hopeless + -ness = hopelessness — безнадёжность."],["Какое слово означает «неосторожность»?","carelessness",["careless","carefully","helplessness"],"careless + -ness = carelessness — неосторожность."],["Какое слово означает «беспомощность»?","helplessness",["helpless","helpful","hopelessness"],"helpless + -ness = helplessness — беспомощность."],["Какой суффикс образует существительное hopelessness от hopeless?","-ness",["-less","-ful","-ly"],"hopeless + -ness = hopelessness: название состояния."]]],["-er","исполнитель действия",[["Какое слово означает «работник»?","worker",["workable","rework","overwork"],"work + -er = worker — работник."],["Какое слово означает «игрок»?","player",["playable","replay","worker"],"play + -er = player — игрок."],["Какое слово означает «помощник»?","helper",["helpful","helpless","helplessness"],"help + -er = helper — помощник."],["Какой суффикс в слове thinker обозначает человека, который думает?","-er",["-ly","-able","-less"],"think + -er = thinker — мыслитель."]]],["-able","возможность действия",[["Как перевести usable?","пригодный для использования",["бесполезный","повторно использовать","полезный"],"use + -able = usable — пригодный для использования."],["Какое слово означает «пригодный для игры»?","playable",["player","replay","workable"],"play + -able = playable — пригодный для игры."],["Какое слово означает «управляемый»?","manageable",["mismanage","workable","usable"],"manage + -able = manageable — управляемый."],["Какой суффикс есть в workable и означает возможность действия?","-able",["-er","-ful","-less"],"work + -able = workable — осуществимый."]]],["re-","повторное действие",[["Какое слово означает «использовать повторно»?","reuse",["misuse","usable","useless"],"re- + use = reuse — использовать повторно."],["Какое слово означает «переиграть (ещё раз)»?","replay",["player","playable","rethink"],"re- + play = replay — сыграть повторно."],["Какое слово означает «передумать, пересмотреть решение»?","rethink",["overthink","thinker","rework"],"re- + think = rethink — обдумать заново."],["Что означает приставка re- в слове rework?","сделать заново",["сделать неправильно","делать чрезмерно","отрицать действие"],"re- означает повторение: rework — переделать."]]],["un-","отрицание",[["Какое слово означает «неиспользованный»?","unused",["reuse","usable","useful"],"un- + used = unused — неиспользованный."],["Какое слово означает «непомогающий / бесполезный как помощник»?","unhelpful",["helpful","helplessness","helper"],"un- + helpful = unhelpful — не помогающий."],["Какое слово означает «неуспешный»?","unsuccessful",["successfully","hopeful","careful"],"un- + successful = unsuccessful — неуспешный."],["Какую роль выполняет un- в unused?","делает значение отрицательным",["обозначает повтор","обозначает чрезмерность","обозначает человека"],"un- означает отрицание: used → unused."]]],["mis-","неправильное действие",[["Какое слово означает «использовать неправильно»?","misuse",["reuse","usable","useless"],"mis- + use = misuse — использовать неправильно."],["Какое слово означает «плохо управлять»?","mismanage",["manageable","rework","overthink"],"mis- + manage = mismanage — плохо управлять."],["Что означает mis- в слове misuse?","неправильное действие",["повторное действие","чрезмерное действие","человек-исполнитель"],"mis- означает неправильное действие: misuse — злоупотреблять, использовать неправильно."],["Что произойдёт со значением manage, если добавить mis-?","управлять неправильно",["управлять повторно","работать слишком много","стать управляемым"],"mismanage — плохо управлять; mis- = неправильность."]]],["over-","чрезмерное действие",[["Какое слово означает «слишком много работать»?","overwork",["rework","worker","workable"],"over- + work = overwork — перерабатывать."],["Какое слово означает «слишком много думать, накручивать себя»?","overthink",["rethink","thinker","overwork"],"over- + think = overthink — слишком много обдумывать."],["Какое значение добавляет over- в overwork?","чрезмерность",["повтор","отрицание","неправильность"],"over- в overwork = чрезмерность, переработка."],["Что значит «overthink a problem»?","слишком долго обдумывать проблему",["решить проблему повторно","не думать о проблеме","неправильно управлять проблемой"],"overthink — чрезмерно обдумывать."]]]];
+function buildWordFormationQuestions_(setNumber, round) {
+  if (!Number.isInteger(setNumber) || setNumber < 1 || setNumber > TOTAL_SETS ||
+      !Number.isSafeInteger(round) || round < 0) throw new Error('Неверный набор словообразования.');
+  const questions = [];
+  for (let slot = 0; slot < 5; slot++) {
+    const wordIndex = (((setNumber - 1) * 5) + slot) % WORD_FORMATION_BANK_.length;
+    const item = WORD_FORMATION_BANK_[wordIndex];
+    const example = item[2][(round + slot + setNumber) % item[2].length];
+    const correctIndex = (setNumber + slot + Math.floor(round / 4)) % 4;
+    const options = example[2].slice();
+    options.splice(correctIndex,0,example[1]);
+    if (options.length !== 4 || new Set(options).size !== 4) {
+      throw new Error('Повтор ответа в теме ' + item[0]);
+    }
+    questions.push(q_('Word formation · '+item[0],
+      example[0],options[0],options[1],options[2],options[3],correctIndex,
+      item[0] + ' — ' + item[1] + '. ' + example[3]));
+  }
+  return questions;
+}
+
 function buildSetQuestions_(setNumber) {
   const set = TEST_SETS[setNumber - 1];
   const source = setNumber >= 16 ? buildNewAdverbQuestions_(setNumber, retryRoundForSet_(setNumber)) : (set && set.questions);
@@ -1101,10 +1129,11 @@ function buildSetQuestions_(setNumber) {
   const baseQuestions = setNumber <= 15 && setNumber === barelyExtraSetNumber_()
     ? [additionalBarely].concat(source)
     : source.concat([additionalBarely]);
-  // Four questions use the 15 source phrasal verbs, yielding 20 total.
-  const questions = baseQuestions.concat(buildPhrasalReviewQuestions_(setNumber,retryRound));
-  if (questions.length !== 20) {
-    throw new Error('Ожидалось ровно 20 вопросов в каждом наборе.');
+  // Keep the original 20 and append five word-formation questions.
+  const questions = baseQuestions.concat(buildPhrasalReviewQuestions_(setNumber,retryRound),
+    buildWordFormationQuestions_(setNumber,retryRound));
+  if (questions.length !== 25) {
+    throw new Error('Ожидалось ровно 25 вопросов в каждом наборе.');
   }
 
   return questions.map(function(item, index) {
@@ -1199,15 +1228,20 @@ function rewardStatusFromSheet_(sheet, epoch) {
       if (d && d.rewardEpoch === epoch && d.rewardGranted === true &&
           d.student === 'Артём' && Number.isInteger(Number(d.setNumber))) {
         if (!earnedSets[String(d.setNumber)]) {
-          earnedHistory.push({type:'earn',amount:REWARD_POINTS,
+          // Historical 60-point grants remain 60; the new 80 applies only
+          // to attempts submitted after this release.
+          const originalGrant = Number(d.pointsAwarded);
+          const earnedAmount = Number.isFinite(originalGrant) && originalGrant > 0
+            ? originalGrant : 60;
+          earnedHistory.push({type:'earn',amount:earnedAmount,
             date:row[0] instanceof Date ? row[0].toISOString() : String(row[0]),
             reason:'Тест '+d.setNumber+' — '+(d.total||15)+'/'+(d.total||15)});
+          earnedSets[String(d.setNumber)] = earnedAmount;
         }
-        earnedSets[String(d.setNumber)] = true;
       }
     });
   }
-  const earned = Object.keys(earnedSets).length * REWARD_POINTS;
+  const earned = Object.keys(earnedSets).reduce(function(sum,key){return sum + earnedSets[key];},0);
   const legacySpent = Math.max(0, Number(PropertiesService.getScriptProperties().getProperty(SPENT_POINTS_KEY)) || 0);
   const transactions = readArtyomRewardJournal_();
   const journalSpent = transactions.reduce(function(sum,t){
@@ -1286,9 +1320,9 @@ function startArtyomAdverbsBlock() {
 }
 
 function testIdForSet_(setNumber) {
-  // New bank version rejects stale cached 15- or 16-question submissions
+  // New bank version rejects stale cached 20-question submissions
   // without corrupting already saved attempts or the reward history.
-  return 'phrasal-20-v1-' + (setNumber >= 16
+  return 'morphology-25-v1-' + (setNumber >= 16
     ? 'adverbs-retry-a2b1-v2-set-' + setNumber + '-round-' + retryRoundForSet_(setNumber)
     : setNumber <= 5
     ? 'active-passive-formula-a2plus-v2-set-' + setNumber
@@ -1451,7 +1485,7 @@ function verifyAndSave_(data) {
   }
 
   const answers = Array.isArray(data.answers) ? data.answers : [];
-  // Validate the current 20-answer payload after the idempotency lookup below.
+  // Validate the current 25-answer payload after the idempotency lookup below.
 
   const lock = LockService.getScriptLock();
   lock.waitLock(15000);
