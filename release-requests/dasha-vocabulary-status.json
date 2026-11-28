@@ -1,0 +1,5 @@
+{
+  "action": "inspect_live_vocabulary_milestone",
+  "requested_on": "2026-11-28",
+  "reason": "Diagnose previous final level 30/30 before claiming new block is unlocked"
+}
