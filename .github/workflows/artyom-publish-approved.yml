@@ -77,11 +77,11 @@ jobs:
           test -s "$stage/Dashboard.html"
           test -s "$stage/appsscript.json"
           python3 -m json.tool "$stage/appsscript.json" > /dev/null
-          # Abort if Google HEAD differs from the last approved live release (v23).
+          # Abort if Google HEAD differs from the last approved live release (v24).
           # These immutable blobs were pinned in the previous approved release request,
-          # and verified when version 23 was deployed successfully.
+          # and verified when version 24 was deployed successfully.
           # Allow one Google serialization whitespace byte, no other differences.
-          BASELINE_CODE_BLOB=a5063201c2afa2522524d0279bbf361827221c2f
+          BASELINE_CODE_BLOB=5323d1d649c63d9c6e35db2f8e84d663287a9296
           BASELINE_DASHBOARD_BLOB=74ce21a3c57f2c06c3083c7b470b5afb51b6ae7e
           git cat-file -e "$BASELINE_CODE_BLOB"
           git cat-file -e "$BASELINE_DASHBOARD_BLOB"
@@ -144,9 +144,17 @@ jobs:
           if not data.get('ok'):
               raise RuntimeError('Live API reported: ' + str(data.get('error','unknown')))
           qs = data.get('questions',[])
-          if len(qs) != 20 or len({q.get('prompt') for q in qs}) != len(qs) or len({q.get('id') for q in qs}) != len(qs):
+          if len(qs) != 25 or len({q.get('prompt') for q in qs}) != len(qs) or len({q.get('id') for q in qs}) != len(qs):
               raise RuntimeError('Invalid/duplicate questions in live server.')
           if any('correctIndex' in q or 'explanation' in q for q in qs):
               raise RuntimeError('Answer key exposed in live API.')
+          if len([q for q in qs if q.get('type','').startswith('Word formation · ')])!=5:
+              raise RuntimeError('Expected five new word formation questions.')
+          if len([q for q in qs if q.get('type','').startswith('Phrasal verbs')])!=4:
+              raise RuntimeError('Expected the four earlier phrasal verb questions.')
+          if int(data.get('rewardPerSet',0))!=80:
+              raise RuntimeError('New perfect-set reward should be +80.')
+          if not str(data.get('testId','')).startswith('morphology-25-v1-'):
+              raise RuntimeError('The published API returned an old 20-question bank.')
           print('Live smoke passed: set %s of %s, %s questions.' % (data.get('setNumber'),data.get('totalSets'),len(qs)))
           PY
