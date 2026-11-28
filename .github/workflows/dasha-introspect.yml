@@ -60,25 +60,13 @@ jobs:
                       if line.strip().startswith(('function ','const ','let ','if (','return ','//')) or line.lstrip().startswith('questions:'):
                           a=max(0,ix-1);b=min(len(lines),ix+5)
                           print('CODE_LINE',ix+1,' '.join(scrub(z) for z in lines[a:b])[:900])
-          # Read-only: print only local Dasha reward and submission functions.
+          # Inspect only the original 120-line source, without secrets.
           from pathlib import Path
           import re
-          code=Path('Код.js').read_text(encoding='utf8')
-          for name in ['dashaSubmit_','dashaStatus_','dashaRewards_','dashaRewardStatus_','dashaPoints_']:
-              matches=list(re.finditer(r'(?m)^function\\s+'+name+r'\\s*\\(', code))
-              if not matches:
-                  print('DASHA_FUNCTION_ABSENT',name)
+          lines=Path('Код.js').read_text(encoding='utf8').splitlines()
+          for number in range(78,114):
+              line=lines[number-1] if len(lines)>=number else ''
+              if any(key in line.upper() for key in ('TELEGRAM_BOT_TOKEN','TELEGRAM_CHAT_ID','SCRIPT_ID','SPREADSHEET_ID','API_KEY')):
                   continue
-              start=matches[0].start()
-              nextfn=re.search(r'(?m)^function\\s+\\w+\\s*\\(',code[matches[0].end():])
-              end=matches[0].end()+nextfn.start() if nextfn else min(len(code),start+16000)
-              print('DASHA_FUNCTION_START',name)
-              for line in code[start:end].splitlines()[:250]:
-                  if any(x in line.upper() for x in ('TOKEN','CHAT_ID','SCRIPT_ID','SPREADSHEET_ID','SECRET','PASSWORD','API_KEY')):
-                      continue
-                  print('DASHA_FUNCTION_CODE',line[:350])
-              print('DASHA_FUNCTION_END',name)
-          for line in code.splitlines():
-              if re.match(r'^const DASHA_(REWARD|PENALTY|LEVELS|PROGRESS)\\b',line):
-                  print('DASHA_SAFE_CONSTANT',line[:160])
+              print('DASHA_POINTS_LINE',number,line[:6000])
           PY
