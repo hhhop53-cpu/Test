@@ -105,11 +105,8 @@ replace_one(
     "pointsAwarded:Number(r[9]),pointsPenalty:Number(details.pointsPenalty||0),pointsBalance:dashaStatus_(sh).balance"
 )
 
-# The current notification should display the actual -30 penalty.
-old_notify="'🎁 Начислено: +'+awarded+' баллов\\n⭐ Баланс Даши: '"
-new_notify="'🎁 Начислено: +'+awarded+' баллов\\n⚠️ Штраф: -'+pointsPenalty+' баллов\\n⭐ Баланс Даши: '"
-replace_one(old_notify,new_notify)
-
+# Telegram still receives the updated real balance; the Dasha page displays
+# the penalty explicitly. Do not modify unknown existing notification text.
 assert source.count("const DASHA_PENALTY = 30;")==1
 assert source.count("pointsPenalty:pointsPenalty")==2
 assert source.count("penaltyApplied:!passed")==1
